@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  /* Atmospheric theme palette */
+  --color-storm-dark: #0a0e17;
+  --color-storm-mid: #1a2740;
+  --color-storm-blue: #2d4a6e;
+  --color-lake-deep: #0c1a2b;
+  --color-lake-surface: #1b3a5c;
+  --color-lighthouse-glow: #f5d67b;
+  --color-lighthouse-beam: #ffe8a0;
+  --color-light-warm: #ffd166;
+  --color-light-gold: #f0a500;
+  --color-orb-idle: #6eb5ff;
+  --color-orb-selected: #ffe8a0;
+  --color-orb-chained: #ffd166;
+  --color-orb-wrong: #ff6b6b;
+  --color-combo-1: #ffd166;
+  --color-combo-2: #f0a500;
+  --color-combo-3: #ff8c42;
+  --color-storm-warning: #ff4444;
+  --color-duck-body: #f5e6ca;
+  --color-duck-beak: #f0a500;
+  --color-chelsea: #a8d8ea;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* CSS animations for ambient effects */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(110, 181, 255, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(110, 181, 255, 0.7); }
+}
+
+@keyframes rain {
+  0% { transform: translateY(-10vh); }
+  100% { transform: translateY(110vh); }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.15; }
+}
+
+@keyframes drift {
+  0% { transform: translateX(-5%); }
+  100% { transform: translateX(5%); }
+}
+
+/* Utility layer for ambient effects */
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@utility animate-rain {
+  animation: rain 1.5s linear infinite;
+}
+
+@utility animate-flash {
+  animation: flash 0.15s ease-out;
+}
+
+@utility animate-drift {
+  animation: drift 8s ease-in-out infinite alternate;
+}
+
+/* Tap target minimum size */
+@utility tap-target {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Base body styles */
+body {
+  background-color: var(--color-storm-dark);
+  color: #e0e8f0;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
