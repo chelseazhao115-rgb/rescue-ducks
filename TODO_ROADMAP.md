@@ -6,15 +6,32 @@
 
 ---
 
+## P0 — Home Screen Polish (NEXT)
+
+- [ ] **Home Screen lighthouse animation**
+  - Gentle floating/pulsing motion for the lighthouse
+  - Sparkle particles around lantern
+  - Light beam subtle sweep animation
+- [ ] **Button micro-interactions**
+  - Ripple effect on START JOURNEY press
+  - Stronger glow pulse on hover
+  - Scale/spring feedback
+- [ ] **Home -> Game transition**
+  - Smooth fade/slide instead of hard route change
+  - Lighthouse could "zoom" into the game position
+- [ ] **Background depth**
+  - More atmospheric particles (fireflies, dust)
+  - Subtle parallax on mouse/touch movement
+  - Moon or stars visible in sky area
+
+---
+
 ## P0 — Atmosphere & Emotional Core
 
-- [ ] **Intro cinematic polish**
-  - Scene 1/2 visual differentiation (currently too similar)
-  - Camera feel — slow zoom, vignette, blur transitions
-  - Emotional arc clarity (calm → tension → hope)
-  - Duck visibility and emotional connection in intro
+- [ ] **Gameplay ambience**
+  - Extend ambientSound.ts to run during gameplay (not just intro)
+  - Gentle water/wind loop at low volume
 - [ ] **Sound design upgrade**
-  - Gameplay ambience (currently only intro has ambience)
   - Storm audio that responds to storm meter level
   - Lighthouse glow sound
   - Duck sounds (soft quacks on rescue)
@@ -62,15 +79,26 @@
 - [ ] **Environmental variation**
   - Slightly different background per stage
   - Time-of-day progression across stages
-  - Weather variation (light rain → heavy storm)
-- [ ] **Level balance pass**
-  - Playtest and adjust timers per level
-  - Verify star thresholds feel fair
-  - Ensure early levels are genuinely easy
+  - Weather variation (light rain -> heavy storm)
 - [ ] **Chelsea variety**
   - More tip lines
   - Context-aware reactions
   - Occasional non-tip presence (just being there)
+
+---
+
+## Completed (May 21, 2026)
+
+- [x] Full UI redesign based on 8 reference PNGs
+- [x] Circular watercolor-style word orbs
+- [x] Glassmorphism overlay screens
+- [x] Multi-layer SVG chain links
+- [x] Lighthouse repositioned to right side as "home"
+- [x] Duck parade direction: waiting left -> rescued right (toward lighthouse)
+- [x] Level timer rebalancing by stage (50s/65s/75s/90s)
+- [x] Fixed critical countdown display bug (rAF timestamp mismatch)
+- [x] Home Screen vertical layout: Title -> Lighthouse -> Buttons
+- [x] Soft twilight background with warm horizon glow
 
 ---
 

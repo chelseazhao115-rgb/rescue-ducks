@@ -1,4 +1,4 @@
-# Rescue Duck 🦆✨
+# Rescue Duck
 
 **"Language magic + Lighthouse + Ducks coming home"**
 
@@ -22,10 +22,10 @@ Chelsea, your gentle guide, watches from the shore.
 
 - Floating glowing word orbs appear on screen (4 synonym groups at once)
 - Tap words from the **same semantic group** to chain them
-- Complete a group → light energy flies to lighthouse → a duck moves toward home
+- Complete a group -> light energy flies to lighthouse -> a duck moves toward home
 - Wrong matches break the chain and intensify the storm
 - The storm meter fills over time — let it reach 100% and the lighthouse is lost
-- Light all groups to fully relight the lighthouse → victory with star rating
+- Light all groups to fully relight the lighthouse -> victory with star rating
 
 **Key mechanic**: Semantic groups, not fixed 1v1 pairs. Tap any words that share meaning in sequence.
 
@@ -45,34 +45,53 @@ Chelsea, your gentle guide, watches from the shore.
 
 ---
 
-## Current State (May 2026)
+## Current State (May 21, 2026)
 
-**Phase**: MVP complete → Polish iteration
+**Phase**: MVP complete -> Polish iteration -> Pre-HomeScreen-polish checkpoint
 
-✅ Core gameplay loop
-✅ Semantic matching with chain system
-✅ Storm meter with progressive difficulty
-✅ Lighthouse brightness progression
-✅ Duck rescue parade
-✅ Combo system with multiplier
-✅ 28 progressive levels from IELTS paraphrasing vocabulary
-✅ Level select map
-✅ Victory / Game Over screens with star ratings
-✅ Cinematic intro sequence (v2)
-✅ Ambient sound system (procedural)
-✅ Chinese translation hints on tap
-✅ Chelsea NPC with contextual tips
-✅ Mobile-first responsive design
-✅ Sound effects for all game actions
+### Completed
+- Core gameplay loop with semantic matching and chain system
+- Storm meter with progressive difficulty
+- Lighthouse brightness progression (right-side, guides ducks home)
+- Duck rescue parade (waiting left -> rescued right toward lighthouse)
+- Combo system with multiplier
+- 28 progressive levels from IELTS paraphrasing vocabulary
+- Level select map
+- Victory / Game Over / Pause overlays with star ratings
+- Cinematic intro sequence
+- Ambient sound system (procedural)
+- Chinese translation hints on tap
+- Chelsea NPC with contextual tips
+- Mobile-first responsive design
+- Full UI redesign based on reference images (dreamy lighthouse aesthetic)
+- **Level timer rebalancing**: Stage 1 (50s), Stage 2 (65s), Stage 3 (75s), Stage 4 (90s)
+- **Fixed critical timer display bug** (rAF timestamp vs Date.now() mismatch)
+- **Home Screen layout**: Title -> Lighthouse -> Buttons (vertical stack)
+
+### Home Screen Current Layout
+- Top: "Rescue Duck" title with gold glow
+- Center: Lighthouse illustration with glow halo and light beam
+- Below: "START JOURNEY" primary button (gold gradient)
+- Below: "LOAD MAP" secondary button (glass style)
+- Bottom: Settings icon, trophy icon, version text
+- Background: Water surface, island, floating duck silhouettes
+
+### Gameplay Visual Style
+- Soft twilight gradient sky (#6a7a9f to #1a2238)
+- Warm horizon glow (gold radial)
+- Circular watercolor-style word orbs with glow states
+- Multi-layer SVG chain links with energy flow
+- Glassmorphism overlays (victory, pause, game over)
+- Lighthouse on right as "home" destination
 
 ---
 
 ## Development Direction
 
-**Current priority**: Atmosphere, presentation, game feel — NOT more features.
+**Current priority**: Home Screen polish -> Atmosphere -> Game feel. NOT more features.
 
 ### DO
-- Polish intro cinematic quality
+- Polish Home Screen visual quality and animations
 - Enhance visual layering and lighting
 - Improve sound design and ambience
 - Add particle effects and micro-animations
@@ -93,7 +112,7 @@ Chelsea, your gentle guide, watches from the shore.
 ```bash
 npm install
 npm run dev
-# → http://localhost:3000 (home) → /game (gameplay)
+# -> http://localhost:3000 (home) -> /game (gameplay)
 ```
 
 To reset intro: `localStorage.removeItem("rescueDuckIntroSeenV2")`

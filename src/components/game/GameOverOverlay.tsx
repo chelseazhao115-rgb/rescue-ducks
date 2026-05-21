@@ -18,81 +18,135 @@ export const GameOverOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center
-                 bg-storm-dark/90 backdrop-blur-md px-6"
+      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-6"
+      style={{
+        background:
+          "radial-gradient(circle at center, rgba(80,90,130,0.2), rgba(15,20,35,0.95))",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+      }}
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 40 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <motion.h2
-        className="text-3xl font-bold text-red-400 mb-2"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        Storm Took the Lighthouse
-      </motion.h2>
-
-      <motion.p
-        className="text-white/40 mb-6 text-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        The storm grew too strong...
-      </motion.p>
-
-      <StarRating stars={starResult.stars} animate />
-
-      {/* Stats */}
-      <motion.div
-        className="grid grid-cols-2 gap-x-8 gap-y-2 mt-6 text-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.0 }}
-      >
-        <span className="text-white/40 text-right">Score</span>
-        <span className="text-white/80">{score}</span>
-        <span className="text-white/40 text-right">Groups</span>
-        <span className="text-white/80">
-          {groupsCompleted}/{totalGroups}
-        </span>
-        <span className="text-white/40 text-right">Max Combo</span>
-        <span className="text-white/80">{maxCombo}x</span>
-      </motion.div>
+      {/* Subtle rain effect */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={`rain-${i}`}
+            className="absolute w-px rounded-full"
+            style={{
+              left: `${10 + Math.random() * 80}%`,
+              top: "-5%",
+              height: `${8 + Math.random() * 12}px`,
+              background: "linear-gradient(to bottom, rgba(180,190,210,0.15), transparent)",
+            }}
+            animate={{
+              y: ["0vh", "110vh"],
+              opacity: [0, 0.15, 0],
+            }}
+            transition={{
+              duration: 1.5 + Math.random(),
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
       <motion.div
-        className="flex flex-col gap-3 mt-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
+        className="flex flex-col items-center max-w-[340px] w-full"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.5 }}
       >
-        <motion.button
-          onClick={() => {
-            resetGame();
-            router.push("/game");
-          }}
-          className="px-8 py-3 rounded-full bg-lighthouse-glow/20 border border-lighthouse-glow/40
-                     text-lighthouse-glow font-semibold hover:bg-lighthouse-glow/30 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
+        <motion.h2
+          className="text-2xl font-extrabold mb-1 tracking-tight text-center"
+          style={{ color: "#8890c8" }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
         >
-          Try Again
-        </motion.button>
+          Storm Overwhelmed
+          <br />
+          the Lighthouse
+        </motion.h2>
 
-        <motion.button
-          onClick={() => {
-            resetGame();
-            router.push("/");
-          }}
-          className="px-8 py-3 rounded-full bg-white/10 border border-white/10
-                     text-white/60 font-semibold hover:bg-white/20 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
+        <motion.p
+          className="mb-5 text-xs text-center"
+          style={{ color: "rgba(255,255,255,0.25)", maxWidth: "240px" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
         >
-          Back to Menu
-        </motion.button>
+          The dusk deepened before the ducks made it home.
+        </motion.p>
+
+        <StarRating stars={starResult.stars} animate />
+
+        {/* Stats card */}
+        <motion.div
+          className="w-full mt-6 p-4 rounded-2xl"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            backdropFilter: "blur(12px)",
+          }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Score</span>
+            <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>{score.toLocaleString()}</span>
+            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Groups</span>
+            <span style={{ color: "rgba(255,255,255,0.75)" }}>{groupsCompleted}/{totalGroups}</span>
+            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Max Combo</span>
+            <span style={{ color: "rgba(255,255,255,0.75)" }}>{maxCombo}x</span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col gap-2.5 mt-6 w-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <motion.button
+            onClick={() => { resetGame(); router.push("/game"); }}
+            className="w-full font-bold text-sm tracking-wide"
+            style={{
+              padding: "14px 28px",
+              borderRadius: "999px",
+              background: "linear-gradient(180deg, #ffe8af, #f0c860)",
+              color: "#5a4a28",
+              border: "1px solid rgba(255,255,255,0.3)",
+              boxShadow: "0 0 20px rgba(255,220,120,0.25), 0 4px 12px rgba(0,0,0,0.15)",
+            }}
+            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,220,120,0.4), 0 4px 12px rgba(0,0,0,0.2)" }}
+            whileTap={{ scale: 0.97 }}
+          >
+            RETRY
+          </motion.button>
+
+          <motion.button
+            onClick={() => { resetGame(); router.push("/"); }}
+            className="w-full font-semibold text-sm"
+            style={{
+              padding: "12px 28px",
+              borderRadius: "999px",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(255,255,255,0.4)",
+            }}
+            whileHover={{ scale: 1.03, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}
+            whileTap={{ scale: 0.97 }}
+          >
+            BACK TO MAP
+          </motion.button>
+        </motion.div>
       </motion.div>
     </motion.div>
   );

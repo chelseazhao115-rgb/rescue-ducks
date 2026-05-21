@@ -12,7 +12,6 @@ export const ComboIndicator: React.FC = () => {
   const combo = activeChain?.combo ?? 0;
   const visible = combo >= 1;
 
-  // Find the current chain's group to show progress
   const currentGroup = activeChain
     ? activeGroups.find((g) => g.groupId === activeChain.groupId)
     : null;
@@ -22,13 +21,14 @@ export const ComboIndicator: React.FC = () => {
   const multiplier = getComboMultiplier(combo);
   const colorClass =
     multiplier >= 3
-      ? "text-combo-3"
+      ? "#e8b050"
       : multiplier >= 2
-        ? "text-combo-2"
-        : "text-combo-1";
+        ? "#f0c860"
+        : "#ffd97a";
 
   return (
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
+    >
       <AnimatePresence>
         {visible && (
           <motion.div
@@ -40,7 +40,11 @@ export const ComboIndicator: React.FC = () => {
             {/* Combo count */}
             {combo >= 2 && (
               <motion.span
-                className={`text-3xl font-bold ${colorClass} drop-shadow-[0_0_10px_currentColor]`}
+                className="text-4xl font-extrabold"
+                style={{
+                  color: colorClass,
+                  textShadow: `0 0 24px ${colorClass}55`,
+                }}
                 animate={{ scale: [1, 1.3, 1] }}
                 transition={{ duration: 0.3 }}
               >
@@ -48,19 +52,28 @@ export const ComboIndicator: React.FC = () => {
               </motion.span>
             )}
 
-            {/* Group progress: shows matched/total for current group */}
+            {/* Group progress dots */}
             {totalInGroup > 0 && (
-              <div className="flex items-center gap-1.5">
-                {/* Dot indicators */}
-                <div className="flex gap-1">
+              <div className="flex items-center gap-2 mt-1"
+              >
+                <div className="flex gap-1.5"
+                >
                   {Array.from({ length: totalInGroup }).map((_, i) => (
                     <motion.div
                       key={i}
-                      className={`w-2 h-2 rounded-full ${
-                        i < matchedCount
-                          ? "bg-lighthouse-glow shadow-[0_0_6px_rgba(245,214,123,0.6)]"
-                          : "bg-white/20"
-                      }`}
+                      className="rounded-full"
+                      style={{
+                        width: i < matchedCount ? "6px" : "5px",
+                        height: i < matchedCount ? "6px" : "5px",
+                        background:
+                          i < matchedCount
+                            ? "#ffd97a"
+                            : "rgba(255,255,255,0.18)",
+                        boxShadow:
+                          i < matchedCount
+                            ? "0 0 8px rgba(255,217,122,0.5)"
+                            : "none",
+                      }}
                       animate={
                         i === matchedCount - 1
                           ? { scale: [1, 1.5, 1] }
@@ -70,7 +83,8 @@ export const ComboIndicator: React.FC = () => {
                     />
                   ))}
                 </div>
-                <span className="text-xs text-white/50">
+                <span className="text-[10px] font-medium" style={{ color: "rgba(255,255,255,0.4)" }}
+                >
                   {matchedCount}/{totalInGroup}
                 </span>
               </div>
@@ -78,7 +92,10 @@ export const ComboIndicator: React.FC = () => {
 
             {/* Chain label */}
             {combo >= 2 && (
-              <span className="text-xs text-white/30 mt-0.5">Chain</span>
+              <span className="text-[10px] font-medium tracking-wider mt-0.5" style={{ color: "rgba(255,255,255,0.25)" }}
+              >
+                CHAIN
+              </span>
             )}
           </motion.div>
         )}

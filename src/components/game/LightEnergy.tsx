@@ -32,25 +32,28 @@ export const LightEnergy: React.FC = () => {
         const sy = p.sourcePosition.y * containerSize.h;
         const tx = p.targetPosition.x * containerSize.w;
         const ty = p.targetPosition.y * containerSize.h;
-        const midX = (sx + tx) / 2 + (Math.random() - 0.5) * 60;
-        const midY = Math.min(sy, ty) - 40 - Math.random() * 60;
+        const midX = (sx + tx) / 2 + (Math.random() - 0.5) * 40;
+        const midY = Math.min(sy, ty) - 20 - Math.random() * 40;
 
         return (
           <motion.div
             key={p.particleId}
-            className="absolute w-2 h-2 rounded-full"
+            className="absolute rounded-full"
             style={{
               left: 0,
               top: 0,
-              background: `radial-gradient(circle, hsl(${p.hue}, 100%, 70%), transparent)`,
-              filter: "blur(2px)",
+              width: "5px",
+              height: "5px",
+              background: "rgba(255,240,190,0.9)",
+              filter: "blur(1px)",
+              boxShadow: "0 0 8px rgba(255,232,168,0.6)",
             }}
-            initial={{ x: sx, y: sy, opacity: 1, scale: 1 }}
+            initial={{ x: sx, y: sy, opacity: 0, scale: 1 }}
             animate={{
               x: [sx, midX, tx],
               y: [sy, midY, ty],
-              opacity: [1, 1, 0],
-              scale: [1, 1.5, 0.3],
+              opacity: [0, 1, 1, 0],
+              scale: [1, 1.2, 0.3],
             }}
             transition={{ duration: p.duration / 1000, ease: "easeInOut" }}
           />

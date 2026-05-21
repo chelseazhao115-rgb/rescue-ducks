@@ -111,14 +111,15 @@ export function spawnGroupOrbs(
 }
 
 function gridCell(col: number, row: number): { x: number; y: number } {
-  const marginX = 0.08;
+  const marginLeft = 0.08;
+  const marginRight = 0.24; // reserve right portion for lighthouse
   const marginY = 0.14;
-  const usableW = 1 - marginX * 2;
+  const usableW = 1 - marginLeft - marginRight;
   const usableH = 0.48;
   const cellW = usableW / GRID_COLS;
   const cellH = usableH / GRID_ROWS;
   return {
-    x: marginX + cellW * (col + 0.5),
+    x: marginLeft + cellW * (col + 0.5),
     y: marginY + cellH * (row + 0.5),
   };
 }
@@ -147,7 +148,7 @@ function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number }
 
   for (let attempt = 0; attempt < 30; attempt++) {
     const pos = {
-      x: 0.1 + Math.random() * 0.8,
+      x: 0.1 + Math.random() * 0.66, // avoid right ~24% lighthouse area
       y: 0.16 + Math.random() * 0.44,
     };
     if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE)) {

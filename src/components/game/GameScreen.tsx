@@ -79,12 +79,13 @@ export const GameScreen: React.FC = () => {
       <Lighthouse />
 
       {/* Top HUD */}
-      <div className="absolute top-0 left-0 right-0 z-10">
-        <StormMeter />
+      <div className="absolute top-0 left-0 right-0 z-10 flex items-start justify-between">
         <ScoreDisplay />
+        <div className="flex flex-col items-end pt-2 pr-2 gap-1">
+          <StormMeter />
+          <PauseButton />
+        </div>
       </div>
-
-      <PauseButton />
 
       {/* Center play area - word orbs */}
       <WordOrbField />

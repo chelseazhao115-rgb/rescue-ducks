@@ -103,7 +103,7 @@ export class GameEngine {
       usedWords: [],
     });
 
-    this.lastTickTime = now;
+    this.lastTickTime = 0; // startLoop will init from rAF timestamp
     this.startLoop();
   }
 

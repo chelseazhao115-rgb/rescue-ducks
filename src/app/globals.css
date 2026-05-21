@@ -1,78 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Atmospheric theme palette */
-  --color-storm-dark: #0a0e17;
-  --color-storm-mid: #1a2740;
-  --color-storm-blue: #2d4a6e;
-  --color-lake-deep: #0c1a2b;
-  --color-lake-surface: #1b3a5c;
-  --color-lighthouse-glow: #f5d67b;
-  --color-lighthouse-beam: #ffe8a0;
-  --color-light-warm: #ffd166;
-  --color-light-gold: #f0a500;
-  --color-orb-idle: #6eb5ff;
-  --color-orb-selected: #ffe8a0;
-  --color-orb-chained: #ffd166;
-  --color-orb-wrong: #ff6b6b;
-  --color-combo-1: #ffd166;
-  --color-combo-2: #f0a500;
-  --color-combo-3: #ff8c42;
-  --color-storm-warning: #ff4444;
-  --color-duck-body: #f5e6ca;
-  --color-duck-beak: #f0a500;
-  --color-chelsea: #a8d8ea;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  /* === Atmospheric Background === */
+  --color-bg-deep-night: #1a1f35;
+  --color-bg-indigo: #2d3655;
+  --color-bg-mist: #6d7aa6;
+  --color-bg-lake: #3d5270;
+
+  /* === Lighthouse Glow — Warm Gold === */
+  --color-light-gold-soft: #ffe7b0;
+  --color-light-gold-main: #ffd97a;
+  --color-light-gold-bright: #fff2cf;
+  --color-light-gold-dim: #e8c46a;
+
+  /* === Semantic Orbs — Watercolor Palette === */
+  --color-orb-blue: #b9d9ff;
+  --color-orb-lavender: #d9c8ff;
+  --color-orb-gold: #ffe8a8;
+  --color-orb-soft-pink: #f6d8e8;
+  --color-orb-mint: #c8f0e4;
+  --color-orb-coral: #ffd4c8;
+
+  /* === UI Glass — Soft Frost === */
+  --color-glass-bg: rgba(255, 255, 255, 0.10);
+  --color-glass-border: rgba(255, 255, 255, 0.20);
+  --color-glass-highlight: rgba(255, 255, 255, 0.06);
+
+  /* === Text === */
+  --color-text-main: #f8f5ee;
+  --color-text-soft: #d9d7d2;
+  --color-text-muted: rgba(255, 255, 255, 0.45);
+
+  /* === Backward-compatible aliases === */
+  --color-night-deep: #1a1f35;
+  --color-night-mid: #2d3655;
+  --color-night-low: #46577e;
+  --color-night-horizon: #5b6d99;
+  --color-water-deep: #2a3a50;
+  --color-water-surface: #405a78;
+  --color-warm-glow: #ffd97a;
+  --color-warm-beam: #fff2cf;
+  --color-sun-gold: #ffd97a;
+  --color-sun-amber: #f0c860;
+  --color-orb-idle: #b9d9ff;
+  --color-orb-selected: #ffe8a8;
+  --color-orb-chained: #ffd97a;
+  --color-orb-wrong: #f6d8e8;
+  --color-combo-1: #ffd97a;
+  --color-combo-2: #f0c860;
+  --color-combo-3: #e8b050;
+  --color-twilight-low: #8a90b8;
+  --color-twilight-mid: #6a70a0;
+  --color-twilight-deep: #4a5088;
+  --color-duck-body: #f8f0e0;
+  --color-duck-beak: #e89850;
+  --color-duck-wing: #e8d8c0;
+  --color-chelsea: #b9d9ff;
+  --color-chelsea-accent: #d9c8ff;
+  --color-lighthouse-white: #f0ead8;
+  --color-lighthouse-shadow: #c0b8a8;
+  --color-lighthouse-lantern: #ffe8a8;
+  --color-lighthouse-red: #c87870;
+
+  /* Keep old token names working */
+  --color-storm-dark: #1a1f35;
+  --color-storm-mid: #2d3655;
+  --color-storm-blue: #46577e;
+  --color-lake-deep: #2a3a50;
+  --color-lake-surface: #405a78;
+  --color-lighthouse-glow: #ffd97a;
+  --color-lighthouse-beam: #fff2cf;
+  --color-light-warm: #ffd97a;
+  --color-light-gold: #f0c860;
+  --color-storm-warning: #4a5088;
+
+  --font-sans: "Nunito", "Quicksand", system-ui, -apple-system, sans-serif;
 }
 
-/* CSS animations for ambient effects */
-@keyframes float {
+/* ===== Atmospheric Keyframes ===== */
+
+@keyframes fogFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes lighthousePulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+@keyframes orbFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes orbBreathe {
+  0% { box-shadow: 0 0 18px rgba(255,225,140,0.18); }
+  50% { box-shadow: 0 0 36px rgba(255,225,140,0.42); }
+  100% { box-shadow: 0 0 18px rgba(255,225,140,0.18); }
+}
+
+@keyframes energyFlow {
+  from { transform: translateX(-60px); }
+  to { transform: translateX(300px); }
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0px) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-80px) scale(0.3); opacity: 0; }
+}
+
+@keyframes starPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes warmPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,217,122,0.25); }
+  50% { box-shadow: 0 0 28px rgba(255,217,122,0.5); }
+}
+
+@keyframes softRain {
+  0% { transform: translateY(-10vh) translateX(0px); }
+  100% { transform: translateY(110vh) translateX(-4px); }
+}
+
+@keyframes cloudDrift {
+  0% { transform: translateX(-3%); }
+  100% { transform: translateX(3%); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.8; transform: scale(1.3); }
+}
+
+@keyframes softWave {
+  0%, 100% { transform: translateY(0px) scaleY(1); }
+  50% { transform: translateY(-2px) scaleY(1.02); }
+}
+
+@keyframes gentleBob {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-3px); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(110, 181, 255, 0.4); }
-  50% { box-shadow: 0 0 20px rgba(110, 181, 255, 0.7); }
+@keyframes mistDrift {
+  0% { transform: translateX(-8%); opacity: 0.3; }
+  50% { transform: translateX(4%); opacity: 0.5; }
+  100% { transform: translateX(-8%); opacity: 0.3; }
 }
 
-@keyframes rain {
-  0% { transform: translateY(-10vh); }
-  100% { transform: translateY(110vh); }
+@keyframes beamBreathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
 }
 
-@keyframes flash {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 0.15; }
+@keyframes orbGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(255, 232, 168, 0.25),
+      0 0 60px rgba(255, 232, 168, 0.1),
+      inset 0 0 20px rgba(255, 255, 255, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(255, 232, 168, 0.4),
+      0 0 80px rgba(255, 232, 168, 0.15),
+      inset 0 0 30px rgba(255, 255, 255, 0.22);
+  }
 }
 
-@keyframes drift {
-  0% { transform: translateX(-5%); }
-  100% { transform: translateX(5%); }
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
-/* Utility layer for ambient effects */
-@utility animate-float {
-  animation: float 3s ease-in-out infinite;
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-40px) scale(0.5); opacity: 0; }
 }
 
-@utility animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
+/* ===== Utility Classes ===== */
 
-@utility animate-rain {
-  animation: rain 1.5s linear infinite;
-}
+@utility animate-float { animation: orbFloat 7s ease-in-out infinite; }
+@utility animate-warm-pulse { animation: warmPulse 2.5s ease-in-out infinite; }
+@utility animate-rain { animation: softRain 1.8s linear infinite; }
+@utility animate-cloud-drift { animation: cloudDrift 14s ease-in-out infinite alternate; }
+@utility animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+@utility animate-soft-wave { animation: softWave 3s ease-in-out infinite; }
+@utility animate-gentle-bob { animation: gentleBob 2.5s ease-in-out infinite; }
+@utility animate-mist-drift { animation: mistDrift 10s ease-in-out infinite; }
+@utility animate-beam-breathe { animation: beamBreathe 3s ease-in-out infinite; }
+@utility animate-orb-glow { animation: orbGlowPulse 3s ease-in-out infinite; }
+@utility animate-shimmer { animation: shimmer 3s linear infinite; }
 
-@utility animate-flash {
-  animation: flash 0.15s ease-out;
-}
+/* Legacy compat */
+@utility animate-pulse-glow { animation: warmPulse 2.5s ease-in-out infinite; }
+@utility animate-drift { animation: cloudDrift 14s ease-in-out infinite alternate; }
+@utility animate-flash { animation: sparkle 0.3s ease-out; }
 
-@utility animate-drift {
-  animation: drift 8s ease-in-out infinite alternate;
-}
-
-/* Tap target minimum size */
 @utility tap-target {
   min-width: 44px;
   min-height: 44px;
@@ -81,11 +214,54 @@
   user-select: none;
 }
 
-/* Base body styles */
+/* ===== Frosted Glass Utilities ===== */
+
+@utility glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@utility glass-light {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+@utility glass-strong {
+  background: rgba(30, 35, 60, 0.55);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Base Body Styles ===== */
+
 body {
-  background-color: var(--color-storm-dark);
-  color: #e0e8f0;
+  background:
+    linear-gradient(
+      180deg,
+      #6a7a9f 0%,
+      #5b6d99 15%,
+      #46577e 35%,
+      #2e3b5f 60%,
+      #1a2238 100%
+    );
   overflow: hidden;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  color: #f8f5ee;
+  font-family: "Nunito", "Quicksand", system-ui, -apple-system, sans-serif;
 }
