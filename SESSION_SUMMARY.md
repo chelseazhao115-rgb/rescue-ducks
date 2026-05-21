@@ -1,8 +1,8 @@
-# Rescue Duck — Session Summary (2026-05-21)
+# Rescue Duck — Session Summary (2026-05-22)
 
 ## Current Project State at a Glance
 
-**Phase**: MVP Complete -> Polish Iteration -> **Pre-HomeScreen-polish Checkpoint**
+**Phase**: MVP Complete -> Polish Iteration -> **HomeScreen Visual Polish Checkpoint**
 **Build**: Passing (Next.js 16, TypeScript strict, zero errors)
 **Dev server**: `npm run dev` -> http://localhost:3000 (home) + /game (gameplay)
 **28 levels** playable, level select map on home screen
@@ -36,85 +36,74 @@
 - Level progress saved to localStorage (`rescueDuckLevel`)
 
 ### UI Screens
-1. **Home**: Title + Lighthouse illustration + "START JOURNEY" + "LOAD MAP" -> LevelMap
+1. **Home**: Title + Scene + "Start Journey" + "Level Map" -> LevelMap
 2. **LevelMap**: 4 stage tabs, level cards with lock/unlock, progress bar
-3. **Game**: Storm meter + Score + Timer + Word Orb Field + Lighthouse (right) + Duck Parade + Chelsea NPC + Combo Indicator
+3. **Game**: Storm meter + Score + Timer + Word Orb Field + Duck Parade + Chelsea NPC + Combo Indicator
 4. **Pause Overlay**: Resume / Restart / Quit to Menu
 5. **Victory Overlay**: Stats + Next Level / Replay / Menu
 6. **Game Over Overlay**: Stats + Try Again / Menu
 7. **Intro Sequence**: Cinematic opening
 
-### Home Screen Layout (Current — Post-UI-Redesign)
-Vertical stack (top to bottom):
-1. **"Rescue Duck"** title — gold glow text shadow
-2. **Lighthouse illustration** — warm glow halo, light beam, sparkles, trapezoid tower with red stripes
-3. **"START JOURNEY"** — gold gradient pill button
-4. **"LOAD MAP"** — glassmorphism secondary button
-5. **Bottom bar** — settings icon, trophy icon, version text
-
-Background: Water surface with gold reflection, island silhouette, floating duck silhouettes
-
-### Gameplay Visual Style (Post-UI-Redesign)
-- **Sky**: Soft twilight gradient (#6a7a9f -> #5b6d99 -> #46577e -> #2e3b5f -> #1a2238)
-- **Warm horizon glow**: Gold radial gradient with blur animation
-- **Word orbs**: Circular 72px watercolor style with per-state colors/borders/glows
-- **Chain links**: Multi-layer SVG (outer glow 8px + main line 3px + core line 1px)
-- **Overlays**: Glassmorphism cards with backdrop-filter blur
-- **Lighthouse**: Right side at bottom-[22%], glows and sparkles react to progress
-- **Duck parade**: Waiting ducks left -> rescued ducks right (toward lighthouse)
-
-### Intro Sequence
-- Plays once (localStorage `rescueDuckIntroSeenV2`). Skip available.
-
-### Sound System
-- **Ambient**: Procedural Web Audio (no files) — water, wind, rain, thunder, magical hum
-- **SFX**: Correct tap (ascending chime), chain (rising pitch), wrong (buzz), group complete (chord), victory (melody)
-- Ambience auto-switches per intro scene
-- **No gameplay ambience yet** (only intro has ambient sound)
-
 ---
 
-## Recent Changes (2026-05-21 Session)
+## Session Changes (2026-05-22)
 
-### UI Redesign (Based on 8 Reference PNGs)
-- Complete color palette overhaul — warm gold + lavender twilight
-- Circular watercolor-style word orbs replacing pill shapes
-- Glassmorphism overlay screens
-- Multi-layer SVG chain links with energy flow dots
-- Lighthouse moved to right side as "home" destination
-- Duck parade direction reversed: left (waiting) -> right (rescued toward lighthouse)
-- Score display, storm meter, combo indicator all restyled
+### Major Home Screen Visual Overhaul
 
-### Bug Fixes
-- **Fixed critical countdown display bug** (`GameEngine.ts`): `lastTickTime` was set to `Date.now()` but `requestAnimationFrame` uses `performance.now()` timestamp, causing delta to be a huge negative number and `remainingMs` to display as millions of minutes. Fixed by setting `lastTickTime = 0` and letting the first rAF callback initialize it.
+#### 1. Background Replacement
+- **Deleted**: Procedural purple/blue gradient sky + SVG lake surface
+- **Added**: Full-bleed `homescreen-back.png` as background layer in `AnimatedBackground`
+- Result: Home Screen now has a cohesive, illustrated atmospheric background
 
-### Level Rebalancing
-- All 28 level timers standardized by stage:
-  - Stage 1 (1-7): 50,000ms
-  - Stage 2 (8-14): 65,000ms
-  - Stage 3 (15-21): 75,000ms
-  - Stage 4 (22-28): 90,000ms
+#### 2. Duck Character Replacement
+- **Deleted**: Procedural/SVG duck graphics
+- **Added**: `duck_2d_pure.png` (360x360px) with floating animation
+- Positioned at `bottom-[10%] left-[38%]` facing right toward lighthouse
+- Animation: gentle bob (y: [0, -3, 0], 3.5s cycle) + breathing glow + shadow
 
-### Home Screen Layout Fix
-- Removed "LIGHT THE STORM" subtitle (overlapped with lighthouse)
-- Extracted lighthouse from background into content flow
-- New vertical order: Title -> Lighthouse -> Buttons
+#### 3. Cottage & Lighthouse Replacement
+- **Deleted**: Procedural SVG lighthouse (complex trapezoid + stripes + glow)
+- **Added**: `home.png` (1120x1120px) containing cottage, lighthouse, rocks, trees, forest
+- Positioned at `right-0 bottom-[8%]`
+- Scene container has gentle idle breathing animation (scale 1 -> 1.003)
+
+#### 4. Home Screen Layout Redesign
+- **UI Panel moved to LEFT side**: `left-[6%] top-[16%]`
+- Title: "Rescue Duck" with large cute font, gold glow, animated star (✨)
+- Subtitle: "Light the way home."
+- Buttons vertically stacked and **left-aligned** with matching width
+- Bottom icons aligned to `left-[6%]` to match panel
+
+#### 5. Firefly Particles
+- Increased to **45 particles**
+- Concentrated in middle-lower area (not full screen)
+- 35% at bottom 20-35%, 65% at bottom 35-70%
+- Gentle drift animation with warm colors
+
+#### 6. Transition Animation
+- Clicking "Start Journey" triggers zoom transition
+- Scene scales to 1.06 and shifts toward lighthouse
+- Warm golden light overlay fades in from lighthouse direction
+- Central bright spot at `left: 78%, top: 12%` (lighthouse position)
+- Router navigation delayed by 1500ms for animation
+
+#### 7. Game Screen Background
+- **Added**: `stage-1-background.png` as game background
+- **Removed**: `<Lighthouse />` component from GameScreen (redundant with background image)
+- `AnimatedBackground` now uses image for both home and game variants
+
+#### 8. Level Map Button Color
+- Changed from `#5a4a28` (dark brown) to `#ffffff` (white)
+- Better contrast against glassmorphism button
 
 ---
 
 ## Current Biggest Gaps (What Feels Rough)
 
-### P0 — Home Screen Polish (Next Phase)
-- Lighthouse illustration is static SVG, could use more life
-- Button hover/press feedback could be more satisfying
-- Transition from Home -> Game could be smoother
-- Background could use more depth (parallax, more particles)
-
 ### P0 — Atmosphere
-- **No gameplay ambience** — silence during actual play (ambience only runs in intro)
+- **No gameplay ambience** — silence during actual play (ambience only runs in intro/home)
 - Storm audio doesn't respond to gameplay storm level
 - Lighthouse glow change per group is mathematically correct but visually subtle
-- Light beam doesn't extend visibly as brightness increases
 
 ### P0 — Orb Feel
 - Orbs float identically — no variety
@@ -126,7 +115,6 @@ Background: Water surface with gold reflection, island silhouette, floating duck
 - Single flat background layer (no parallax)
 - No foreground elements (shore grass, rocks, dock)
 - Fog doesn't vary with storm
-- No moon or visible sky elements
 
 ### P1 — Duck Presence
 - Ducks are tiny (8x6px body) and easy to miss
@@ -140,6 +128,7 @@ Background: Water surface with gold reflection, island silhouette, floating duck
 - `StartButton.tsx` component is dead code (HomeScreen buttons are now inline)
 - `useWordSpawning.ts` and `useGameLoop.ts` are placeholder files
 - `GameSummary` type defined but not actively used
+- `LighthouseBackground.tsx` in home/ may be unused (replaced by `AnimatedBackground`)
 
 ---
 
@@ -157,17 +146,21 @@ Background: Water surface with gold reflection, island silhouette, floating duck
 
 ## Next Session Starting Points
 
-### Recommended: Home Screen Polish
-1. Add subtle animations to the Home Screen lighthouse (floating, pulsing)
-2. Improve button micro-interactions (ripple, glow on hover)
-3. Add transition animation from Home -> Game (fade, slide, lighthouse zoom)
-4. Enhance background with more atmospheric particles
+### Recommended: Home Screen Polish Continuation
+1. Consider refining firefly distribution (some users may want even more)
+2. Add subtle parallax to scene elements on mouse move
+3. Add more ambient particles (dust motes, sparkles near lighthouse)
 
 ### Alternative: Gameplay Atmosphere
 1. Add gameplay ambience (extend ambientSound.ts to run during gameplay)
 2. Tie storm audio intensity to stormMeter value
 3. Make lighthouse glow change more dramatic (bigger beam, wider halo)
 4. Add orb idle animation variety
+
+### Alternative: Game Screen Polish
+1. Stage background currently only has one image — consider per-stage variations
+2. Add transition animation from Game -> Home
+3. Polish victory/gameover overlay animations
 
 ---
 
@@ -182,6 +175,12 @@ Saveducks/
 ├── DESIGN_DIRECTION.md        <- Visual/sound/animation specs
 ├── SESSION_SUMMARY.md         <- THIS FILE
 ├── package.json
+├── public/
+│   ├── homescreen-back.png    <- Home Screen atmospheric background
+│   ├── home.png               <- Cottage + lighthouse illustration
+│   ├── duck_2d_pure.png       <- Duck character (360px)
+│   ├── stage-1-background.png <- Game background (Stage 1)
+│   └── duck.webp              <- Unused alternative duck asset
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx         <- Root layout
@@ -192,9 +191,14 @@ Saveducks/
 │   │       └── loading.tsx    <- Skeleton
 │   ├── components/
 │   │   ├── home/
-│   │   │   ├── HomeScreen.tsx       <- Main home with level select
+│   │   │   ├── HomeScreen.tsx       <- Main home (left panel + scene)
 │   │   │   ├── LevelMap.tsx         <- 28-level grid selector
-│   │   │   ├── LighthouseBackground.tsx <- Water/island/ducks bg
+│   │   │   ├── DuckCharacter.tsx    <- Floating duck image
+│   │   │   ├── CottageAndLighthouse.tsx <- home.png wrapper
+│   │   │   ├── FireflyParticles.tsx <- 45 ambient particles
+│   │   │   ├── LakeSurface.tsx      <- Water shimmer overlay
+│   │   │   ├── Toast.tsx            <- Toast notification system
+│   │   │   ├── LighthouseBackground.tsx <- (likely unused)
 │   │   │   └── StartButton.tsx      <- (dead code)
 │   │   ├── game/
 │   │   │   ├── GameScreen.tsx       <- Main game container
@@ -203,7 +207,6 @@ Saveducks/
 │   │   │   ├── WordOrb.tsx          <- Individual orb (circular)
 │   │   │   ├── ChainLink.tsx        <- SVG chain connectors
 │   │   │   ├── LightEnergy.tsx      <- Energy particles
-│   │   │   ├── Lighthouse.tsx       <- Lighthouse glow (right side)
 │   │   │   ├── DuckParade.tsx       <- Duck container
 │   │   │   ├── Duck.tsx             <- Single duck
 │   │   │   ├── ChelseaNPC.tsx       <- NPC with tips
@@ -216,7 +219,7 @@ Saveducks/
 │   │   │   ├── GameOverOverlay.tsx
 │   │   │   └── StarRating.tsx
 │   │   └── shared/
-│   │       ├── AnimatedBackground.tsx <- Rain/fog/lightning layer
+│   │       ├── AnimatedBackground.tsx <- Background images + rain/fog/particles
 │   │       └── ProgressBar.tsx
 │   ├── lib/
 │   │   ├── engine/

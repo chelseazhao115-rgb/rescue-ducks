@@ -75,9 +75,6 @@ export const GameScreen: React.FC = () => {
     <main className="relative w-full h-dvh bg-storm-dark overflow-hidden select-none">
       <AnimatedBackground variant="game" stormIntensity={stormIntensity} />
 
-      {/* Lighthouse background layer */}
-      <Lighthouse />
-
       {/* Top HUD */}
       <div className="absolute top-0 left-0 right-0 z-10 flex items-start justify-between">
         <ScoreDisplay />

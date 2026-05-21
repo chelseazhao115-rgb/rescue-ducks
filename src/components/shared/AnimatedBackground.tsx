@@ -144,47 +144,88 @@ export const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
   if (!mounted) {
     return (
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, #6a7a9f 0%, #5b6d99 15%, #46577e 35%, #2e3b5f 60%, #1a2238 100%)",
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[30%]"
-          style={{
-            background: "linear-gradient(to top, #2a3a50, #405a78, transparent)",
-          }}
-        />
+        {variant === "game" ? (
+          <img
+            src="/stage-1-background.png"
+            alt="Background"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <img
+            src="/homescreen-back.png"
+            alt="Background"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
       </div>
     );
   }
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Sky gradient — softer twilight tones */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, #6a7a9f 0%, #5b6d99 15%, #46577e 35%, #2e3b5f 60%, #1a2238 100%)",
-        }}
-      />
+      {/* Background layer */}
+      {variant === "home" ? (
+        <img
+          src="/homescreen-back.png"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <img
+          src="/stage-1-background.png"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
 
-      {/* Warm horizon glow */}
+      {/* Warm horizon glow — dusty pink for home, warm gold for game */}
       <motion.div
         className="absolute left-0 right-0"
         style={{
-          bottom: "25%",
-          height: "45%",
-          background:
-            "radial-gradient(ellipse at 50% 100%, rgba(255,220,160,0.12), transparent 70%)",
+          bottom: variant === "home" ? "20%" : "25%",
+          height: variant === "home" ? "40%" : "45%",
+          background: variant === "home"
+            ? "radial-gradient(ellipse at 50% 100%, rgba(210,160,170,0.15), rgba(180,140,180,0.08) 40%, transparent 70%)"
+            : "radial-gradient(ellipse at 50% 100%, rgba(255,220,160,0.12), transparent 70%)",
           filter: "blur(60px)",
         }}
-        animate={{ opacity: [0.6, 0.9, 0.6] }}
+        animate={{ opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
+
+      {/* Subtle stars at top (home only) */}
+      {variant === "home" && (
+        <div className="absolute top-0 left-0 right-0 h-[40%]">
+          {Array.from({ length: 20 }, (_, i) => {
+            const s = i + 999;
+            const sx = Math.sin(s * 73.7 + 1) * 43758.5453;
+            const r = (sx - Math.floor(sx));
+            const sy = Math.sin(s * 127.1 + 2) * 43758.5453;
+            const r2 = (sy - Math.floor(sy));
+            return (
+              <motion.div
+                key={`star-${i}`}
+                className="absolute rounded-full"
+                style={{
+                  left: `${5 + r * 90}%`,
+                  top: `${3 + r2 * 28}%`,
+                  width: `${r > 0.7 ? 2 : 1}px`,
+                  height: `${r > 0.7 ? 2 : 1}px`,
+                  background: "rgba(255,255,240,0.7)",
+                  boxShadow: r > 0.7 ? "0 0 3px rgba(255,255,240,0.5)" : undefined,
+                }}
+                animate={{ opacity: [0.2, r > 0.7 ? 0.9 : 0.5, 0.2] }}
+                transition={{
+                  duration: 2 + r * 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: r2 * 3,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
 
       {/* Atmospheric fog */}
       <motion.div

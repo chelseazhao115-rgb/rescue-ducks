@@ -6,21 +6,35 @@
 
 ---
 
-## P0 — Home Screen Polish (NEXT)
+## P0 — Home Screen Polish (IN PROGRESS — May 22)
 
-- [ ] **Home Screen lighthouse animation**
-  - Gentle floating/pulsing motion for the lighthouse
-  - Sparkle particles around lantern
-  - Light beam subtle sweep animation
+- [x] **Replace background with atmospheric PNG**
+  - `homescreen-back.png` as full-bleed background
+  - Deleted procedural purple gradient
+- [x] **Replace duck with illustrated character**
+  - `duck_2d_pure.png` (360px) with floating animation
+  - Positioned on water facing lighthouse
+- [x] **Replace cottage/lighthouse with illustration**
+  - `home.png` (1120px) containing full scene
+  - Positioned right-bottom
+- [x] **Redesign UI panel layout**
+  - Moved to left side (6% from left, 16% from top)
+  - Title + subtitle + buttons vertically stacked
+  - Bottom icons aligned to left panel
+- [x] **Add firefly particles**
+  - 45 particles concentrated in middle-lower area
+  - Warm colors, gentle drift
+- [x] **Add Start Journey transition**
+  - Scene zoom toward lighthouse
+  - Warm golden light overlay
+  - Delayed router navigation
+- [x] **Level Map button color**
+  - Changed to white (#ffffff) for better contrast
 - [ ] **Button micro-interactions**
   - Ripple effect on START JOURNEY press
   - Stronger glow pulse on hover
   - Scale/spring feedback
-- [ ] **Home -> Game transition**
-  - Smooth fade/slide instead of hard route change
-  - Lighthouse could "zoom" into the game position
 - [ ] **Background depth**
-  - More atmospheric particles (fireflies, dust)
   - Subtle parallax on mouse/touch movement
   - Moon or stars visible in sky area
 
@@ -29,7 +43,7 @@
 ## P0 — Atmosphere & Emotional Core
 
 - [ ] **Gameplay ambience**
-  - Extend ambientSound.ts to run during gameplay (not just intro)
+  - Extend ambientSound.ts to run during gameplay (not just intro/home)
   - Gentle water/wind loop at low volume
 - [ ] **Sound design upgrade**
   - Storm audio that responds to storm meter level
@@ -86,6 +100,18 @@
   - Occasional non-tip presence (just being there)
 
 ---
+
+## Completed (May 22, 2026)
+
+- [x] Full Home Screen background replacement (`homescreen-back.png`)
+- [x] Duck character replacement (`duck_2d_pure.png`)
+- [x] Cottage/lighthouse illustration replacement (`home.png`)
+- [x] Home Screen layout redesign (left panel, scene right)
+- [x] Firefly particles (45, concentrated middle-lower)
+- [x] Start Journey transition animation (zoom + light overlay)
+- [x] Game Screen background (`stage-1-background.png`)
+- [x] Removed redundant `<Lighthouse />` from GameScreen
+- [x] Level Map button color to white
 
 ## Completed (May 21, 2026)
 

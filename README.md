@@ -45,9 +45,11 @@ Chelsea, your gentle guide, watches from the shore.
 
 ---
 
-## Current State (May 21, 2026)
+## Current State (May 22, 2026)
 
-**Phase**: MVP complete -> Polish iteration -> Pre-HomeScreen-polish checkpoint
+**Phase**: MVP complete -> Polish iteration -> **HomeScreen polish checkpoint**
+
+Major visual overhaul completed on Home Screen:
 
 ### Completed
 - Core gameplay loop with semantic matching and chain system
@@ -68,21 +70,28 @@ Chelsea, your gentle guide, watches from the shore.
 - **Fixed critical timer display bug** (rAF timestamp vs Date.now() mismatch)
 - **Home Screen layout**: Title -> Lighthouse -> Buttons (vertical stack)
 
-### Home Screen Current Layout
-- Top: "Rescue Duck" title with gold glow
-- Center: Lighthouse illustration with glow halo and light beam
-- Below: "START JOURNEY" primary button (gold gradient)
-- Below: "LOAD MAP" secondary button (glass style)
-- Bottom: Settings icon, trophy icon, version text
-- Background: Water surface, island, floating duck silhouettes
+### Home Screen Current Layout (Post-Polish)
+- **Left panel (6% from left, 16% from top)**: 
+  - "Rescue Duck" title — large cute font, gold glow, animated star icon
+  - Subtitle: "Light the way home."
+  - "Start Journey" primary button (gold gradient pill)
+  - "Level Map" secondary button (glass style, white text)
+- **Right scene**: Cottage + lighthouse illustration (home.png) positioned at right-bottom
+- **Center-bottom**: Duck character (duck_2d_pure.png, 360px) floating on water
+- **Atmosphere**: 45 firefly particles concentrated in middle-lower area
+- **Background**: Full-screen `homescreen-back.png` image (replaced purple gradient)
+- **Bottom-left**: Settings icon, leaderboard icon, version text (v1.0.0)
+- **Transition**: Clicking "Start Journey" triggers lighthouse-zoom transition with warm golden light overlay
 
 ### Gameplay Visual Style
+- **Home Screen Background**: Full-bleed atmospheric PNG with lake, island, lighthouse, cottage
+- **Game Background**: `stage-1-background.png` (removed procedural lighthouse SVG)
 - Soft twilight gradient sky (#6a7a9f to #1a2238)
 - Warm horizon glow (gold radial)
 - Circular watercolor-style word orbs with glow states
 - Multi-layer SVG chain links with energy flow
 - Glassmorphism overlays (victory, pause, game over)
-- Lighthouse on right as "home" destination
+- Lighthouse removed from code (now part of background image)
 
 ---
 

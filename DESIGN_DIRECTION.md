@@ -2,25 +2,65 @@
 
 ## Visual Identity
 
-### Color Palette
+### Current Direction (May 22, 2026)
+
+**This is a soft atmospheric indie game.**
+
+Rescue Duck is NOT:
+- ❌ dark fantasy
+- ❌ cyberpunk
+- ❌ arcade mobile game
+- ❌ neon UI
+- ❌ high saturation anime
+- ❌ blue/white ed-tech UI
+
+Rescue Duck IS:
+- ✅ soft atmospheric indie game
+- ✅ Alto's Adventure + Sky: Children of the Light 气质
+- ✅ 柔和紫蓝夜晚 (soft purple-blue night)
+- ✅ 日落后蓝调时刻 (post-sunset blue hour)
+- ✅ 温暖灯塔 (warm lighthouse)
+- ✅ 安静湖面 (quiet lake)
+- ✅ 回家的方向感 (sense of direction toward home)
+- ✅ 低饱和度 (low saturation)
+- ✅ soft glow
+- ✅ breathing UI
+- ✅ 治愈感 (healing/comforting feeling)
+- ✅ dreamlike calm
+
+### Color Palette (Updated May 22)
+
 ```
-Storm Dark:     #0a0e17  — Deep night background
-Storm Mid:      #1a2740  — Cloud masses, mid-tones
-Storm Blue:     #2d4a6e  — Rain, wind elements
-Lake Deep:      #0c1a2b  — Water base
-Lake Surface:   #1b3a5c  — Water highlights
-Lighthouse Glow:#f5d67b  — Main warm light
-Lighthouse Beam:#ffe8a0  — Bright glow peak
-Light Warm:     #ffd166  — Transition warmth
-Light Gold:     #f0a500  — Accent warmth
-Orb Idle:       #6eb5ff  — Floating orbs (cool blue)
-Orb Selected:   #ffe8a0  — Selected orbs (warm gold)
-Orb Chained:    #ffd166  — Chained orbs (amber)
-Orb Wrong:      #ff6b6b  — Error flash (red)
-Combo 1:        #ffd166  — Low combo
-Combo 2:        #f0a500  — Mid combo
-Combo 3:        #ff8c42  — High combo
-Chelsea:        #a8d8ea  — NPC color
+Background Night:   #1a1040  — Deep night (fallback)
+Background Indigo:  #2d1f5e  — Mid-tone purple
+Background Mist:    #6b5b8e  — Twilight mist
+Background Lake:    #3d5270  — Water surface
+
+Title Gold:         #ffe7b0  — Main title color
+Title Glow:         rgba(255,217,122,0.5) — Title shadow
+Subtitle Gold:      #ffe7b0  — Subtitle with 0.85 opacity
+
+Button Primary:     linear-gradient(180deg, #ffe8af, #f0c860)
+Button Primary Text:#5a4a28  — Dark brown for contrast
+Button Secondary:   rgba(255,255,255,0.12) — Glass
+Button Secondary Text: #ffffff — White (updated May 22)
+
+Lighthouse Glow:    #ffd97a  — Main warm light
+Lighthouse Beam:    #ffe8a0  — Bright glow peak
+Light Warm:         #ffd166  — Transition warmth
+Light Gold:         #f0a500  — Accent warmth
+
+Orb Idle:           #b9d9ff  — Floating orbs (cool blue)
+Orb Selected:       #ffe8a0  — Selected orbs (warm gold)
+Orb Chained:        #ffd166  — Chained orbs (amber)
+Orb Wrong:          #f6d8e8  — Soft pink error (NOT bright red)
+
+Combo 1:            #ffd97a  — Low combo
+Combo 2:            #f0c860  — Mid combo
+Combo 3:            #e8b050  — High combo
+
+Chelsea:            #b9d9ff  — NPC soft blue
+Chelsea Accent:     #d9c8ff  — Soft lavender
 ```
 
 ### Light Direction
@@ -30,9 +70,10 @@ Chelsea:        #a8d8ea  — NPC color
 - **Emotional light**: Warm = safety/home. Cold = danger/distance.
 
 ### Typography
-- System font stack: Inter → system-ui → sans-serif
-- No decorative fonts (keeps it clean, indie)
-- Monospace for timer only
+- **Home Screen**: Comic Sans MS / Chalkboard SE / Nunito / Quicksand — cute, rounded, friendly
+- **Game UI**: Nunito / Quicksand / system-ui — clean, readable
+- **No monospace except timer**
+- **Letter-spacing**: Slightly tight for titles (-0.02em)
 
 ---
 
@@ -47,6 +88,9 @@ Chelsea:        #a8d8ea  — NPC color
 - "Educational" iconography (books, graduation caps, checkmarks)
 - Overly explicit instructions
 - "You scored X points! Great job!" tone
+- Neon colors, high saturation
+- Mobile game currency/gem icons
+- Achievement badges and XP bars
 
 **Instead use:**
 - Dark, atmospheric backgrounds
@@ -54,41 +98,37 @@ Chelsea:        #a8d8ea  — NPC color
 - Diegetic UI (storm meter feels like a weather instrument)
 - Implicit feedback (lighthouse brightens = you're doing well)
 - Chelsea's gentle presence = guidance without instruction
+- Soft glassmorphism — not sharp frosted glass
+- Warm gold accents on dark backgrounds
 
-### Animation Principles
+---
+
+## Animation Principles
+
 - **Slow, gentle, organic** — nothing jerky or mechanical
 - **Spring physics** for most interactions (stiffness: 200, damping: 20)
 - **Ease-in-out** for atmospheric elements
 - **No linear transitions** — everything breathes
 - **Framer Motion `layout` animations** for position changes
+- **Idle breathing**: All living things have subtle motion (ducks bob, lighthouse pulses, fireflies drift)
 
----
+### Home Screen Animations
+- Title: fade in from top (opacity 0→1, y: -30→0, 1s easeOut)
+- Subtitle: delayed fade in (0.2s delay)
+- Buttons: fade in from bottom (opacity 0→1, y: 16→0, 0.4s)
+- Star icon: gentle rotation + scale pulse (3s cycle)
+- Duck: floating bob (y: [0, -3, 0], 3.5s) + shadow breathing
+- Scene container: idle scale breathing (scale: [1, 1.003, 1], 8s)
+- Fireflies: wandering drift with opacity pulse
+- Transition: scene zooms toward lighthouse, warm light overlay fades in
 
-## Animation Reference
-
-### Enter Animations
-- Orbs: scale 0→1, opacity 0→1 (spring, gentle)
-- Overlays: opacity 0→1, scale 0.9→1 (spring)
-- Tips: opacity 0→1, y 10→0 (spring)
-
-### Idle Animations
+### Game Animations
 - Orbs: gentle y-float (3s cycle, infinite)
 - Lighthouse glow: slow opacity pulse (2-3s)
 - Lake surface: subtle shimmer
 - Ducks: gentle bobbing
-
-### Interaction Feedback
-- Orb tap: scale 1→1.15 (spring, stiff)
-- Chain link: SVG path draw (0.3s, ease-out) + pulse glow
-- Wrong match: x-shake (0.4s) + red flash
-- Group complete: orb pop (scale 1→1.5, opacity→0) + particles
-- Energy particles: curved flight path to lighthouse (0.8s, ease-in-out)
-
-### Atmospheric
-- Rain: linear fall, infinite repeat
-- Lightning: opacity flash (random intervals)
-- Fog: slow horizontal drift (8s cycle)
-- Clouds: very slow horizontal movement
+- Chain links: SVG path draw + glow pulse
+- Energy particles: curved flight path to lighthouse
 
 ---
 
@@ -98,16 +138,18 @@ Chelsea:        #a8d8ea  — NPC color
 All sounds generated with Web Audio API oscillators and noise.
 
 ### Ambience
+- **Home**: Gentle water + warm ambient pad (C3-G3-C4) + faint sparkle sine
 - **Calm night**: Low-pass noise (water) + band-pass noise with LFO (breeze)
 - **Storm**: Low-pass noise (wind) + high-pass noise (rain) + periodic sawtooth rumble (thunder)
 - **Magical hum**: Layered sine waves (C-major chord) with gentle LFO modulation
 
 ### Gameplay Sounds
-- **Correct tap**: 2-note ascending sine (523→659 Hz)
+- **Correct tap**: 3-note ascending sine (523→659→784 Hz)
 - **Chain link**: Rising pitch per combo step (440 + combo×60 Hz)
 - **Wrong match**: Low double-buzz (200→160 Hz, square wave)
 - **Group complete**: 4-note ascending (C-E-G-C, triangle wave)
 - **Victory**: 6-note melody (C-E-G-E-G-C, sine wave)
+- **Button click**: Short descending sine chirp (880→660 Hz)
 
 ### Mixing Principles
 - Ambience stays quiet (5-12% gain) — felt, not heard
@@ -130,21 +172,20 @@ All sounds generated with Web Audio API oscillators and noise.
 - Store uses **Immer middleware** for immutable updates
 - Game loop via `requestAnimationFrame` in engine class
 
-### File Organization
-```
-src/
-  components/
-    home/     — HomeScreen, LevelMap, LighthouseBackground
-    game/     — All gameplay components
-    shared/   — AnimatedBackground, ProgressBar
-  lib/
-    engine/   — Pure game logic (7 files)
-    data/     — Word groups, levels, Chelsea tips
-    hooks/    — useScreenSize, useGameInit
-    types/    — All TypeScript interfaces
-    utils/    — random, array, timing, sound, ambientSound
-  store/
-    gameStore.ts  — Single Zustand store
-  constants/
-    game.ts, colors.ts, animation.ts
-```
+### Asset Strategy (Updated May 22)
+- **Home Screen**: Full-bleed PNG background (`homescreen-back.png`)
+- **Cottage/Lighthouse**: Large PNG illustration (`home.png`, 1120px)
+- **Duck**: PNG character sprite (`duck_2d_pure.png`, 360px)
+- **Game Screen**: Full-bleed PNG background (`stage-1-background.png`)
+- **Procedural layers retained**: Rain, fog, clouds, sparkles, water shimmer overlay on top of PNG backgrounds
+- **SVG phased out** for major illustrations (too complex, doesn't match painted style)
+
+---
+
+## Responsive Design
+
+- **Mobile-first**: All tap targets minimum 44px
+- **Home Screen title**: `clamp(5rem, 10vw, 12rem)`
+- **Home Screen buttons**: `clamp(1.25rem, 2.5vw, 2.25rem)` font, generous padding
+- **Scene container**: Uses percentage-based positioning
+- **Prevent zoom**: `maximumScale: 1, userScalable: false` in viewport meta

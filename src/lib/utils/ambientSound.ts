@@ -195,6 +195,86 @@ export function playMagicalHum(): ActiveSound {
   };
 }
 
+// ---- Home ambience: gentle water + warm ambient hum ----
+export function playHomeAmbience(): ActiveSound {
+  const c = ctx();
+  const master = c.createGain();
+  master.gain.setValueAtTime(0, c.currentTime);
+  master.gain.linearRampToValueAtTime(0.05, c.currentTime + 1);
+  master.connect(c.destination);
+
+  // Gentle water: very low filtered noise with slow LFO
+  const water = c.createBufferSource();
+  water.buffer = noiseBuffer(4);
+  water.loop = true;
+  const waterFilter = c.createBiquadFilter();
+  waterFilter.type = "lowpass";
+  waterFilter.frequency.value = 200;
+  const waterLFO = c.createOscillator();
+  waterLFO.frequency.value = 0.15;
+  const waterLFOGain = c.createGain();
+  waterLFOGain.gain.value = 80;
+  waterLFO.connect(waterLFOGain);
+  waterLFOGain.connect(waterFilter.frequency);
+  waterLFO.start();
+  const waterGain = c.createGain();
+  waterGain.gain.value = 0.25;
+  water.connect(waterFilter);
+  waterFilter.connect(waterGain);
+  waterGain.connect(master);
+  water.start();
+
+  // Warm ambient pad: low sine drone with slow beating
+  const padFreqs = [130, 196, 261]; // C3-G3-C4 spread
+  const pads = padFreqs.map((freq, i) => {
+    const osc = c.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const g = c.createGain();
+    g.gain.value = 0.04 / (i + 1);
+    // Slow tremolo
+    const lfo = c.createOscillator();
+    lfo.frequency.value = 0.08 + i * 0.03;
+    const lfoG = c.createGain();
+    lfoG.gain.value = 0.02;
+    lfo.connect(lfoG);
+    lfoG.connect(g.gain);
+    lfo.start();
+    osc.connect(g);
+    g.connect(master);
+    osc.start();
+    return { osc, lfo };
+  });
+
+  // Very faint sparkle: high sine with slow random modulation
+  const sparkle = c.createOscillator();
+  sparkle.type = "sine";
+  sparkle.frequency.value = 1200;
+  const sparkleLFO = c.createOscillator();
+  sparkleLFO.frequency.value = 0.12;
+  const sparkleLFOGain = c.createGain();
+  sparkleLFOGain.gain.value = 300;
+  sparkleLFO.connect(sparkleLFOGain);
+  sparkleLFOGain.connect(sparkle.frequency);
+  sparkleLFO.start();
+  const sparkleGain = c.createGain();
+  sparkleGain.gain.value = 0.015;
+  sparkle.connect(sparkleGain);
+  sparkleGain.connect(master);
+  sparkle.start();
+
+  return {
+    stop: () => {
+      master.gain.linearRampToValueAtTime(0, c.currentTime + 0.5);
+      setTimeout(() => {
+        [water, waterLFO, sparkle, sparkleLFO, ...pads.flatMap((p) => [p.osc, p.lfo])]
+          .forEach((n) => { try { n.stop(); } catch {} });
+        master.disconnect();
+      }, 600);
+    },
+  };
+}
+
 // ---- Ambience manager ----
 let currentAmbience: ActiveSound | null = null;
 
@@ -203,6 +283,9 @@ export function switchAmbience(scene: string): void {
   currentAmbience = null;
 
   switch (scene) {
+    case "home":
+      currentAmbience = playHomeAmbience();
+      break;
     case "night":
       currentAmbience = playNightAmbience();
       break;
@@ -210,11 +293,9 @@ export function switchAmbience(scene: string): void {
       currentAmbience = playStormAmbience();
       break;
     case "chelsea":
-      // Storm continues but slightly quieter
       currentAmbience = playStormAmbience();
       break;
     case "orb":
-      // Storm fades, magical hum starts
       currentAmbience = playMagicalHum();
       break;
     default:
