@@ -1,6 +1,5 @@
 import { v4 as uuid } from "uuid";
-import type { DuckState, LevelConfig, OrbInstance, WordGroup } from "@/lib/types";
-import { WORD_GROUPS } from "@/lib/data/wordGroups";
+import type { DuckState, OrbInstance, RuntimeGroupConfig, RuntimeLevelConfig } from "@/lib/types";
 import { shuffle } from "@/lib/utils/random";
 
 const GRID_COLS = 5;
@@ -17,24 +16,27 @@ function isTooClose(pos: { x: number; y: number }, existing: OrbInstance[], minD
   return existing.some((o) => orbDistance(pos, o.position) < minDist);
 }
 
-interface SpawnItem {
+export interface SpawnItem {
   word: string;
-  groupId: number;
+  groupId: string;
   meaning: string;
+  visualWeight: number;
+  wordDifficulty: number;
 }
 
-export function loadLevel(config: LevelConfig): {
-  activeGroups: WordGroup[];
+/**
+ * Load level from a dynamically generated RuntimeLevelConfig.
+ */
+export function loadLevel(config: RuntimeLevelConfig): {
+  activeGroups: RuntimeGroupConfig[];
   ducks: DuckState[];
-  allGroups: { group: WordGroup; items: SpawnItem[] }[];
+  allGroups: { group: RuntimeGroupConfig; items: SpawnItem[] }[];
 } {
-  const activeGroups = config.groupIds
-    .map((id) => WORD_GROUPS.find((g) => g.groupId === id))
-    .filter((g): g is WordGroup => g !== undefined)
-    .map((g) => ({
-      ...g,
-      words: shuffle(g.words).slice(0, config.wordsPerGroup),
-    }));
+  const activeGroups = config.groups.map((g) => ({
+    ...g,
+    // Words are already pre-selected by LevelGenerator, just shuffle order
+    words: shuffle([...g.words]),
+  }));
 
   const ducks: DuckState[] = activeGroups.map(() => ({
     duckId: uuid(),
@@ -43,10 +45,12 @@ export function loadLevel(config: LevelConfig): {
   }));
 
   const allGroups = activeGroups.map((group) => {
-    const items: SpawnItem[] = group.words.map((word) => ({
-      word,
+    const items: SpawnItem[] = group.words.map((w) => ({
+      word: w.text,
       groupId: group.groupId,
-      meaning: group.meanings[word] ?? "",
+      meaning: w.meaning,
+      visualWeight: w.visualWeight,
+      wordDifficulty: w.wordDifficulty,
     }));
     return { group, items };
   });
@@ -54,8 +58,10 @@ export function loadLevel(config: LevelConfig): {
   return { activeGroups, ducks, allGroups };
 }
 
-// Spawn ALL orbs for a specific group at once
-// Same-group words are placed in different columns to avoid being too close
+/**
+ * Spawn ALL orbs for a specific group at once.
+ * Same-group words are placed in different columns to avoid being too close.
+ */
 export function spawnGroupOrbs(
   groupItems: SpawnItem[],
   existingOrbs: OrbInstance[],
@@ -70,7 +76,6 @@ export function spawnGroupOrbs(
 
   for (let i = 0; i < count; i++) {
     const col = assignedCols[i];
-    // Try multiple rows in this column to find a free spot
     let position: { x: number; y: number } | null = null;
 
     // Try rows in shuffled order
@@ -82,7 +87,6 @@ export function spawnGroupOrbs(
           x: base.x + (Math.random() - 0.5) * 0.05,
           y: base.y + (Math.random() - 0.5) * 0.03,
         };
-        // Check against ALL existing orbs AND already placed group orbs
         if (!isTooClose(pos, [...existingOrbs, ...orbs], ORB_MIN_DISTANCE)) {
           position = pos;
           break;
@@ -112,7 +116,7 @@ export function spawnGroupOrbs(
 
 function gridCell(col: number, row: number): { x: number; y: number } {
   const marginLeft = 0.08;
-  const marginRight = 0.24; // reserve right portion for lighthouse
+  const marginRight = 0.24;
   const marginY = 0.14;
   const usableW = 1 - marginLeft - marginRight;
   const usableH = 0.48;
@@ -148,7 +152,7 @@ function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number }
 
   for (let attempt = 0; attempt < 30; attempt++) {
     const pos = {
-      x: 0.1 + Math.random() * 0.66, // avoid right ~24% lighthouse area
+      x: 0.1 + Math.random() * 0.66,
       y: 0.16 + Math.random() * 0.44,
     };
     if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE)) {

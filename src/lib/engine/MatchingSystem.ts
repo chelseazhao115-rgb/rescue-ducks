@@ -4,7 +4,7 @@ export function getOrbById(state: GameState, orbId: string): OrbInstance | undef
   return state.orbs.find((o) => o.orbId === orbId);
 }
 
-export function isSameGroup(orb: OrbInstance, groupId: number): boolean {
+export function isSameGroup(orb: OrbInstance, groupId: string): boolean {
   return orb.groupId === groupId;
 }
 
@@ -12,14 +12,14 @@ export function isOrbAlreadyChained(orb: OrbInstance, chainOrbIds: string[]): bo
   return chainOrbIds.includes(orb.orbId);
 }
 
-export function getChainedOrbsInGroup(state: GameState, groupId: number): OrbInstance[] {
+export function getChainedOrbsInGroup(state: GameState, groupId: string): OrbInstance[] {
   if (!state.activeChain || state.activeChain.groupId !== groupId) return [];
   return state.activeChain.orbIds
     .map((id) => getOrbById(state, id))
     .filter((o): o is OrbInstance => o !== undefined);
 }
 
-export function getUnchainedOrbsInGroup(state: GameState, groupId: number): OrbInstance[] {
+export function getUnchainedOrbsInGroup(state: GameState, groupId: string): OrbInstance[] {
   return state.orbs.filter(
     (o) =>
       o.groupId === groupId &&
@@ -28,7 +28,7 @@ export function getUnchainedOrbsInGroup(state: GameState, groupId: number): OrbI
   );
 }
 
-export function isGroupFullyChained(state: GameState, groupId: number): boolean {
+export function isGroupFullyChained(state: GameState, groupId: string): boolean {
   const activeGroup = state.activeGroups.find((g) => g.groupId === groupId);
   if (!activeGroup) return false;
 

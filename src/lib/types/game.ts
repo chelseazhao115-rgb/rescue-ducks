@@ -1,4 +1,4 @@
-import type { WordGroup } from "./words";
+import type { AtmosphereTag } from "@/data/semanticGroupsV2";
 
 export type GamePhase = "menu" | "playing" | "paused" | "victory" | "gameover";
 
@@ -19,7 +19,7 @@ export interface OrbInstance {
   orbId: string;
   word: string;
   meaning: string;
-  groupId: number;
+  groupId: string;
   position: { x: number; y: number };
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
   showMeaning: boolean;
@@ -28,7 +28,7 @@ export interface OrbInstance {
 
 export interface ChainState {
   chainId: string;
-  groupId: number;
+  groupId: string;
   orbIds: string[];
   startedAt: number;
   lastTapAt: number;
@@ -72,11 +72,30 @@ export interface GameSummary {
   starResult: StarResult;
 }
 
-export interface LevelConfig {
-  levelId: number;
+// ── Runtime Level Config (V2 — dynamically generated) ────────
+
+export interface RuntimeWordConfig {
+  text: string;
+  meaning: string;
+  groupId: string;
+  visualWeight: number;
+  wordDifficulty: number;
+}
+
+export interface RuntimeGroupConfig {
+  groupId: string;
+  category: string;
+  atmosphere: AtmosphereTag[];
+  difficulty: number;
+  words: RuntimeWordConfig[];
+}
+
+export interface RuntimeLevelConfig {
+  levelId: string;
+  stageId: number;
+  levelInStage: number;
   name: string;
   durationMs: number;
-  groupIds: number[];
   stormTickRateMs: number;
   stormTickAmount: number;
   stormPenaltyOnWrong: number;
@@ -86,14 +105,19 @@ export interface LevelConfig {
   maxOrbsOnScreen: number;
   orbSpawnIntervalMs: number;
   wordsPerGroup: number;
+  groups: RuntimeGroupConfig[];
 }
+
+// ── Game State ───────────────────────────────────────────────
 
 export interface GameState {
   phase: GamePhase;
-  levelConfig: LevelConfig | null;
+  levelConfig: RuntimeLevelConfig | null;
+  currentStage: number;
+  currentLevelInStage: number;
   stormMeter: number;
   lighthouseBrightness: number;
-  activeGroups: WordGroup[];
+  activeGroups: RuntimeGroupConfig[];
   orbs: OrbInstance[];
   activeChain: ChainState | null;
   energyParticles: EnergyParticle[];

@@ -1,6 +1,5 @@
 import { v4 as uuid } from "uuid";
 import type { GameState, ChelseaContext } from "@/lib/types";
-import { LEVELS } from "@/lib/data/levels";
 import { CHELSEA_TIPS } from "@/lib/data/chelseaTips";
 import { pickRandom } from "@/lib/utils/random";
 import {
@@ -17,6 +16,8 @@ import { shouldBreakChain, createChain, extendChain, getComboMultiplier } from "
 import { getOrbById, isSameGroup, isOrbAlreadyChained, isGroupFullyChained } from "./MatchingSystem";
 import { calcMatchScore, calcGroupCompleteScore, calcStarRating } from "./ScoringSystem";
 import { loadLevel, spawnGroupOrbs } from "./LevelManager";
+import { generateLevel, getLevelsInStage, recordGroupEncountered, recordGroupMastered } from "./LevelGenerator";
+import type { SpawnItem } from "./LevelManager";
 import {
   COMBO_MILESTONE_INTERVAL,
   STORM_HIGH_THRESHOLD,
@@ -28,12 +29,6 @@ import {
 
 type StateGetter = () => GameState;
 type StateSetter = (partial: Partial<GameState> | ((state: GameState) => Partial<GameState>)) => void;
-
-interface SpawnItem {
-  word: string;
-  groupId: number;
-  meaning: string;
-}
 
 export class GameEngine {
   private getState: StateGetter;
@@ -51,12 +46,22 @@ export class GameEngine {
     this.setState = setState;
   }
 
-  start(levelId: number): void {
-    const config = LEVELS.find((l) => l.levelId === levelId);
-    if (!config) return;
-
+  /**
+   * Start a level using the V2 semantic group runtime generator.
+   * @param stageId - Stage number (1-4)
+   * @param levelInStage - Level within the stage (1-based)
+   */
+  start(stageId: number, levelInStage: number): void {
     const state = this.getState();
     if (!canTransition(state.phase, "playing")) return;
+
+    // Generate level dynamically from 376 semantic groups
+    const config = generateLevel(stageId, levelInStage);
+
+    // Record all group encounters for semantic progression tracking
+    for (const g of config.groups) {
+      recordGroupEncountered(g.groupId);
+    }
 
     const { activeGroups, ducks, allGroups } = loadLevel(config);
 
@@ -64,7 +69,7 @@ export class GameEngine {
     this.groupBatches = allGroups.map((g) => g.items);
     this.spawnedBatchIndex = 0;
 
-    // Spawn first 4 groups immediately — mix them up for difficulty
+    // Spawn first 4 groups immediately
     const initialOrbs: Parameters<typeof spawnGroupOrbs>[1] = [];
     let orbs = initialOrbs;
     const initialBatch = Math.min(4, this.groupBatches.length);
@@ -81,6 +86,8 @@ export class GameEngine {
     this.setState({
       phase: "playing",
       levelConfig: config,
+      currentStage: stageId,
+      currentLevelInStage: levelInStage,
       stormMeter: 0,
       lighthouseBrightness: 10,
       activeGroups,
@@ -103,7 +110,7 @@ export class GameEngine {
       usedWords: [],
     });
 
-    this.lastTickTime = 0; // startLoop will init from rAF timestamp
+    this.lastTickTime = 0;
     this.startLoop();
   }
 
@@ -138,7 +145,7 @@ export class GameEngine {
 
     unlockAudio();
 
-    // Show Chinese meaning
+    // Show Chinese meaning briefly
     this.setState({
       orbs: state.orbs.map((o) =>
         o.orbId === orbId ? { ...o, showMeaning: true } : o
@@ -167,7 +174,7 @@ export class GameEngine {
       if (isOrbAlreadyChained(orb, chain.orbIds)) return;
 
       if (isSameGroup(orb, chain.groupId)) {
-        // Correct match
+        // Correct match — extend chain
         const extended = extendChain(chain, orbId, now);
         const multiplier = getComboMultiplier(extended.combo);
         const matchScore = calcMatchScore(extended.combo, multiplier);
@@ -275,9 +282,12 @@ export class GameEngine {
     });
   }
 
-  private completeGroup(groupId: number): void {
+  private completeGroup(groupId: string): void {
     const state = this.getState();
     const config = state.levelConfig!;
+
+    // Track semantic mastery — group completed successfully
+    recordGroupMastered(groupId);
 
     playGroupCompleteSound();
 
@@ -331,7 +341,7 @@ export class GameEngine {
       tipVisible: true,
     });
 
-    // Spawn 2 new groups every 2 completions (more challenging mix)
+    // Spawn 2 new groups every 2 completions
     if (this.spawnedBatchIndex < this.groupBatches.length && newGroupsCompleted % 2 === 0) {
       const currentState = this.getState();
       const batchSize = Math.min(2, this.groupBatches.length - this.spawnedBatchIndex);
@@ -366,8 +376,6 @@ export class GameEngine {
   private onVictory(): void {
     this.stopLoop();
     this.clearMeaningTimers();
-    const state = this.getState();
-    const starResult = calcStarRating(state);
 
     playVictorySound();
 
@@ -382,7 +390,6 @@ export class GameEngine {
   private onGameOver(): void {
     this.stopLoop();
     this.clearMeaningTimers();
-    const state = this.getState();
 
     this.setState({
       phase: "gameover",

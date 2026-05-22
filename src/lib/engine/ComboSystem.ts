@@ -5,7 +5,7 @@ export function shouldBreakChain(state: GameState, comboTimeoutMs: number, now: 
   return now - state.activeChain.lastTapAt > comboTimeoutMs;
 }
 
-export function createChain(orbId: string, groupId: number, now: number, chainId: string): ChainState {
+export function createChain(orbId: string, groupId: string, now: number, chainId: string): ChainState {
   return {
     chainId,
     groupId,

@@ -7,8 +7,8 @@ export type {
   DuckState,
   StarResult,
   GameSummary,
-  LevelConfig,
+  RuntimeLevelConfig,
+  RuntimeGroupConfig,
+  RuntimeWordConfig,
   GameState,
 } from "./game";
-
-export type { WordGroup } from "./words";

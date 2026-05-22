@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
+import { getStageAndLevel, TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
 import { IntroSequence, shouldPlayIntro, markIntroSeen } from "./IntroSequence";
 import { StormMeter } from "./StormMeter";
@@ -45,10 +46,11 @@ export const GameScreen: React.FC = () => {
   useEffect(() => {
     if (introDone && phase === "menu") {
       const saved = typeof window !== "undefined"
-        ? localStorage.getItem("rescueDuckLevel")
+        ? localStorage.getItem("rescueDuckGlobalLevel")
         : null;
-      const level = saved ? parseInt(saved, 10) : 1;
-      startGame(level);
+      const globalLevel = saved ? parseInt(saved, 10) : 1;
+      const { stageId, levelInStage } = getStageAndLevel(globalLevel);
+      startGame(stageId, levelInStage);
     }
   }, [introDone, phase, startGame]);
 

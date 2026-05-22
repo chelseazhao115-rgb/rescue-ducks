@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rescue Duck — Light the Lighthouse",
+  title: "Rescue Ducks — Light the Lighthouse",
   description:
     "Match IELTS synonyms to generate light energy, relight the lighthouse, and rescue ducks before the storm hits.",
 };

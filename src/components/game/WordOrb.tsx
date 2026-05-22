@@ -6,7 +6,7 @@ export interface WordOrbProps {
   orbId: string;
   word: string;
   meaning: string;
-  groupId: number;
+  groupId: string;
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
   showMeaning: boolean;
   position: { x: number; y: number };

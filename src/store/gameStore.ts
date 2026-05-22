@@ -6,6 +6,8 @@ import { GameEngine } from "@/lib/engine/GameEngine";
 const initialState: GameState = {
   phase: "menu",
   levelConfig: null,
+  currentStage: 1,
+  currentLevelInStage: 1,
   stormMeter: 0,
   lighthouseBrightness: 0,
   activeGroups: [],
@@ -29,7 +31,7 @@ const initialState: GameState = {
 };
 
 interface GameActions {
-  startGame: (levelId: number) => void;
+  startGame: (stageId: number, levelInStage: number) => void;
   pauseGame: () => void;
   resumeGame: () => void;
   tapOrb: (orbId: string) => void;
@@ -45,14 +47,14 @@ export const useGameStore = create<GameState & GameActions>()(
     return {
       ...initialState,
 
-      startGame: (levelId: number) => {
+      startGame: (stageId: number, levelInStage: number) => {
         if (!engine) {
           engine = new GameEngine(
             () => get(),
             (partial) => set(partial as any)
           );
         }
-        engine.start(levelId);
+        engine.start(stageId, levelInStage);
       },
 
       pauseGame: () => {

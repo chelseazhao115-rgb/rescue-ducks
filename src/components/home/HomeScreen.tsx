@@ -25,7 +25,7 @@ export const HomeScreen: React.FC = () => {
 
   const getCurrentLevel = (): number => {
     if (typeof window === "undefined") return 1;
-    const saved = localStorage.getItem("rescueDuckLevel");
+    const saved = localStorage.getItem("rescueDuckGlobalLevel");
     return saved ? parseInt(saved, 10) : 1;
   };
 
@@ -33,7 +33,7 @@ export const HomeScreen: React.FC = () => {
     unlockAudio();
     setIsTransitioning(true);
     const level = getCurrentLevel();
-    localStorage.setItem("rescueDuckLevel", String(level));
+    localStorage.setItem("rescueDuckGlobalLevel", String(level));
     setTimeout(() => {
       router.push("/game");
     }, 1500);
@@ -98,7 +98,7 @@ export const HomeScreen: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: "easeOut" }}
               >
-                Rescue Duck
+                Rescue Ducks
               </motion.h1>
               {/* Little star */}
               <motion.span
