@@ -83,7 +83,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const styles = STATUS_STYLES[status];
 
   // Orb size varies slightly for organic feel
-  const orbSize = 72;
+  const orbSize = 150;
 
   return (
     <motion.button
@@ -185,12 +185,13 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 
         {/* Word text */}
         <span
-          className="relative font-semibold text-sm text-center px-2 leading-tight"
+          className="relative font-semibold text-center px-2 leading-tight"
           style={{
+            fontSize: "28px",
             color: styles.textColor,
             textShadow: `0 0 12px ${styles.glowColor}`,
             wordBreak: "break-word",
-            maxWidth: orbSize - 12,
+            maxWidth: orbSize - 24,
           }}
         >
           {word}
@@ -201,12 +202,13 @@ export const WordOrb: React.FC<WordOrbProps> = ({
       <AnimatePresence>
         {showMeaning && meaning && (
           <motion.span
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs
-                       text-white/50 backdrop-blur-md rounded-full px-2.5 py-0.5
+            className="absolute -bottom-7 left-1/2 -translate-x-1/2
+                       text-white/70 backdrop-blur-md rounded-full px-2.5 py-0.5
                        whitespace-nowrap pointer-events-none"
             style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              fontSize: "18px",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.12)",
             }}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}

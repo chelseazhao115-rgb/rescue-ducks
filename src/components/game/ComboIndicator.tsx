@@ -27,8 +27,7 @@ export const ComboIndicator: React.FC = () => {
         : "#ffd97a";
 
   return (
-    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
-    >
+    <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
       <AnimatePresence>
         {visible && (
           <motion.div
@@ -37,7 +36,6 @@ export const ComboIndicator: React.FC = () => {
             {...popIn}
             exit={popOut}
           >
-            {/* Combo count */}
             {combo >= 2 && (
               <motion.span
                 className="text-4xl font-extrabold"
@@ -52,12 +50,9 @@ export const ComboIndicator: React.FC = () => {
               </motion.span>
             )}
 
-            {/* Group progress dots */}
             {totalInGroup > 0 && (
-              <div className="flex items-center gap-2 mt-1"
-              >
-                <div className="flex gap-1.5"
-                >
+              <div className="flex items-center gap-2 mt-1">
+                <div className="flex gap-1.5">
                   {Array.from({ length: totalInGroup }).map((_, i) => (
                     <motion.div
                       key={i}
@@ -68,32 +63,25 @@ export const ComboIndicator: React.FC = () => {
                         background:
                           i < matchedCount
                             ? "#ffd97a"
-                            : "rgba(255,255,255,0.18)",
+                            : "rgba(255,255,255,0.25)",
                         boxShadow:
                           i < matchedCount
                             ? "0 0 8px rgba(255,217,122,0.5)"
                             : "none",
                       }}
-                      animate={
-                        i === matchedCount - 1
-                          ? { scale: [1, 1.5, 1] }
-                          : {}
-                      }
+                      animate={i === matchedCount - 1 ? { scale: [1, 1.5, 1] } : {}}
                       transition={{ duration: 0.3 }}
                     />
                   ))}
                 </div>
-                <span className="text-[10px] font-medium" style={{ color: "rgba(255,255,255,0.4)" }}
-                >
+                <span className="font-medium text-white/70" style={{fontSize:"15px"}}>
                   {matchedCount}/{totalInGroup}
                 </span>
               </div>
             )}
 
-            {/* Chain label */}
             {combo >= 2 && (
-              <span className="text-[10px] font-medium tracking-wider mt-0.5" style={{ color: "rgba(255,255,255,0.25)" }}
-              >
+              <span className="font-medium tracking-wider mt-0.5 text-white/60" style={{fontSize:"15px"}}>
                 CHAIN
               </span>
             )}

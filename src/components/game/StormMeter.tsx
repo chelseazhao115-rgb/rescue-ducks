@@ -9,7 +9,6 @@ export const StormMeter: React.FC = () => {
   const isFlashing = stormMeter > STORM_HIGH_THRESHOLD;
   const pct = Math.min(100, Math.max(0, stormMeter));
 
-  // Color interpolation based on storm level
   const getBarColor = () => {
     if (stormMeter > 80) {
       return "linear-gradient(90deg, #c87070, #e09090)";
@@ -23,15 +22,10 @@ export const StormMeter: React.FC = () => {
   return (
     <motion.div
       className="w-full px-4 pt-2"
-      animate={
-        isFlashing
-          ? { opacity: [1, 0.85, 1] }
-          : {}
-      }
+      animate={isFlashing ? { opacity: [1, 0.85, 1] } : {}}
       transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
     >
-      <div className="flex items-center gap-2 mb-1"
-      >
+      <div className="flex items-center gap-2 mb-1">
         <svg
           width="14"
           height="14"
@@ -41,27 +35,26 @@ export const StormMeter: React.FC = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ color: stormMeter > 80 ? "rgba(232,144,144,0.7)" : "rgba(255,255,255,0.4)" }}
+          style={{ color: stormMeter > 80 ? "#e89090" : "rgba(255,255,255,0.8)" }}
         >
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
         </svg>
         <span
-          className="text-[10px] font-medium tracking-wider uppercase"
-          style={{ color: stormMeter > 80 ? "rgba(232,144,144,0.7)" : "rgba(255,255,255,0.45)" }}
+          className="font-medium tracking-wider uppercase text-white/80"
+          style={{fontSize:"15px"}}
         >
           Storm
         </span>
-        <span className="text-[10px] ml-auto" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <span className="ml-auto text-white/70" style={{fontSize:"15px"}}>
           {Math.round(pct)}%
         </span>
       </div>
 
-      {/* Progress track */}
       <div
         className="w-full rounded-full overflow-hidden"
         style={{
           height: "6px",
-          background: "rgba(255,255,255,0.06)",
+          background: "rgba(255,255,255,0.1)",
           boxShadow: "inset 0 1px 2px rgba(0,0,0,0.2)",
         }}
       >

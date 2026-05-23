@@ -42,9 +42,9 @@ export const ChelseaNPC: React.FC = () => {
               <div
                 style={{
                   color: "#5a5060",
-                  fontSize: "18px",
+                  fontSize: "27px",
                   fontWeight: 700,
-                  marginBottom: "4px",
+                  marginBottom: "6px",
                   letterSpacing: "0.02em",
                 }}
               >
@@ -53,8 +53,8 @@ export const ChelseaNPC: React.FC = () => {
               <div
                 style={{
                   color: "#5a5060",
-                  fontSize: "14px",
-                  lineHeight: 1.5,
+                  fontSize: "21px",
+                  lineHeight: 1.4,
                   fontWeight: 500,
                   wordWrap: "break-word",
                 }}

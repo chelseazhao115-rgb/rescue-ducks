@@ -18,7 +18,7 @@ export const GameOverOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-6"
+      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12"
       style={{
         background:
           "radial-gradient(circle at center, rgba(80,90,130,0.2), rgba(15,20,35,0.95))",
@@ -30,21 +30,20 @@ export const GameOverOverlay: React.FC = () => {
       exit={{ opacity: 0, y: 40 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      {/* Subtle rain effect */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={`rain-${i}`}
-            className="absolute w-px rounded-full"
+            className="absolute w-0.5 rounded-full"
             style={{
               left: `${10 + Math.random() * 80}%`,
               top: "-5%",
-              height: `${8 + Math.random() * 12}px`,
-              background: "linear-gradient(to bottom, rgba(180,190,210,0.15), transparent)",
+              height: `${16 + Math.random() * 24}px`,
+              background: "linear-gradient(to bottom, rgba(180,190,210,0.2), transparent)",
             }}
             animate={{
               y: ["0vh", "110vh"],
-              opacity: [0, 0.15, 0],
+              opacity: [0, 0.2, 0],
             }}
             transition={{
               duration: 1.5 + Math.random(),
@@ -57,14 +56,15 @@ export const GameOverOverlay: React.FC = () => {
       </div>
 
       <motion.div
-        className="flex flex-col items-center max-w-[340px] w-full"
+        className="flex flex-col items-center w-full"
+        style={{ maxWidth: "680px" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
       >
         <motion.h2
-          className="text-2xl font-extrabold mb-1 tracking-tight text-center"
-          style={{ color: "#8890c8" }}
+          className="font-extrabold mb-2 tracking-tight text-center text-white/90"
+          style={{ fontSize: "48px" }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -75,8 +75,8 @@ export const GameOverOverlay: React.FC = () => {
         </motion.h2>
 
         <motion.p
-          className="mb-5 text-xs text-center"
-          style={{ color: "rgba(255,255,255,0.25)", maxWidth: "240px" }}
+          className="mb-10 text-center text-white/70"
+          style={{ fontSize: "24px", maxWidth: "480px" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
@@ -86,46 +86,46 @@ export const GameOverOverlay: React.FC = () => {
 
         <StarRating stars={starResult.stars} animate />
 
-        {/* Stats card */}
         <motion.div
-          className="w-full mt-6 p-4 rounded-2xl"
+          className="w-full mt-12 p-8 rounded-3xl"
           style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.06)",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Score</span>
-            <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>{score.toLocaleString()}</span>
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Groups</span>
-            <span style={{ color: "rgba(255,255,255,0.75)" }}>{groupsCompleted}/{totalGroups}</span>
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Max Combo</span>
-            <span style={{ color: "rgba(255,255,255,0.75)" }}>{maxCombo}x</span>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-4" style={{ fontSize: "28px" }}>
+            <span className="text-right text-white/70">Score</span>
+            <span className="text-white font-semibold">{score.toLocaleString()}</span>
+            <span className="text-right text-white/70">Groups</span>
+            <span className="text-white">{groupsCompleted}/{totalGroups}</span>
+            <span className="text-right text-white/70">Max Combo</span>
+            <span className="text-white">{maxCombo}x</span>
           </div>
         </motion.div>
 
         <motion.div
-          className="flex flex-col gap-2.5 mt-6 w-full"
+          className="flex flex-col gap-5 mt-12 w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
           <motion.button
             onClick={() => { resetGame(); router.push("/game"); }}
-            className="w-full font-bold text-sm tracking-wide"
+            className="w-full font-bold tracking-wide"
             style={{
-              padding: "14px 28px",
+              fontSize: "28px",
+              padding: "28px 56px",
               borderRadius: "999px",
               background: "linear-gradient(180deg, #ffe8af, #f0c860)",
               color: "#5a4a28",
               border: "1px solid rgba(255,255,255,0.3)",
-              boxShadow: "0 0 20px rgba(255,220,120,0.25), 0 4px 12px rgba(0,0,0,0.15)",
+              boxShadow: "0 0 40px rgba(255,220,120,0.25), 0 8px 24px rgba(0,0,0,0.15)",
             }}
-            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,220,120,0.4), 0 4px 12px rgba(0,0,0,0.2)" }}
+            whileHover={{ scale: 1.03, boxShadow: "0 0 60px rgba(255,220,120,0.4), 0 8px 24px rgba(0,0,0,0.2)" }}
             whileTap={{ scale: 0.97 }}
           >
             RETRY
@@ -133,15 +133,15 @@ export const GameOverOverlay: React.FC = () => {
 
           <motion.button
             onClick={() => { resetGame(); router.push("/"); }}
-            className="w-full font-semibold text-sm"
+            className="w-full font-semibold text-white/70"
             style={{
-              padding: "12px 28px",
+              fontSize: "28px",
+              padding: "24px 56px",
               borderRadius: "999px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.4)",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
             }}
-            whileHover={{ scale: 1.03, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}
+            whileHover={{ scale: 1.03, background: "rgba(255,255,255,0.1)", color: "#fff" }}
             whileTap={{ scale: 0.97 }}
           >
             BACK TO MAP

@@ -23,16 +23,18 @@ export const PauseOverlay: React.FC = () => {
       transition={{ duration: 0.25 }}
     >
       <motion.div
-        className="flex flex-col items-center max-w-[300px] w-full px-6"
+        className="flex flex-col items-center w-full px-12"
+        style={{ maxWidth: "600px" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
       >
         <motion.h2
-          className="text-2xl font-extrabold mb-8 tracking-tight"
+          className="font-extrabold mb-16 tracking-tight"
           style={{
+            fontSize: "48px",
             color: "rgba(255,255,255,0.8)",
-            textShadow: "0 0 20px rgba(255,255,255,0.1)",
+            textShadow: "0 0 40px rgba(255,255,255,0.1)",
           }}
           initial={{ y: -15, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -41,19 +43,20 @@ export const PauseOverlay: React.FC = () => {
           PAUSED
         </motion.h2>
 
-        <div className="flex flex-col gap-2.5 w-full">
+        <div className="flex flex-col gap-5 w-full">
           <motion.button
             onClick={resumeGame}
-            className="w-full font-bold text-sm tracking-wide"
+            className="w-full font-bold tracking-wide"
             style={{
-              padding: "14px 28px",
+              fontSize: "28px",
+              padding: "28px 56px",
               borderRadius: "999px",
               background: "linear-gradient(180deg, #ffe8af, #f0c860)",
               color: "#5a4a28",
               border: "1px solid rgba(255,255,255,0.3)",
-              boxShadow: "0 0 20px rgba(255,220,120,0.25), 0 4px 12px rgba(0,0,0,0.15)",
+              boxShadow: "0 0 40px rgba(255,220,120,0.25), 0 8px 24px rgba(0,0,0,0.15)",
             }}
-            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,220,120,0.4), 0 4px 12px rgba(0,0,0,0.2)" }}
+            whileHover={{ scale: 1.03, boxShadow: "0 0 60px rgba(255,220,120,0.4), 0 8px 24px rgba(0,0,0,0.2)" }}
             whileTap={{ scale: 0.97 }}
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -64,9 +67,10 @@ export const PauseOverlay: React.FC = () => {
 
           <motion.button
             onClick={() => { resetGame(); router.push("/game"); }}
-            className="w-full font-semibold text-sm"
+            className="w-full font-semibold"
             style={{
-              padding: "12px 28px",
+              fontSize: "28px",
+              padding: "24px 56px",
               borderRadius: "999px",
               background: "rgba(255,217,122,0.08)",
               border: "1px solid rgba(255,217,122,0.18)",
@@ -83,9 +87,10 @@ export const PauseOverlay: React.FC = () => {
 
           <motion.button
             onClick={() => { resetGame(); router.push("/"); }}
-            className="w-full font-semibold text-sm"
+            className="w-full font-semibold"
             style={{
-              padding: "12px 28px",
+              fontSize: "28px",
+              padding: "24px 56px",
               borderRadius: "999px",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",

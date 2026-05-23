@@ -3,8 +3,8 @@ import type { DuckState, OrbInstance, RuntimeGroupConfig, RuntimeLevelConfig } f
 import { shuffle } from "@/lib/utils/random";
 
 const GRID_COLS = 5;
-const GRID_ROWS = 3;
-const ORB_MIN_DISTANCE = 0.14;
+const GRID_ROWS = 4;
+const ORB_MIN_DISTANCE = 0.12;
 
 function orbDistance(a: { x: number; y: number }, b: { x: number; y: number }): number {
   const dx = a.x - b.x;
@@ -115,11 +115,11 @@ export function spawnGroupOrbs(
 }
 
 function gridCell(col: number, row: number): { x: number; y: number } {
-  const marginLeft = 0.08;
-  const marginRight = 0.24;
-  const marginY = 0.14;
+  const marginLeft = 0.06;
+  const marginRight = 0.22;
+  const marginY = 0.10;
   const usableW = 1 - marginLeft - marginRight;
-  const usableH = 0.48;
+  const usableH = 0.60;
   const cellW = usableW / GRID_COLS;
   const cellH = usableH / GRID_ROWS;
   return {
@@ -152,13 +152,13 @@ function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number }
 
   for (let attempt = 0; attempt < 30; attempt++) {
     const pos = {
-      x: 0.1 + Math.random() * 0.66,
-      y: 0.16 + Math.random() * 0.44,
+      x: 0.08 + Math.random() * 0.68,
+      y: 0.12 + Math.random() * 0.52,
     };
     if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE)) {
       return pos;
     }
   }
 
-  return { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.35 };
+  return { x: 0.12 + Math.random() * 0.6, y: 0.15 + Math.random() * 0.45 };
 }

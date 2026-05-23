@@ -8,7 +8,6 @@ import {
   getLevelsInStage,
   resetAntiRepetition,
   getSemanticProgress,
-  getStageAndLevel,
 } from "@/lib/engine/LevelGenerator";
 import { StarRating } from "./StarRating";
 import { calcStarRating } from "@/lib/engine/ScoringSystem";
@@ -20,7 +19,6 @@ export const VictoryOverlay: React.FC = () => {
   const groupsCompleted = useGameStore((s) => s.groupsCompleted);
   const totalGroups = useGameStore((s) => s.activeGroups.length);
   const ducksRescued = useGameStore((s) => s.ducks.filter((d) => d.rescued).length);
-  const levelConfig = useGameStore((s) => s.levelConfig);
   const currentStage = useGameStore((s) => s.currentStage);
   const currentLevelInStage = useGameStore((s) => s.currentLevelInStage);
   const router = useRouter();
@@ -34,7 +32,6 @@ export const VictoryOverlay: React.FC = () => {
   const stage = CURRICULUM.find((s) => s.id === currentStage);
   const stageName = stage?.name ?? `Stage ${currentStage}`;
 
-  // Compute global level for progress tracking
   const getGlobalLevel = (): number => {
     const saved = typeof window !== "undefined"
       ? localStorage.getItem("rescueDuckGlobalLevel")
@@ -77,7 +74,7 @@ export const VictoryOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-6"
+      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12"
       style={{
         background:
           "radial-gradient(circle at center, rgba(255,235,180,0.15), rgba(20,26,40,0.92))",
@@ -98,14 +95,14 @@ export const VictoryOverlay: React.FC = () => {
             style={{
               left: `${10 + Math.random() * 80}%`,
               top: `${10 + Math.random() * 80}%`,
-              width: "3px",
-              height: "3px",
-              background: "rgba(255,240,190,0.6)",
-              filter: "blur(1px)",
+              width: "6px",
+              height: "6px",
+              background: "rgba(255,240,190,0.8)",
+              filter: "blur(2px)",
             }}
             animate={{
               y: ["0vh", "-5vh", "0vh"],
-              opacity: [0.15, 0.6, 0.15],
+              opacity: [0.3, 0.8, 0.3],
               scale: [0.8, 1.3, 0.8],
             }}
             transition={{
@@ -118,18 +115,19 @@ export const VictoryOverlay: React.FC = () => {
         ))}
       </div>
 
-      {/* Content card */}
       <motion.div
-        className="flex flex-col items-center max-w-[340px] w-full"
+        className="flex flex-col items-center w-full"
+        style={{ maxWidth: "680px" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.15, duration: 0.5 }}
       >
         <motion.h2
-          className="text-3xl font-extrabold mb-1 tracking-tight"
+          className="font-extrabold mb-2 tracking-tight"
           style={{
+            fontSize: "60px",
             color: "#ffd97a",
-            textShadow: "0 0 24px rgba(255,217,122,0.35)",
+            textShadow: "0 0 48px rgba(255,217,122,0.35)",
           }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -139,8 +137,8 @@ export const VictoryOverlay: React.FC = () => {
         </motion.h2>
 
         <motion.p
-          className="mb-1 text-xs font-medium tracking-wide"
-          style={{ color: "rgba(255,255,255,0.35)" }}
+          className="mb-2 font-medium tracking-wide text-white/80"
+          style={{ fontSize: "24px" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -149,8 +147,8 @@ export const VictoryOverlay: React.FC = () => {
         </motion.p>
 
         <motion.p
-          className="mb-5 text-xs text-center"
-          style={{ color: "rgba(255,255,255,0.25)", maxWidth: "240px" }}
+          className="mb-10 text-center text-white/70"
+          style={{ fontSize: "24px", maxWidth: "480px" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
@@ -160,36 +158,34 @@ export const VictoryOverlay: React.FC = () => {
 
         <StarRating stars={starResult.stars} animate />
 
-        {/* Stats card */}
         <motion.div
-          className="w-full mt-6 p-4 rounded-2xl"
+          className="w-full mt-12 p-8 rounded-3xl"
           style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Score</span>
-            <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>{score.toLocaleString()}</span>
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Groups</span>
-            <span style={{ color: "rgba(255,255,255,0.75)" }}>{groupsCompleted}/{totalGroups}</span>
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Max Combo</span>
-            <span style={{ color: "rgba(255,255,255,0.75)" }}>{maxCombo}x</span>
-            <span className="text-right" style={{ color: "rgba(255,255,255,0.3)" }}>Ducks Rescued</span>
-            <span style={{ color: "rgba(255,255,255,0.75)" }}>{ducksRescued}/{totalGroups}</span>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-4" style={{ fontSize: "28px" }}>
+            <span className="text-right text-white/70">Score</span>
+            <span className="text-white font-semibold">{score.toLocaleString()}</span>
+            <span className="text-right text-white/70">Groups</span>
+            <span className="text-white">{groupsCompleted}/{totalGroups}</span>
+            <span className="text-right text-white/70">Max Combo</span>
+            <span className="text-white">{maxCombo}x</span>
+            <span className="text-right text-white/70">Ducks Rescued</span>
+            <span className="text-white">{ducksRescued}/{totalGroups}</span>
           </div>
 
-          {/* Semantic journey progress */}
-          <div className="mt-4 pt-3 border-t border-white/10">
-            <div className="flex justify-between text-[10px] text-white/25 mb-1">
+          <div className="mt-8 pt-6 border-t border-white/15">
+            <div className="flex justify-between mb-2 text-white/70" style={{ fontSize: "20px" }}>
               <span>Semantic Mastery</span>
               <span>{semanticProgress.groupsEncountered}/{semanticProgress.totalGroupsInCurriculum} groups</span>
             </div>
-            <div className="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-white/15 overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: "linear-gradient(90deg, #7EC8E3, #FFEAA7)" }}
@@ -197,16 +193,15 @@ export const VictoryOverlay: React.FC = () => {
                 transition={{ duration: 0.8 }}
               />
             </div>
-            <div className="flex justify-between text-[9px] text-white/20 mt-1">
+            <div className="flex justify-between mt-2 text-white/60" style={{ fontSize: "18px" }}>
               <span>Mastered: {semanticProgress.groupsMastered}</span>
               <span>Stage {currentStage}: {Math.round(semanticProgress.stageProgress * 100)}%</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Buttons */}
         <motion.div
-          className="flex flex-col gap-2.5 mt-6 w-full"
+          className="flex flex-col gap-5 mt-12 w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -214,16 +209,17 @@ export const VictoryOverlay: React.FC = () => {
           {(hasNextLevelInStage || hasNextStage) && (
             <motion.button
               onClick={handleNextLevel}
-              className="w-full font-bold text-sm tracking-wide"
+              className="w-full font-bold tracking-wide"
               style={{
-                padding: "14px 28px",
+                fontSize: "28px",
+                padding: "28px 56px",
                 borderRadius: "999px",
                 background: "linear-gradient(180deg, #ffe8af, #f0c860)",
                 color: "#5a4a28",
                 border: "1px solid rgba(255,255,255,0.3)",
-                boxShadow: "0 0 20px rgba(255,220,120,0.3), 0 4px 12px rgba(0,0,0,0.15)",
+                boxShadow: "0 0 40px rgba(255,220,120,0.3), 0 8px 24px rgba(0,0,0,0.15)",
               }}
-              whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,220,120,0.45), 0 4px 12px rgba(0,0,0,0.2)" }}
+              whileHover={{ scale: 1.03, boxShadow: "0 0 60px rgba(255,220,120,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
               whileTap={{ scale: 0.97 }}
             >
               {hasNextLevelInStage ? "NEXT LEVEL" : "NEXT STAGE"}
@@ -232,15 +228,15 @@ export const VictoryOverlay: React.FC = () => {
 
           <motion.button
             onClick={handleReplay}
-            className="w-full font-semibold text-sm tracking-wide"
+            className="w-full font-semibold tracking-wide text-white/90"
             style={{
-              padding: "12px 28px",
+              fontSize: "28px",
+              padding: "24px 56px",
               borderRadius: "999px",
-              background: "rgba(255,217,122,0.08)",
-              border: "1px solid rgba(255,217,122,0.18)",
-              color: "rgba(255,217,122,0.85)",
+              background: "rgba(255,217,122,0.1)",
+              border: "1px solid rgba(255,217,122,0.2)",
             }}
-            whileHover={{ scale: 1.03, background: "rgba(255,217,122,0.14)" }}
+            whileHover={{ scale: 1.03, background: "rgba(255,217,122,0.18)" }}
             whileTap={{ scale: 0.97 }}
           >
             {(hasNextLevelInStage || hasNextStage) ? "Replay" : "Play Again"}
@@ -248,15 +244,15 @@ export const VictoryOverlay: React.FC = () => {
 
           <motion.button
             onClick={handleBackToMap}
-            className="w-full font-semibold text-sm"
+            className="w-full font-semibold text-white/70"
             style={{
-              padding: "12px 28px",
+              fontSize: "28px",
+              padding: "24px 56px",
               borderRadius: "999px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.4)",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
             }}
-            whileHover={{ scale: 1.03, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}
+            whileHover={{ scale: 1.03, background: "rgba(255,255,255,0.1)", color: "#fff" }}
             whileTap={{ scale: 0.97 }}
           >
             BACK TO MAP

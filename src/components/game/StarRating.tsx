@@ -9,7 +9,7 @@ export interface StarRatingProps {
 
 export const StarRating: React.FC<StarRatingProps> = ({ stars, animate }) => {
   return (
-    <div className="flex gap-3 justify-center"
+    <div className="flex gap-6 justify-center"
     >
       {[1, 2, 3].map((n) => (
         <motion.div
@@ -19,8 +19,8 @@ export const StarRating: React.FC<StarRatingProps> = ({ stars, animate }) => {
           transition={{ delay: 0.3 + n * 0.25, type: "spring", stiffness: 300, damping: 15 }}
         >
           <svg
-            width="40"
-            height="40"
+            width="80"
+            height="80"
             viewBox="0 0 24 24"
             fill={n <= stars ? "currentColor" : "none"}
             stroke="currentColor"

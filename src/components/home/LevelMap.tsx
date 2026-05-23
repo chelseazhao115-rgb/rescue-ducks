@@ -43,9 +43,12 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const completedLevels = Math.max(0, highestUnlocked - 1);
 
   return (
-    <div className="flex flex-col items-center gap-4 px-4">
+    <div className="flex flex-col items-center gap-6 px-6">
       {/* Stage tabs */}
-      <div className="flex gap-1 bg-white/5 rounded-full p-1 backdrop-blur-sm">
+      <div
+        className="flex gap-1.5 rounded-full p-1.5 backdrop-blur-sm"
+        style={{ background: "rgba(255,255,255,0.08)" }}
+      >
         {stageRanges.map((stage, i) => {
           const isUnlocked = stage.start <= highestUnlocked;
           return (
@@ -53,13 +56,20 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
               key={stage.name}
               onClick={() => isUnlocked && setActiveStageIdx(i)}
               disabled={!isUnlocked}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                i === activeStageIdx
-                  ? "bg-lighthouse-glow/20 text-lighthouse-glow"
-                  : isUnlocked
-                    ? "text-white/40 hover:text-white/60"
-                    : "text-white/15 cursor-not-allowed"
-              }`}
+              className="px-4 py-2 rounded-full font-medium transition-colors"
+              style={{
+                fontSize: "22px",
+                background:
+                  i === activeStageIdx
+                    ? "rgba(255,217,122,0.25)"
+                    : "transparent",
+                color:
+                  i === activeStageIdx
+                    ? "#ffd97a"
+                    : isUnlocked
+                      ? "rgba(255,255,255,0.7)"
+                      : "rgba(255,255,255,0.2)",
+              }}
             >
               {stage.name}
             </button>
@@ -67,16 +77,22 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
         })}
       </div>
 
-      <p className="text-xs text-white/30">
+      {/* Stage subtitle */}
+      <p className="text-center" style={{ fontSize: "22px", color: "rgba(255,255,255,0.7)" }}>
         {currentStageRange.subtitle} — {currentStageRange.description}
       </p>
 
       {/* Chapter tags */}
-      <div className="flex gap-1 flex-wrap justify-center">
+      <div className="flex gap-1.5 flex-wrap justify-center">
         {currentStageRange.chapters.map((ch) => (
           <span
             key={ch.id}
-            className="px-2 py-0.5 rounded text-[10px] text-white/25 bg-white/5"
+            className="px-3 py-0.5 rounded"
+            style={{
+              fontSize: "18px",
+              color: "rgba(255,255,255,0.6)",
+              background: "rgba(255,255,255,0.08)",
+            }}
           >
             {ch.name}
           </span>
@@ -84,7 +100,10 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
       </div>
 
       {/* Level grid */}
-      <div className="grid grid-cols-4 gap-2 w-full max-w-[320px]">
+      <div
+        className="grid grid-cols-4 gap-3 w-full"
+        style={{ maxWidth: "480px" }}
+      >
         <AnimatePresence mode="wait">
           {Array.from({ length: levelsInStage }, (_, i) => {
             const levelInStage = i + 1;
@@ -112,34 +131,64 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ delay: i * 0.03 }}
-                className={`relative aspect-square rounded-xl border flex flex-col items-center justify-center gap-0.5
-                  ${unlocked
+                className="relative aspect-square rounded-xl border flex flex-col items-center justify-center gap-0.5"
+                style={
+                  unlocked
                     ? isLatest
-                      ? "border-lighthouse-glow/40 bg-lighthouse-glow/10 hover:bg-lighthouse-glow/20 cursor-pointer"
+                      ? {
+                          borderColor: "rgba(255,217,122,0.5)",
+                          background: "rgba(255,217,122,0.12)",
+                          cursor: "pointer",
+                        }
                       : isCompleted
-                        ? "border-white/20 bg-white/8 hover:bg-white/12 cursor-pointer"
-                        : "border-white/15 bg-white/5 hover:bg-white/10 cursor-pointer"
-                    : "border-white/5 bg-white/[0.02] cursor-not-allowed opacity-40"
-                  }`}
+                        ? {
+                            borderColor: "rgba(255,255,255,0.25)",
+                            background: "rgba(255,255,255,0.1)",
+                            cursor: "pointer",
+                          }
+                        : {
+                            borderColor: "rgba(255,255,255,0.15)",
+                            background: "rgba(255,255,255,0.06)",
+                            cursor: "pointer",
+                          }
+                    : {
+                        borderColor: "rgba(255,255,255,0.06)",
+                        background: "rgba(255,255,255,0.02)",
+                        cursor: "not-allowed",
+                        opacity: 0.4,
+                      }
+                }
                 whileHover={unlocked ? { scale: 1.08 } : undefined}
                 whileTap={unlocked ? { scale: 0.95 } : undefined}
               >
-                <span className={`text-sm font-bold ${unlocked ? "text-white/80" : "text-white/30"}`}>
+                <span
+                  className="font-bold"
+                  style={{
+                    fontSize: "27px",
+                    color: unlocked
+                      ? "rgba(255,255,255,0.9)"
+                      : "rgba(255,255,255,0.3)",
+                  }}
+                >
                   {globalLevel}
                 </span>
                 {unlocked && chapterName ? (
-                  <span className="text-[8px] text-white/30 truncate max-w-full px-1">
+                  <span
+                    className="text-center truncate max-w-full px-1"
+                    style={{ fontSize: "16px", color: "rgba(255,255,255,0.6)" }}
+                  >
                     {chapterName}
                   </span>
                 ) : !unlocked ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white/20">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: "rgba(255,255,255,0.15)" }}>
                     <rect x="3" y="11" width="18" height="11" rx="2" />
                     <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="1.5" />
                   </svg>
                 ) : null}
                 {isLatest && (
                   <motion.div
-                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-lighthouse-glow"
+                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full"
+                    style={{ background: "#ffd97a" }}
                     animate={{ opacity: [1, 0.5, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
@@ -151,14 +200,18 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full max-w-[320px]">
-        <div className="flex justify-between text-[10px] text-white/30 mb-1">
+      <div className="w-full" style={{ maxWidth: "480px" }}>
+        <div className="flex justify-between mb-1.5" style={{ fontSize: "21px", color: "rgba(255,255,255,0.7)" }}>
           <span>Journey Progress</span>
           <span>{completedLevels}/{TOTAL_LEVELS}</span>
         </div>
-        <div className="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className="w-full h-1.5 rounded-full overflow-hidden"
+          style={{ background: "rgba(255,255,255,0.12)" }}
+        >
           <motion.div
-            className="h-full rounded-full bg-lighthouse-glow/50"
+            className="h-full rounded-full"
+            style={{ background: "rgba(255,217,122,0.6)" }}
             animate={{ width: `${(completedLevels / TOTAL_LEVELS) * 100}%` }}
             transition={{ duration: 0.5 }}
           />
