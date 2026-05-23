@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ViewportScale } from "@/components/shared/ViewportScale";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,7 +22,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ViewportScale />
+        {children}
+      </body>
     </html>
   );
 }

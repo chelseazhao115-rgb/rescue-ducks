@@ -33,33 +33,16 @@ export const Duck: React.FC<DuckProps> = ({ duckId, rescued, index, total }) => 
         },
       }}
     >
-      {/* Duck body */}
-      <div
-        className="w-8 h-6 rounded-full relative"
+      <img
+        src="/duck_2d_pure.png"
+        alt=""
+        className="w-24 h-[4.5rem] object-contain"
         style={{
-          backgroundColor: "var(--color-duck-body)",
-          boxShadow: rescued
-            ? "0 0 10px rgba(255,217,122,0.25)"
-            : "0 2px 6px rgba(0,0,0,0.1)",
+          filter: rescued
+            ? "drop-shadow(0 0 6px rgba(255,217,122,0.35))"
+            : "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
         }}
-      />
-      {/* Beak */}
-      <div
-        className="absolute top-1 -right-1 w-3 h-2 rounded-r-full"
-        style={{ backgroundColor: "var(--color-duck-beak)" }}
-      />
-      {/* Eye */}
-      <div
-        className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full"
-        style={{ backgroundColor: "#2a3a50" }}
-      />
-      {/* Wing */}
-      <div
-        className="absolute top-2 left-1 w-3 h-2 rounded-full"
-        style={{
-          backgroundColor: "var(--color-duck-wing)",
-          opacity: 0.7,
-        }}
+        draggable={false}
       />
     </motion.div>
   );

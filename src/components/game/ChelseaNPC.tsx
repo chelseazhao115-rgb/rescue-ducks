@@ -17,8 +17,8 @@ export const ChelseaNPC: React.FC = () => {
           <motion.div
             className="relative"
             style={{
-              width: "480px",
-              height: "256px",
+              width: "calc(480px * var(--vscale, 1))",
+              height: "calc(256px * var(--vscale, 1))",
               backgroundImage: "url(/Chelsea1.png)",
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
@@ -33,16 +33,16 @@ export const ChelseaNPC: React.FC = () => {
             <div
               className="absolute"
               style={{
-                left: "168px",
+                left: "calc(168px * var(--vscale, 1))",
                 top: "44%",
                 transform: "translateY(-50%)",
-                width: "300px",
+                width: "calc(300px * var(--vscale, 1))",
               }}
             >
               <div
                 style={{
                   color: "#5a5060",
-                  fontSize: "27px",
+                  fontSize: "calc(27px * var(--vscale, 1))",
                   fontWeight: 700,
                   marginBottom: "6px",
                   letterSpacing: "0.02em",
@@ -53,7 +53,7 @@ export const ChelseaNPC: React.FC = () => {
               <div
                 style={{
                   color: "#5a5060",
-                  fontSize: "21px",
+                  fontSize: "calc(21px * var(--vscale, 1))",
                   lineHeight: 1.4,
                   fontWeight: 500,
                   wordWrap: "break-word",

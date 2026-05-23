@@ -24,7 +24,7 @@ export const PauseOverlay: React.FC = () => {
     >
       <motion.div
         className="flex flex-col items-center w-full px-12"
-        style={{ maxWidth: "600px" }}
+        style={{ maxWidth: "calc(600px * var(--vscale, 1))" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.4 }}
@@ -32,7 +32,7 @@ export const PauseOverlay: React.FC = () => {
         <motion.h2
           className="font-extrabold mb-16 tracking-tight"
           style={{
-            fontSize: "48px",
+            fontSize: "calc(48px * var(--vscale, 1))",
             color: "rgba(255,255,255,0.8)",
             textShadow: "0 0 40px rgba(255,255,255,0.1)",
           }}
@@ -48,8 +48,8 @@ export const PauseOverlay: React.FC = () => {
             onClick={resumeGame}
             className="w-full font-bold tracking-wide"
             style={{
-              fontSize: "28px",
-              padding: "28px 56px",
+              fontSize: "calc(28px * var(--vscale, 1))",
+              padding: "calc(28px * var(--vscale, 1)) calc(56px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "linear-gradient(180deg, #ffe8af, #f0c860)",
               color: "#5a4a28",
@@ -69,8 +69,8 @@ export const PauseOverlay: React.FC = () => {
             onClick={() => { resetGame(); router.push("/game"); }}
             className="w-full font-semibold"
             style={{
-              fontSize: "28px",
-              padding: "24px 56px",
+              fontSize: "calc(28px * var(--vscale, 1))",
+              padding: "calc(24px * var(--vscale, 1)) calc(56px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "rgba(255,217,122,0.08)",
               border: "1px solid rgba(255,217,122,0.18)",
@@ -89,8 +89,8 @@ export const PauseOverlay: React.FC = () => {
             onClick={() => { resetGame(); router.push("/"); }}
             className="w-full font-semibold"
             style={{
-              fontSize: "28px",
-              padding: "24px 56px",
+              fontSize: "calc(28px * var(--vscale, 1))",
+              padding: "calc(24px * var(--vscale, 1)) calc(56px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",

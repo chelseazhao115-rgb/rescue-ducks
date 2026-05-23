@@ -72,21 +72,21 @@ export const HomeScreen: React.FC = () => {
         <LakeSurface />
 
         {/* Duck — floating on water, facing right toward cottage/lighthouse */}
-        <div className="absolute bottom-[10%] left-[38%] -translate-x-1/2 z-10">
+        <div className="absolute bottom-[10%] left-[42%] -translate-x-1/2 z-10">
           <DuckCharacter />
         </div>
       </motion.div>
 
       {/* ===== UI PANEL — LEFT SIDE ===== */}
-      <div className="absolute left-[6%] top-[16%] flex flex-col items-start z-20 pointer-events-none">
-        <div className="pointer-events-auto flex flex-col items-start gap-8">
-          {/* Title group */}
+      <div className="absolute left-[6%] top-[8%] bottom-[12%] flex flex-col items-start z-20 pointer-events-none">
+        {/* Title group — fixed at top */}
+        <div className="pointer-events-auto flex-shrink-0 flex flex-col items-start">
           <div className="flex flex-col items-start">
             <div className="relative">
               <motion.h1
                 className="font-extrabold tracking-tight text-left"
                 style={{
-                  fontSize: "clamp(5rem, 10vw, 12rem)",
+                  fontSize: "clamp(4rem, 8vw, 9rem)",
                   color: "#ffe7b0",
                   textShadow:
                     "0 0 60px rgba(255,217,122,0.5), 0 4px 24px rgba(0,0,0,0.35)",
@@ -106,7 +106,7 @@ export const HomeScreen: React.FC = () => {
                 style={{
                   top: "-0.1em",
                   right: "-0.6em",
-                  fontSize: "clamp(1.5rem, 3vw, 3.5rem)",
+                  fontSize: "clamp(1.2rem, 2.4vw, 2.8rem)",
                   color: "#ffe7b0",
                   filter: "drop-shadow(0 0 10px rgba(255,220,120,0.7))",
                 }}
@@ -121,7 +121,7 @@ export const HomeScreen: React.FC = () => {
             <motion.p
               className="font-medium text-left mt-3"
               style={{
-                fontSize: "clamp(1.25rem, 2.5vw, 3rem)",
+                fontSize: "clamp(1rem, 2vw, 2.25rem)",
                 color: "#ffe7b0",
                 opacity: 0.85,
                 textShadow: "0 2px 12px rgba(0,0,0,0.3)",
@@ -134,13 +134,16 @@ export const HomeScreen: React.FC = () => {
               Light the way home.
             </motion.p>
           </div>
+        </div>
 
-          {/* Buttons / Level Map */}
+        {/* Buttons / Level Map — fills remaining space, scrolls if needed */}
+        <div className="pointer-events-auto flex-1 min-h-0 w-full mt-6">
           <AnimatePresence mode="wait">
             {showMap ? (
               <motion.div
                 key="map"
-                className="w-full max-w-[680px]"
+                className="w-full h-full overflow-y-auto"
+                style={{ maxWidth: "calc(680px * var(--vscale, 1))" }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
@@ -235,7 +238,7 @@ export const HomeScreen: React.FC = () => {
       </div>
 
       {/* ===== BOTTOM-LEFT ICONS ===== */}
-      <div className="absolute bottom-8 left-[6%] z-20 flex items-center gap-3">
+      <div className="absolute bottom-4 left-[6%] z-20 flex items-center gap-3">
         {/* Settings */}
         <motion.button
           onClick={() => { playButtonClick(); showToast("Coming Soon"); }}

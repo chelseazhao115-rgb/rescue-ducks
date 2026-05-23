@@ -6,8 +6,8 @@ export const CottageAndLighthouse: React.FC = () => {
       <img
         src="/home.png"
         alt="Cottage and Lighthouse"
-        width={1120}
-        height={1120}
+        width={900}
+        height={900}
         className="object-contain"
         style={{ imageRendering: "auto" }}
       />

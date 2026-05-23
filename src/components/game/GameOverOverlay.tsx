@@ -57,26 +57,24 @@ export const GameOverOverlay: React.FC = () => {
 
       <motion.div
         className="flex flex-col items-center w-full"
-        style={{ maxWidth: "680px" }}
+        style={{ maxWidth: "calc(780px * var(--vscale, 1))" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
       >
         <motion.h2
           className="font-extrabold mb-2 tracking-tight text-center text-white/90"
-          style={{ fontSize: "48px" }}
+          style={{ fontSize: "calc(48px * var(--vscale, 1))", whiteSpace: "nowrap" }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Storm Overwhelmed
-          <br />
-          the Lighthouse
+          Storm Overwhelmed the Lighthouse
         </motion.h2>
 
         <motion.p
           className="mb-10 text-center text-white/70"
-          style={{ fontSize: "24px", maxWidth: "480px" }}
+          style={{ fontSize: "calc(32px * var(--vscale, 1))" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
@@ -87,8 +85,9 @@ export const GameOverOverlay: React.FC = () => {
         <StarRating stars={starResult.stars} animate />
 
         <motion.div
-          className="w-full mt-12 p-8 rounded-3xl"
+          className="w-full mt-12 rounded-3xl"
           style={{
+            padding: "calc(32px * var(--vscale, 1))",
             background: "rgba(255,255,255,0.06)",
             border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
@@ -97,7 +96,7 @@ export const GameOverOverlay: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <div className="grid grid-cols-2 gap-x-12 gap-y-4" style={{ fontSize: "28px" }}>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-4" style={{ fontSize: "calc(28px * var(--vscale, 1))" }}>
             <span className="text-right text-white/70">Score</span>
             <span className="text-white font-semibold">{score.toLocaleString()}</span>
             <span className="text-right text-white/70">Groups</span>
@@ -117,8 +116,8 @@ export const GameOverOverlay: React.FC = () => {
             onClick={() => { resetGame(); router.push("/game"); }}
             className="w-full font-bold tracking-wide"
             style={{
-              fontSize: "28px",
-              padding: "28px 56px",
+              fontSize: "calc(28px * var(--vscale, 1))",
+              padding: "calc(28px * var(--vscale, 1)) calc(56px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "linear-gradient(180deg, #ffe8af, #f0c860)",
               color: "#5a4a28",
@@ -135,8 +134,8 @@ export const GameOverOverlay: React.FC = () => {
             onClick={() => { resetGame(); router.push("/"); }}
             className="w-full font-semibold text-white/70"
             style={{
-              fontSize: "28px",
-              padding: "24px 56px",
+              fontSize: "calc(28px * var(--vscale, 1))",
+              padding: "calc(24px * var(--vscale, 1)) calc(56px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.1)",

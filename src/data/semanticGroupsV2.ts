@@ -963,7 +963,13 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 3
       },
       {
-        "text": "nonetheless, nevertheless",
+        "text": "nonetheless",
+        "wordDifficulty": 5,
+        "frequency": 4,
+        "visualWeight": 5
+      },
+      {
+        "text": "nevertheless",
         "wordDifficulty": 5,
         "frequency": 4,
         "visualWeight": 5
@@ -975,10 +981,16 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 3
       },
       {
-        "text": "notwithstanding, though",
+        "text": "notwithstanding",
         "wordDifficulty": 5,
         "frequency": 4,
         "visualWeight": 5
+      },
+      {
+        "text": "though",
+        "wordDifficulty": 1,
+        "frequency": 5,
+        "visualWeight": 3
       },
       {
         "text": "instead",
@@ -10825,10 +10837,16 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "rank;measure",
-        "wordDifficulty": 4,
-        "frequency": 3,
-        "visualWeight": 5
+        "text": "rank",
+        "wordDifficulty": 2,
+        "frequency": 4,
+        "visualWeight": 4
+      },
+      {
+        "text": "measure",
+        "wordDifficulty": 2,
+        "frequency": 4,
+        "visualWeight": 3
       }
     ]
   },

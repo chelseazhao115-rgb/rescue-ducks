@@ -17,8 +17,8 @@ export const DuckCharacter: React.FC = () => {
       <motion.div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
         style={{
-          width: "75px",
-          height: "12px",
+          width: "58px",
+          height: "10px",
           background: "rgba(0,0,0,0.15)",
           filter: "blur(6px)",
         }}
@@ -29,8 +29,8 @@ export const DuckCharacter: React.FC = () => {
       <img
         src="/duck_2d_pure.png"
         alt="Duck"
-        width={360}
-        height={360}
+        width={280}
+        height={280}
         className="object-contain drop-shadow-lg"
         style={{ imageRendering: "auto" }}
       />
@@ -42,10 +42,10 @@ export const DuckCharacter: React.FC = () => {
           background:
             "radial-gradient(circle, rgba(255,245,220,0.15) 0%, transparent 70%)",
           filter: "blur(12px)",
-          top: "15px",
-          left: "8px",
-          width: "90px",
-          height: "75px",
+          top: "12px",
+          left: "6px",
+          width: "70px",
+          height: "58px",
         }}
         animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.04, 1] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}

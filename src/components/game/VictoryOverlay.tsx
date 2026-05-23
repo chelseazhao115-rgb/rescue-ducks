@@ -74,7 +74,7 @@ export const VictoryOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12"
+      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12 overflow-y-auto"
       style={{
         background:
           "radial-gradient(circle at center, rgba(255,235,180,0.15), rgba(20,26,40,0.92))",
@@ -117,15 +117,15 @@ export const VictoryOverlay: React.FC = () => {
 
       <motion.div
         className="flex flex-col items-center w-full"
-        style={{ maxWidth: "680px" }}
+        style={{ maxWidth: "calc(680px * var(--vscale, 1))" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.15, duration: 0.5 }}
       >
         <motion.h2
-          className="font-extrabold mb-2 tracking-tight"
+          className="font-extrabold mb-1 tracking-tight"
           style={{
-            fontSize: "60px",
+            fontSize: "calc(52px * var(--vscale, 1))",
             color: "#ffd97a",
             textShadow: "0 0 48px rgba(255,217,122,0.35)",
           }}
@@ -138,7 +138,7 @@ export const VictoryOverlay: React.FC = () => {
 
         <motion.p
           className="mb-2 font-medium tracking-wide text-white/80"
-          style={{ fontSize: "24px" }}
+          style={{ fontSize: "calc(25px * var(--vscale, 1))" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -147,8 +147,8 @@ export const VictoryOverlay: React.FC = () => {
         </motion.p>
 
         <motion.p
-          className="mb-10 text-center text-white/70"
-          style={{ fontSize: "24px", maxWidth: "480px" }}
+          className="mb-3 text-center text-white/70"
+          style={{ fontSize: "calc(23px * var(--vscale, 1))", maxWidth: "calc(480px * var(--vscale, 1))" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
@@ -159,8 +159,9 @@ export const VictoryOverlay: React.FC = () => {
         <StarRating stars={starResult.stars} animate />
 
         <motion.div
-          className="w-full mt-12 p-8 rounded-3xl"
+          className="w-full mt-6 rounded-3xl"
           style={{
+            padding: "calc(24px * var(--vscale, 1))",
             background: "rgba(255,255,255,0.06)",
             border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(12px)",
@@ -169,7 +170,7 @@ export const VictoryOverlay: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="grid grid-cols-2 gap-x-12 gap-y-4" style={{ fontSize: "28px" }}>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-2" style={{ fontSize: "calc(24px * var(--vscale, 1))" }}>
             <span className="text-right text-white/70">Score</span>
             <span className="text-white font-semibold">{score.toLocaleString()}</span>
             <span className="text-right text-white/70">Groups</span>
@@ -180,8 +181,8 @@ export const VictoryOverlay: React.FC = () => {
             <span className="text-white">{ducksRescued}/{totalGroups}</span>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/15">
-            <div className="flex justify-between mb-2 text-white/70" style={{ fontSize: "20px" }}>
+          <div className="mt-4 pt-4 border-t border-white/15">
+            <div className="flex justify-between mb-2 text-white/70" style={{ fontSize: "calc(21px * var(--vscale, 1))" }}>
               <span>Semantic Mastery</span>
               <span>{semanticProgress.groupsEncountered}/{semanticProgress.totalGroupsInCurriculum} groups</span>
             </div>
@@ -193,7 +194,7 @@ export const VictoryOverlay: React.FC = () => {
                 transition={{ duration: 0.8 }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-white/60" style={{ fontSize: "18px" }}>
+            <div className="flex justify-between mt-2 text-white/60" style={{ fontSize: "calc(21px * var(--vscale, 1))" }}>
               <span>Mastered: {semanticProgress.groupsMastered}</span>
               <span>Stage {currentStage}: {Math.round(semanticProgress.stageProgress * 100)}%</span>
             </div>
@@ -201,7 +202,7 @@ export const VictoryOverlay: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="flex flex-col gap-5 mt-12 w-full"
+          className="flex flex-col gap-3 mt-6 w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -211,8 +212,8 @@ export const VictoryOverlay: React.FC = () => {
               onClick={handleNextLevel}
               className="w-full font-bold tracking-wide"
               style={{
-                fontSize: "28px",
-                padding: "28px 56px",
+                fontSize: "calc(24px * var(--vscale, 1))",
+                padding: "calc(20px * var(--vscale, 1)) calc(48px * var(--vscale, 1))",
                 borderRadius: "999px",
                 background: "linear-gradient(180deg, #ffe8af, #f0c860)",
                 color: "#5a4a28",
@@ -230,8 +231,8 @@ export const VictoryOverlay: React.FC = () => {
             onClick={handleReplay}
             className="w-full font-semibold tracking-wide text-white/90"
             style={{
-              fontSize: "28px",
-              padding: "24px 56px",
+              fontSize: "calc(24px * var(--vscale, 1))",
+              padding: "calc(20px * var(--vscale, 1)) calc(48px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "rgba(255,217,122,0.1)",
               border: "1px solid rgba(255,217,122,0.2)",
@@ -246,8 +247,8 @@ export const VictoryOverlay: React.FC = () => {
             onClick={handleBackToMap}
             className="w-full font-semibold text-white/70"
             style={{
-              fontSize: "28px",
-              padding: "24px 56px",
+              fontSize: "calc(24px * var(--vscale, 1))",
+              padding: "calc(20px * var(--vscale, 1)) calc(48px * var(--vscale, 1))",
               borderRadius: "999px",
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.1)",

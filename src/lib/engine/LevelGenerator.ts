@@ -463,48 +463,66 @@ export function generateLevel(
 
   // ── Select groups for this play ─────────────────────────────
   // Core groups are ALWAYS included (fixed curriculum)
-  // Variation: pick a random subset from the variation pool
+  // Variation: pick from pool, but avoid word overlap across groups
   const varCount = chapter.groupsPerLevel - assignment.coreGroupIds.length;
   const availableVars = assignment.variationPoolIds.filter((id) => !isRecent(id));
-  const selectedVars = shuffle([...availableVars]).slice(0, Math.max(0, varCount));
 
-  const allSelectedIds = [...assignment.coreGroupIds, ...selectedVars];
-  markAsUsed(allSelectedIds);
+  // Build priority-ordered pool: core first, then shuffled variations
+  const neededCount = chapter.groupsPerLevel;
+  const coreIds = [...assignment.coreGroupIds];
+  const varPool = shuffle([...availableVars]).filter((id) => !coreIds.includes(id));
+  const priorityIds = [...coreIds, ...varPool];
 
-  // ── Build RuntimeGroupConfigs ───────────────────────────────
+  // ── Build RuntimeGroupConfigs (with cross-group word dedup) ──
   const groupLookup = new Map(semanticGroupsV2.map((g) => [g.id, g]));
 
-  // Progress within stage determines chain length
   const progressInStage = (levelInStage - 1) / Math.max(1, getLevelsInStage(stageId) - 1);
   const [chainMin, chainMax] = chapter.chainWords;
   const wordsPerGroup = Math.round(chainMin + (chainMax - chainMin) * progressInStage);
 
-  const groups: RuntimeGroupConfig[] = allSelectedIds
-    .map((gid) => groupLookup.get(gid))
-    .filter((g): g is SemanticGroupV2 => g !== undefined)
-    .map((sg) => {
-      // Select words: always include keyword, then pick replacements
-      const keyword = sg.words[0];
-      const restPool = shuffle([...sg.words.slice(1)]);
-      const picked = restPool.slice(0, Math.min(wordsPerGroup - 1, restPool.length));
-      const levelWords = [keyword, ...picked];
+  const groups: RuntimeGroupConfig[] = [];
+  const usedWordTexts = new Set<string>();
+  const usedGroupIds = new Set<string>();
 
-      const runtimeWords: RuntimeWordConfig[] = levelWords.map((w) => ({
-        text: w.text,
-        meaning: sg.keywordsChinese,
-        groupId: sg.id,
-        visualWeight: w.visualWeight,
-        wordDifficulty: w.wordDifficulty,
-      }));
+  for (const gid of priorityIds) {
+    if (groups.length >= neededCount) break;
+    if (usedGroupIds.has(gid)) continue;
 
-      return {
-        groupId: sg.id,
-        category: sg.category,
-        atmosphere: sg.atmosphere,
-        difficulty: sg.difficulty,
-        words: runtimeWords,
-      };
+    const sg = groupLookup.get(gid);
+    if (!sg) continue;
+
+    // Select words for this group
+    const keyword = sg.words[0];
+    const restPool = shuffle([...sg.words.slice(1)]);
+    const picked = restPool.slice(0, Math.min(wordsPerGroup - 1, restPool.length));
+    const levelWords = [keyword, ...picked];
+
+    // Check cross-group word overlap — skip if any word already used
+    const newTexts = levelWords.map((w) => w.text.toLowerCase());
+    if (newTexts.some((t) => usedWordTexts.has(t))) continue;
+
+    // Accept this group
+    for (const t of newTexts) usedWordTexts.add(t);
+    usedGroupIds.add(gid);
+
+    const runtimeWords: RuntimeWordConfig[] = levelWords.map((w) => ({
+      text: w.text,
+      meaning: sg.keywordsChinese,
+      groupId: sg.id,
+      visualWeight: w.visualWeight,
+      wordDifficulty: w.wordDifficulty,
+    }));
+
+    groups.push({
+      groupId: sg.id,
+      category: sg.category,
+      atmosphere: sg.atmosphere,
+      difficulty: sg.difficulty,
+      words: runtimeWords,
     });
+  }
+
+  markAsUsed([...usedGroupIds]);
 
   // ── Calculate timing ────────────────────────────────────────
   const totalWords = groups.reduce((sum, g) => sum + g.words.length, 0);

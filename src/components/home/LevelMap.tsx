@@ -43,7 +43,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const completedLevels = Math.max(0, highestUnlocked - 1);
 
   return (
-    <div className="flex flex-col items-center gap-6 px-6">
+    <div className="flex flex-col items-center gap-3 px-4">
       {/* Stage tabs */}
       <div
         className="flex gap-1.5 rounded-full p-1.5 backdrop-blur-sm"
@@ -58,7 +58,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
               disabled={!isUnlocked}
               className="px-4 py-2 rounded-full font-medium transition-colors"
               style={{
-                fontSize: "22px",
+                fontSize: "calc(22px * var(--vscale, 1))",
                 background:
                   i === activeStageIdx
                     ? "rgba(255,217,122,0.25)"
@@ -78,7 +78,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
       </div>
 
       {/* Stage subtitle */}
-      <p className="text-center" style={{ fontSize: "22px", color: "rgba(255,255,255,0.7)" }}>
+      <p className="text-center" style={{ fontSize: "calc(22px * var(--vscale, 1))", color: "rgba(255,255,255,0.7)" }}>
         {currentStageRange.subtitle} — {currentStageRange.description}
       </p>
 
@@ -89,7 +89,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
             key={ch.id}
             className="px-3 py-0.5 rounded"
             style={{
-              fontSize: "18px",
+              fontSize: "calc(18px * var(--vscale, 1))",
               color: "rgba(255,255,255,0.6)",
               background: "rgba(255,255,255,0.08)",
             }}
@@ -102,7 +102,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
       {/* Level grid */}
       <div
         className="grid grid-cols-4 gap-3 w-full"
-        style={{ maxWidth: "480px" }}
+        style={{ maxWidth: "calc(480px * var(--vscale, 1))" }}
       >
         <AnimatePresence mode="wait">
           {Array.from({ length: levelsInStage }, (_, i) => {
@@ -164,7 +164,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
                 <span
                   className="font-bold"
                   style={{
-                    fontSize: "27px",
+                    fontSize: "calc(27px * var(--vscale, 1))",
                     color: unlocked
                       ? "rgba(255,255,255,0.9)"
                       : "rgba(255,255,255,0.3)",
@@ -175,12 +175,12 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
                 {unlocked && chapterName ? (
                   <span
                     className="text-center truncate max-w-full px-1"
-                    style={{ fontSize: "16px", color: "rgba(255,255,255,0.6)" }}
+                    style={{ fontSize: "calc(16px * var(--vscale, 1))", color: "rgba(255,255,255,0.6)" }}
                   >
                     {chapterName}
                   </span>
                 ) : !unlocked ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: "rgba(255,255,255,0.15)" }}>
+                  <svg width="calc(18px * var(--vscale, 1))" height="calc(18px * var(--vscale, 1))" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: "rgba(255,255,255,0.15)" }}>
                     <rect x="3" y="11" width="18" height="11" rx="2" />
                     <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="1.5" />
                   </svg>
@@ -200,8 +200,8 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full" style={{ maxWidth: "480px" }}>
-        <div className="flex justify-between mb-1.5" style={{ fontSize: "21px", color: "rgba(255,255,255,0.7)" }}>
+      <div className="w-full" style={{ maxWidth: "calc(480px * var(--vscale, 1))" }}>
+        <div className="flex justify-between mb-1.5" style={{ fontSize: "calc(21px * var(--vscale, 1))", color: "rgba(255,255,255,0.7)" }}>
           <span>Journey Progress</span>
           <span>{completedLevels}/{TOTAL_LEVELS}</span>
         </div>
