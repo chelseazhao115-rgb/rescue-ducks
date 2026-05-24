@@ -145,7 +145,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       4
     ],
     "keyword": "comprehend",
-    "keywordsChinese": "v.理解",
+    "keywordsChinese": "v.理解,弄明白",
     "words": [
       {
         "text": "comprehend",
@@ -164,6 +164,12 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 2
+      },
+      {
+        "text": "figure out",
+        "wordDifficulty": 4,
+        "frequency": 4,
+        "visualWeight": 4
       }
     ]
   },
@@ -1890,11 +1896,11 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
     ],
     "resurfacingWeight": 4,
     "recommendedChainRange": [
-      3,
-      4
+      2,
+      2
     ],
     "keyword": "impair",
-    "keywordsChinese": "v.削弱,减少",
+    "keywordsChinese": "v.损害,削弱",
     "words": [
       {
         "text": "impair",
@@ -1905,18 +1911,6 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       {
         "text": "damage",
         "wordDifficulty": 1,
-        "frequency": 2,
-        "visualWeight": 3
-      },
-      {
-        "text": "diminish",
-        "wordDifficulty": 2,
-        "frequency": 2,
-        "visualWeight": 4
-      },
-      {
-        "text": "decrease",
-        "wordDifficulty": 2,
         "frequency": 2,
         "visualWeight": 3
       }
@@ -3001,10 +2995,10 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
     "resurfacingWeight": 5,
     "recommendedChainRange": [
       2,
-      3
+      2
     ],
     "keyword": "settle",
-    "keywordsChinese": "v.解决;定居,稳定",
+    "keywordsChinese": "v.解决,确定",
     "words": [
       {
         "text": "settle",
@@ -3017,12 +3011,6 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "wordDifficulty": 1,
         "frequency": 5,
         "visualWeight": 3
-      },
-      {
-        "text": "figure out",
-        "wordDifficulty": 4,
-        "frequency": 4,
-        "visualWeight": 4
       }
     ]
   },
@@ -4384,11 +4372,11 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       2,
       3
     ],
-    "keyword": "vanishi",
+    "keyword": "vanish",
     "keywordsChinese": "n.消失,绝迹",
     "words": [
       {
-        "text": "vanishi",
+        "text": "vanish",
         "wordDifficulty": 2,
         "frequency": 4,
         "visualWeight": 4
@@ -5397,11 +5385,11 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       2,
       3
     ],
-    "keyword": "certifv",
+    "keyword": "certify",
     "keywordsChinese": "v.证明,保证",
     "words": [
       {
-        "text": "certifv",
+        "text": "certify",
         "wordDifficulty": 2,
         "frequency": 4,
         "visualWeight": 4
@@ -7400,11 +7388,11 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       2,
       4
     ],
-    "keyword": "exceptiona",
+    "keyword": "exceptional",
     "keywordsChinese": "ad.异常的,特别出⾊的",
     "words": [
       {
-        "text": "exceptiona",
+        "text": "exceptional",
         "wordDifficulty": 3,
         "frequency": 4,
         "visualWeight": 4
@@ -8187,7 +8175,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "hard",
+        "text": "unsuitable",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3
@@ -8402,7 +8390,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 5
       },
       {
-        "text": "interdependence",
+        "text": "intervention",
         "wordDifficulty": 4,
         "frequency": 4,
         "visualWeight": 5
@@ -8464,7 +8452,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 5
       },
       {
-        "text": "stopi",
+        "text": "stop",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3
@@ -8951,11 +8939,11 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
       2,
       3
     ],
-    "keyword": "mange to do",
+    "keyword": "manage to do",
     "keywordsChinese": "设法完成某事",
     "words": [
       {
-        "text": "mange to do",
+        "text": "manage to do",
         "wordDifficulty": 4,
         "frequency": 3,
         "visualWeight": 4
@@ -9177,7 +9165,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "liguid metal",
+        "text": "liquid metal",
         "wordDifficulty": 5,
         "frequency": 4,
         "visualWeight": 5
@@ -9639,7 +9627,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "strangel",
+        "text": "strange",
         "wordDifficulty": 2,
         "frequency": 2,
         "visualWeight": 4
@@ -10039,7 +10027,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "repetitive",
+        "text": "tolerant",
         "wordDifficulty": 3,
         "frequency": 2,
         "visualWeight": 4
@@ -10253,7 +10241,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "copyi",
+        "text": "copy",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3
@@ -10284,7 +10272,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "manyi",
+        "text": "many",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3
@@ -10940,6 +10928,12 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "wordDifficulty": 2,
         "frequency": 2,
         "visualWeight": 4
+      },
+      {
+        "text": "diminish",
+        "wordDifficulty": 2,
+        "frequency": 2,
+        "visualWeight": 4
       }
     ]
   },
@@ -11551,7 +11545,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "progressi",
+        "text": "progress",
         "wordDifficulty": 2,
         "frequency": 3,
         "visualWeight": 4

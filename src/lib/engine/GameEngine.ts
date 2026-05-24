@@ -224,7 +224,7 @@ export class GameEngine {
         }
         return;
       } else {
-        // Wrong match
+        // Wrong match — break chain and reset all chained orbs
         playWrongSound();
 
         const newStorm = applyWrongPenalty(state.stormMeter, {
@@ -234,9 +234,13 @@ export class GameEngine {
           stormReductionOnCorrect: state.levelConfig!.stormReductionOnCorrect,
         });
 
-        const updatedOrbs = state.orbs.map((o) =>
-          o.orbId === orbId ? { ...o, status: "wrong" as const } : o
-        );
+        const brokenChainOrbIds = new Set(state.activeChain.orbIds);
+
+        const updatedOrbs = state.orbs.map((o) => {
+          if (o.orbId === orbId) return { ...o, status: "wrong" as const };
+          if (brokenChainOrbIds.has(o.orbId)) return { ...o, status: "idle" as const };
+          return o;
+        });
 
         this.tipContext = "chain_broken";
         this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
@@ -414,7 +418,12 @@ export class GameEngine {
     });
 
     let chain = state.activeChain;
+    let resetOrbsOnTimeout: typeof state.orbs | null = null;
     if (chain && shouldBreakChain(state, config.comboTimeoutMs, now)) {
+      const chainOrbIds = new Set(chain.orbIds);
+      resetOrbsOnTimeout = state.orbs.map((o) =>
+        chainOrbIds.has(o.orbId) ? { ...o, status: "idle" as const } : o
+      );
       chain = null;
     }
 
@@ -450,6 +459,7 @@ export class GameEngine {
     this.setState({
       stormMeter: newStorm,
       activeChain: chain,
+      orbs: resetOrbsOnTimeout ?? state.orbs,
       energyParticles: activeParticles,
       elapsedMs: newElapsed,
       remainingMs: newRemaining,

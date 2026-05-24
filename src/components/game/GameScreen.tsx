@@ -20,6 +20,14 @@ import { PauseOverlay } from "./PauseOverlay";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { VictoryOverlay } from "./VictoryOverlay";
 
+function resolveGlobalLevel(): number {
+  if (typeof window === "undefined") return 1;
+  const selected = localStorage.getItem("rescueDuckSelectedLevel");
+  if (selected) return parseInt(selected, 10);
+  const saved = localStorage.getItem("rescueDuckGlobalLevel");
+  return saved ? parseInt(saved, 10) : 1;
+}
+
 export const GameScreen: React.FC = () => {
   const phase = useGameStore((s) => s.phase);
   const stormMeter = useGameStore((s) => s.stormMeter);
@@ -45,10 +53,7 @@ export const GameScreen: React.FC = () => {
   // Start game after intro is done and phase is menu
   useEffect(() => {
     if (introDone && phase === "menu") {
-      const saved = typeof window !== "undefined"
-        ? localStorage.getItem("rescueDuckGlobalLevel")
-        : null;
-      const globalLevel = saved ? parseInt(saved, 10) : 1;
+      const globalLevel = resolveGlobalLevel();
       const { stageId, levelInStage } = getStageAndLevel(globalLevel);
       startGame(stageId, levelInStage);
     }

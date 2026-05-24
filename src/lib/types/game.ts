@@ -51,7 +51,7 @@ export interface DuckState {
 }
 
 export interface StarResult {
-  stars: 1 | 2 | 3;
+  stars: 0 | 1 | 2 | 3;
   criteria: {
     lighthouseLit: boolean;
     maxComboReached: number;

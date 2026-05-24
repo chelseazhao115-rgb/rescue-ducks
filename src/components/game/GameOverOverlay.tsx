@@ -131,7 +131,7 @@ export const GameOverOverlay: React.FC = () => {
           </motion.button>
 
           <motion.button
-            onClick={() => { resetGame(); router.push("/"); }}
+            onClick={() => { localStorage.removeItem("rescueDuckSelectedLevel"); resetGame(); router.push("/"); }}
             className="w-full font-semibold text-white/70"
             style={{
               fontSize: "calc(28px * var(--vscale, 1))",

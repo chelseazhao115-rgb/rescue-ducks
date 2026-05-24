@@ -42,21 +42,28 @@ export const VictoryOverlay: React.FC = () => {
   const semanticProgress = getSemanticProgress(getGlobalLevel());
 
   const handleNextLevel = () => {
-    let globalLevel = 0;
+    let nextGlobalLevel = 0;
     for (const s of CURRICULUM) {
       const count = getLevelsInStage(s.id);
       if (s.id < currentStage) {
-        globalLevel += count;
+        nextGlobalLevel += count;
       } else if (s.id === currentStage) {
-        globalLevel += hasNextLevelInStage ? currentLevelInStage + 1 : currentLevelInStage;
+        nextGlobalLevel += hasNextLevelInStage ? currentLevelInStage + 1 : currentLevelInStage;
         break;
       }
     }
     if (!hasNextLevelInStage && hasNextStage) {
-      globalLevel += 1;
+      nextGlobalLevel += 1;
     }
 
-    localStorage.setItem("rescueDuckGlobalLevel", String(globalLevel));
+    const savedLevel = getGlobalLevel();
+    if (nextGlobalLevel > savedLevel) {
+      localStorage.setItem("rescueDuckGlobalLevel", String(nextGlobalLevel));
+      localStorage.removeItem("rescueDuckSelectedLevel");
+    } else {
+      localStorage.setItem("rescueDuckSelectedLevel", String(nextGlobalLevel));
+    }
+
     resetGame();
     router.push("/game");
   };
@@ -67,6 +74,7 @@ export const VictoryOverlay: React.FC = () => {
   };
 
   const handleBackToMap = () => {
+    localStorage.removeItem("rescueDuckSelectedLevel");
     resetAntiRepetition();
     resetGame();
     router.push("/");

@@ -48,12 +48,15 @@ export const useGameStore = create<GameState & GameActions>()(
       ...initialState,
 
       startGame: (stageId: number, levelInStage: number) => {
-        if (!engine) {
-          engine = new GameEngine(
-            () => get(),
-            (partial) => set(partial as any)
-          );
+        if (engine) {
+          engine.destroy();
+          engine = null;
         }
+        set({ ...initialState, phase: "menu" });
+        engine = new GameEngine(
+          () => get(),
+          (partial) => set(partial as any)
+        );
         engine.start(stageId, levelInStage);
       },
 

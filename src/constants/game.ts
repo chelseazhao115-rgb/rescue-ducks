@@ -16,10 +16,6 @@ export const ENERGY_PARTICLE_DURATION_MS = 800;
 export const ENERGY_PARTICLES_PER_GROUP = 8;
 export const CHELSEA_TIP_DISPLAY_MS = 3500;
 export const TAP_TARGET_MIN_PX = 44;
-export const STAR_1_THRESHOLD = 0;
-export const STAR_2_THRESHOLD = 40;
-export const STAR_3_THRESHOLD = 70;
-
 export const SCORE_PER_CORRECT_MATCH = 10;
 export const SCORE_PER_GROUP_COMPLETE = 50;
 export const SCORE_PER_COMBO_STEP = 5;

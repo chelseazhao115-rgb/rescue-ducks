@@ -82,7 +82,13 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const isSelected = status === "selected" || status === "chained";
   const styles = STATUS_STYLES[status];
 
-  const orbSize = "calc(150px * var(--vscale, 1))";
+  const chars = word.length;
+  const orbSizePx = chars <= 7 ? 150 : Math.min(280, 150 + (chars - 7) * 11);
+  const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
+  const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
+  const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
+  const highlightW = `calc(${orbSizePx * 0.6}px * var(--vscale, 1))`;
+  const highlightH = `calc(${orbSizePx * 0.35}px * var(--vscale, 1))`;
 
   return (
     <motion.button
@@ -129,8 +135,8 @@ export const WordOrb: React.FC<WordOrbProps> = ({
         <motion.div
           className="absolute rounded-full"
           style={{
-            width: "calc(166px * var(--vscale, 1))",
-            height: "calc(166px * var(--vscale, 1))",
+            width: glowRingSize,
+            height: glowRingSize,
             border: `1.5px solid ${styles.glowColor}`,
           }}
           initial={{ scale: 1, opacity: 0.3 }}
@@ -144,8 +150,8 @@ export const WordOrb: React.FC<WordOrbProps> = ({
         <motion.div
           className="absolute rounded-full"
           style={{
-            width: "calc(158px * var(--vscale, 1))",
-            height: "calc(158px * var(--vscale, 1))",
+            width: glowRing2Size,
+            height: glowRing2Size,
             border: `1px solid ${styles.glowColor}`,
           }}
           initial={{ scale: 1, opacity: 0.2 }}
@@ -171,8 +177,8 @@ export const WordOrb: React.FC<WordOrbProps> = ({
         <div
           className="absolute rounded-full"
           style={{
-            width: "calc(90px * var(--vscale, 1))",
-            height: "calc(52.5px * var(--vscale, 1))",
+            width: highlightW,
+            height: highlightH,
             top: "12%",
             left: "15%",
             background:
@@ -184,13 +190,11 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 
         {/* Word text */}
         <span
-          className="relative font-semibold text-center px-2 leading-tight"
+          className="relative font-semibold text-center px-3 leading-tight whitespace-nowrap"
           style={{
             fontSize: "calc(28px * var(--vscale, 1))",
             color: styles.textColor,
             textShadow: `0 0 12px ${styles.glowColor}`,
-            wordBreak: "break-word",
-            maxWidth: "calc(126px * var(--vscale, 1))",
           }}
         >
           {word}

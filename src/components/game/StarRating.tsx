@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 export interface StarRatingProps {
-  stars: 1 | 2 | 3;
+  stars: 0 | 1 | 2 | 3;
   animate: boolean;
 }
 

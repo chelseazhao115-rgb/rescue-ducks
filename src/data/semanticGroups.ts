@@ -51,13 +51,14 @@ export const semanticGroups: SemanticGroup[] = [
       "difficulty": 2,
       "semanticClarity": 5,
       "theme": "general_vocabulary",
-      "chainLengthRecommendation": "2-chain",
+      "chainLengthRecommendation": "4-chain",
       "keyword": "comprehend",
-      "keywordsChinese": "v.理解",
+      "keywordsChinese": "v.理解,弄明白",
       "words": [
           "comprehend",
           "understand",
-          "know"
+          "know",
+          "figure out"
       ]
   },
   {
@@ -704,14 +705,12 @@ export const semanticGroups: SemanticGroup[] = [
       "difficulty": 2,
       "semanticClarity": 3,
       "theme": "nature_environment",
-      "chainLengthRecommendation": "3-chain",
+      "chainLengthRecommendation": "2-chain",
       "keyword": "impair",
-      "keywordsChinese": "v.削弱,减少",
+      "keywordsChinese": "v.损害,削弱",
       "words": [
           "impair",
-          "damage",
-          "diminish",
-          "decrease"
+          "damage"
       ]
   },
   {
@@ -1173,13 +1172,12 @@ export const semanticGroups: SemanticGroup[] = [
       "difficulty": 2,
       "semanticClarity": 3,
       "theme": "general_vocabulary",
-      "chainLengthRecommendation": "3-chain",
+      "chainLengthRecommendation": "2-chain",
       "keyword": "settle",
-      "keywordsChinese": "v.解决;定居,稳定",
+      "keywordsChinese": "v.解决,确定",
       "words": [
           "settle",
-          "fix",
-          "figure out"
+          "fix"
       ]
   },
   {
@@ -1750,10 +1748,10 @@ export const semanticGroups: SemanticGroup[] = [
       "semanticClarity": 5,
       "theme": "general_vocabulary",
       "chainLengthRecommendation": "2-chain",
-      "keyword": "vanishi",
+      "keyword": "vanish",
       "keywordsChinese": "n.消失,绝迹",
       "words": [
-          "vanishi",
+          "vanish",
           "disappear"
       ]
   },
@@ -2203,10 +2201,10 @@ export const semanticGroups: SemanticGroup[] = [
       "semanticClarity": 5,
       "theme": "general_vocabulary",
       "chainLengthRecommendation": "2-chain",
-      "keyword": "certifv",
+      "keyword": "certify",
       "keywordsChinese": "v.证明,保证",
       "words": [
-          "certifv",
+          "certify",
           "verify"
       ]
   },
@@ -3113,10 +3111,10 @@ export const semanticGroups: SemanticGroup[] = [
       "semanticClarity": 5,
       "theme": "general_vocabulary",
       "chainLengthRecommendation": "2-chain",
-      "keyword": "exceptiona",
+      "keyword": "exceptional",
       "keywordsChinese": "ad.异常的,特别出⾊的",
       "words": [
-          "exceptiona",
+          "exceptional",
           "extreme",
           "utmost"
       ]
@@ -3468,7 +3466,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "ad.不适当的",
       "words": [
           "inappropriate",
-          "hard"
+          "unsuitable"
       ]
   },
   {
@@ -3566,7 +3564,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "n.⼲涉",
       "words": [
           "interference",
-          "interdependence"
+          "intervention"
       ]
   },
   {
@@ -3594,7 +3592,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "v.中断",
       "words": [
           "interrupt",
-          "stopi"
+          "stop"
       ]
   },
   {
@@ -3815,10 +3813,10 @@ export const semanticGroups: SemanticGroup[] = [
       "semanticClarity": 5,
       "theme": "general_vocabulary",
       "chainLengthRecommendation": "2-chain",
-      "keyword": "mange to do",
+      "keyword": "manage to do",
       "keywordsChinese": "设法完成某事",
       "words": [
-          "mange to do",
+          "manage to do",
           "success"
       ]
   },
@@ -3917,7 +3915,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "n.汞,⽔银",
       "words": [
           "mercury",
-          "liguid metal"
+          "liquid metal"
       ]
   },
   {
@@ -4127,7 +4125,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "adj.古怪的",
       "words": [
           "odd",
-          "strangel"
+          "strange"
       ]
   },
   {
@@ -4309,7 +4307,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "能容忍的 n.病⼈; 患者",
       "words": [
           "patient",
-          "repetitive"
+          "tolerant"
       ]
   },
   {
@@ -4407,7 +4405,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "v.抄袭",
       "words": [
           "plagiarise",
-          "copyi"
+          "copy"
       ]
   },
   {
@@ -4421,7 +4419,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "⼤量的",
       "words": [
           "plenty of",
-          "manyi"
+          "many"
       ]
   },
   {
@@ -4715,7 +4713,8 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "n.下降,减少",
       "words": [
           "reduction",
-          "decrease"
+          "decrease",
+          "diminish"
       ]
   },
   {
@@ -4995,7 +4994,7 @@ export const semanticGroups: SemanticGroup[] = [
       "keywordsChinese": "n.进展",
       "words": [
           "stride",
-          "progressi"
+          "progress"
       ]
   },
   {

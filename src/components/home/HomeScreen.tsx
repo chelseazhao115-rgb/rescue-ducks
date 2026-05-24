@@ -23,17 +23,10 @@ export const HomeScreen: React.FC = () => {
     return () => { stopAllAmbience(); };
   }, []);
 
-  const getCurrentLevel = (): number => {
-    if (typeof window === "undefined") return 1;
-    const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    return saved ? parseInt(saved, 10) : 1;
-  };
-
   const handleStartJourney = () => {
     unlockAudio();
     setIsTransitioning(true);
-    const level = getCurrentLevel();
-    localStorage.setItem("rescueDuckGlobalLevel", String(level));
+    localStorage.removeItem("rescueDuckSelectedLevel");
     setTimeout(() => {
       router.push("/game");
     }, 1500);

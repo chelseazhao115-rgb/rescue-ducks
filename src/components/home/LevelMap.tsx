@@ -35,7 +35,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const levelsInStage = currentStageRange.levelsCount;
 
   const handleLevelClick = (globalLevel: number) => {
-    localStorage.setItem("rescueDuckGlobalLevel", String(globalLevel));
+    localStorage.setItem("rescueDuckSelectedLevel", String(globalLevel));
     onSelectLevel(globalLevel);
     router.push("/game");
   };
