@@ -10,53 +10,71 @@ export const ChelseaNPC: React.FC = () => {
   return (
     <div
       className="absolute z-20 pointer-events-none"
-      style={{ left: "10%", bottom: "2%" }}
+      style={{ left: "4%", bottom: "3%" }}
     >
       <AnimatePresence>
         {tipVisible && tipText && (
           <motion.div
-            className="relative"
-            style={{
-              width: "calc(480px * var(--vscale, 1))",
-              height: "calc(256px * var(--vscale, 1))",
-              backgroundImage: "url(/Chelsea1.png)",
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
+            className="flex items-end gap-3"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.35 }}
           >
-            {/* Text inside dialog area */}
+            {/* 头像 */}
             <div
-              className="absolute"
+              className="rounded-full overflow-hidden flex-shrink-0 border-2"
               style={{
-                left: "calc(168px * var(--vscale, 1))",
-                top: "44%",
-                transform: "translateY(-50%)",
-                width: "calc(300px * var(--vscale, 1))",
+                width: "calc(88px * var(--vscale, 1))",
+                height: "calc(88px * var(--vscale, 1))",
+                borderColor: "rgba(255,255,255,0.25)",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
               }}
             >
+              <img
+                src="/chelsea2.png"
+                alt="Chelsea"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* 透明底对话框 */}
+            <div
+              className="relative"
+              style={{
+                maxWidth: "calc(380px * var(--vscale, 1))",
+                padding: "calc(12px * var(--vscale, 1)) calc(16px * var(--vscale, 1))",
+                borderRadius: "calc(16px * var(--vscale, 1))",
+                borderBottomLeftRadius: "calc(4px * var(--vscale, 1))",
+                background: "rgba(20, 12, 40, 0.55)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+              }}
+            >
+              {/* 名字 */}
               <div
                 style={{
-                  color: "#5a5060",
-                  fontSize: "calc(27px * var(--vscale, 1))",
+                  color: "#ffe7b0",
+                  fontSize: "calc(16px * var(--vscale, 1))",
                   fontWeight: 700,
-                  marginBottom: "6px",
-                  letterSpacing: "0.02em",
+                  marginBottom: "calc(4px * var(--vscale, 1))",
+                  letterSpacing: "0.04em",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.4)",
                 }}
               >
                 Chelsea
               </div>
+              {/* 台词 */}
               <div
                 style={{
-                  color: "#5a5060",
-                  fontSize: "calc(21px * var(--vscale, 1))",
-                  lineHeight: 1.4,
-                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.92)",
+                  fontSize: "calc(15px * var(--vscale, 1))",
+                  lineHeight: 1.5,
+                  fontWeight: 400,
                   wordWrap: "break-word",
+                  textShadow: "0 1px 3px rgba(0,0,0,0.35)",
                 }}
               >
                 {tipText}

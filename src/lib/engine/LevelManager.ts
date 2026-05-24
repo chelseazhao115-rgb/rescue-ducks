@@ -2,9 +2,9 @@ import { v4 as uuid } from "uuid";
 import type { DuckState, OrbInstance, RuntimeGroupConfig, RuntimeLevelConfig } from "@/lib/types";
 import { shuffle } from "@/lib/utils/random";
 
-const GRID_COLS = 5;
-const GRID_ROWS = 4;
-const ORB_MIN_DISTANCE = 0.12;
+const GRID_COLS = 6;
+const GRID_ROWS = 5;
+const ORB_MIN_DISTANCE = 0.13;
 
 function orbDistance(a: { x: number; y: number }, b: { x: number; y: number }): number {
   const dx = a.x - b.x;
@@ -115,11 +115,11 @@ export function spawnGroupOrbs(
 }
 
 function gridCell(col: number, row: number): { x: number; y: number } {
-  const marginLeft = 0.06;
-  const marginRight = 0.22;
-  const marginY = 0.10;
+  const marginLeft = 0.05;
+  const marginRight = 0.12;
+  const marginY = 0.08;
   const usableW = 1 - marginLeft - marginRight;
-  const usableH = 0.60;
+  const usableH = 0.68;
   const cellW = usableW / GRID_COLS;
   const cellH = usableH / GRID_ROWS;
   return {

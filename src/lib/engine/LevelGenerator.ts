@@ -73,7 +73,7 @@ export const CURRICULUM: StageDef[] = [
         description: "最简单的纯同义词 — 像呼吸一样自然的语义连接",
         atmosphere: ["warm", "light"],
         levelCount: 3,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 2],
         durationMs: 50000,
       },
@@ -83,7 +83,7 @@ export const CURRICULUM: StageDef[] = [
         description: "主题词汇加入 — 光球开始呈现温暖色调",
         atmosphere: ["calm", "light"],
         levelCount: 4,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 2],
         durationMs: 55000,
       },
@@ -93,7 +93,7 @@ export const CURRICULUM: StageDef[] = [
         description: "混合基础词汇 — 灯塔的第一道光",
         atmosphere: ["warm", "calm"],
         levelCount: 3,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 3],
         durationMs: 60000,
       },
@@ -119,7 +119,7 @@ export const CURRICULUM: StageDef[] = [
         description: "society + culture 主题的语境替换",
         atmosphere: ["water", "journey"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 3],
         durationMs: 60000,
       },
@@ -129,7 +129,7 @@ export const CURRICULUM: StageDef[] = [
         description: "nature + science 主题词汇",
         atmosphere: ["water", "calm"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 3],
         durationMs: 65000,
       },
@@ -139,7 +139,7 @@ export const CURRICULUM: StageDef[] = [
         description: "time + change + movement 主题",
         atmosphere: ["journey", "light"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 3],
         durationMs: 65000,
       },
@@ -149,7 +149,7 @@ export const CURRICULUM: StageDef[] = [
         description: "abstract + mind + emotion 抽象词汇",
         atmosphere: ["dream", "memory"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 4],
         durationMs: 70000,
       },
@@ -159,7 +159,7 @@ export const CURRICULUM: StageDef[] = [
         description: "health + body + movement 主题",
         atmosphere: ["water", "journey"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 4],
         durationMs: 70000,
       },
@@ -169,7 +169,7 @@ export const CURRICULUM: StageDef[] = [
         description: "quantity + measure + general — 混合复习",
         atmosphere: ["light", "calm"],
         levelCount: 5,
-        groupsPerLevel: 8,
+        groupsPerLevel: 6,
         chainWords: [2, 4],
         durationMs: 75000,
       },
@@ -478,7 +478,10 @@ export function generateLevel(
 
   const progressInStage = (levelInStage - 1) / Math.max(1, getLevelsInStage(stageId) - 1);
   const [chainMin, chainMax] = chapter.chainWords;
-  const wordsPerGroup = Math.round(chainMin + (chainMax - chainMin) * progressInStage);
+  const wordsPerGroup = Math.min(
+    Math.round(chainMin + (chainMax - chainMin) * progressInStage),
+    6
+  ); // hard cap: no chain longer than 6
 
   const groups: RuntimeGroupConfig[] = [];
   const usedWordTexts = new Set<string>();
@@ -491,11 +494,10 @@ export function generateLevel(
     const sg = groupLookup.get(gid);
     if (!sg) continue;
 
-    // Select words for this group
-    const keyword = sg.words[0];
-    const restPool = shuffle([...sg.words.slice(1)]);
-    const picked = restPool.slice(0, Math.min(wordsPerGroup - 1, restPool.length));
-    const levelWords = [keyword, ...picked];
+    // Select words for this group (capped at 6)
+    const shuffled = shuffle([...sg.words]);
+    const levelWords = shuffled.slice(0, Math.min(wordsPerGroup, shuffled.length));
+    if (levelWords.length < 2) continue; // need at least 2 words
 
     // Check cross-group word overlap — skip if any word already used
     const newTexts = levelWords.map((w) => w.text.toLowerCase());

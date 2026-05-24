@@ -45,7 +45,7 @@ export const HomeScreen: React.FC = () => {
         className="absolute inset-0"
         animate={
           isTransitioning
-            ? { scale: 1.06, x: "-5%", y: "-2.5%" }
+            ? { scale: 1.08, x: "-2%", y: "-1.5%" }
             : { scale: [1, 1.003, 1] }
         }
         transition={

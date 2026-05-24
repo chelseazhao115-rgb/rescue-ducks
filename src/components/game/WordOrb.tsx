@@ -83,7 +83,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const styles = STATUS_STYLES[status];
 
   const chars = word.length;
-  const orbSizePx = chars <= 7 ? 150 : Math.min(280, 150 + (chars - 7) * 11);
+  const orbSizePx = chars <= 7 ? 120 : Math.min(220, 120 + (chars - 7) * 9);
   const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
   const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
   const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
