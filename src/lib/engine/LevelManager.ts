@@ -3,8 +3,22 @@ import type { DuckState, OrbInstance, RuntimeGroupConfig, RuntimeLevelConfig } f
 import { shuffle } from "@/lib/utils/random";
 
 const GRID_COLS = 6;
-const GRID_ROWS = 5;
-const ORB_MIN_DISTANCE = 0.13;
+const GRID_ROWS = 6;
+const ORB_MIN_DISTANCE = 0.15;
+
+// Chelsea NPC exclusion zone — bottom-left
+const CHELSEA_X_MAX = 0.48;
+const CHELSEA_Y_MIN = 0.60;
+
+// Lighthouse glow + progress ring exclusion zone — top-right
+const LIGHTHOUSE_X_MIN = 0.68;
+const LIGHTHOUSE_Y_MAX = 0.50;
+
+function isInExcludedZone(pos: { x: number; y: number }): boolean {
+  if (pos.x < CHELSEA_X_MAX && pos.y > CHELSEA_Y_MIN) return true; // Chelsea area
+  if (pos.x > LIGHTHOUSE_X_MIN && pos.y < LIGHTHOUSE_Y_MAX) return true; // Lighthouse area
+  return false;
+}
 
 function orbDistance(a: { x: number; y: number }, b: { x: number; y: number }): number {
   const dx = a.x - b.x;
@@ -78,8 +92,10 @@ export function spawnGroupOrbs(
     const col = assignedCols[i];
     let position: { x: number; y: number } | null = null;
 
-    // Try rows in shuffled order
-    const rows = shuffle(Array.from({ length: GRID_ROWS }, (_, r) => r));
+    // Try rows: prefer center rows (2-3 of 6) first, then outward
+    const mid = GRID_ROWS / 2;
+    const rows = Array.from({ length: GRID_ROWS }, (_, r) => r)
+      .sort((a, b) => Math.abs(a - mid + 0.5) - Math.abs(b - mid + 0.5));
     for (const row of rows) {
       const base = gridCell(col, row);
       for (let j = 0; j < 5; j++) {
@@ -87,7 +103,10 @@ export function spawnGroupOrbs(
           x: base.x + (Math.random() - 0.5) * 0.05,
           y: base.y + (Math.random() - 0.5) * 0.03,
         };
-        if (!isTooClose(pos, [...existingOrbs, ...orbs], ORB_MIN_DISTANCE)) {
+        if (
+          !isTooClose(pos, [...existingOrbs, ...orbs], ORB_MIN_DISTANCE) &&
+          !isInExcludedZone(pos)
+        ) {
           position = pos;
           break;
         }
@@ -117,9 +136,9 @@ export function spawnGroupOrbs(
 function gridCell(col: number, row: number): { x: number; y: number } {
   const marginLeft = 0.05;
   const marginRight = 0.12;
-  const marginY = 0.08;
+  const marginY = 0.06;
   const usableW = 1 - marginLeft - marginRight;
-  const usableH = 0.68;
+  const usableH = 0.74;
   const cellW = usableW / GRID_COLS;
   const cellH = usableH / GRID_ROWS;
   return {
@@ -130,35 +149,58 @@ function gridCell(col: number, row: number): { x: number; y: number } {
 
 function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number } {
   const cells: { col: number; row: number }[] = [];
+  const mid = GRID_ROWS / 2;
   for (let c = 0; c < GRID_COLS; c++) {
     for (let r = 0; r < GRID_ROWS; r++) {
       cells.push({ col: c, row: r });
     }
   }
-  const shuffled = shuffle(cells);
+  // Prefer center cells over edge cells
+  cells.sort((a, b) => Math.abs(a.row - mid + 0.5) - Math.abs(b.row - mid + 0.5));
+  const shuffled = shuffle(cells.slice(0, 8)).concat(shuffle(cells.slice(8)));
 
   for (const cell of shuffled) {
     const base = gridCell(cell.col, cell.row);
     for (let j = 0; j < 6; j++) {
       const pos = {
-        x: base.x + (Math.random() - 0.5) * 0.05,
-        y: base.y + (Math.random() - 0.5) * 0.03,
+        x: base.x + (Math.random() - 0.5) * 0.07,
+        y: base.y + (Math.random() - 0.5) * 0.05,
       };
-      if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE)) {
+      if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE) && !isInExcludedZone(pos)) {
         return pos;
       }
     }
   }
 
-  for (let attempt = 0; attempt < 30; attempt++) {
+  // Broad random search — try many positions across the full playable area
+  for (let attempt = 0; attempt < 200; attempt++) {
     const pos = {
-      x: 0.08 + Math.random() * 0.68,
-      y: 0.12 + Math.random() * 0.52,
+      x: 0.08 + Math.random() * 0.72,
+      y: 0.08 + Math.random() * 0.58,
     };
-    if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE)) {
+    if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE) && !isInExcludedZone(pos)) {
       return pos;
     }
   }
 
-  return { x: 0.12 + Math.random() * 0.6, y: 0.15 + Math.random() * 0.45 };
+  // Last resort: among all candidates, pick the one furthest from existing orbs
+  let bestPos = { x: 0.4, y: 0.35 };
+  let bestDist = 0;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const pos = {
+      x: 0.08 + Math.random() * 0.72,
+      y: 0.08 + Math.random() * 0.58,
+    };
+    if (isInExcludedZone(pos)) continue;
+    let minDist = Infinity;
+    for (const o of existingOrbs) {
+      const d = orbDistance(pos, o.position);
+      if (d < minDist) minDist = d;
+    }
+    if (minDist > bestDist) {
+      bestDist = minDist;
+      bestPos = pos;
+    }
+  }
+  return bestPos;
 }

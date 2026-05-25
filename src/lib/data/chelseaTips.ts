@@ -2,55 +2,99 @@ import type { ChelseaContext } from "@/lib/types";
 
 export const CHELSEA_TIPS: Record<ChelseaContext, string[]> = {
   game_start: [
-    "The storm is coming! Match the words to light the lighthouse!",
-    "Quick! Tap words that mean the same thing to create a chain!",
-    "Find the synonyms before the storm fills up!",
+    "The ducklings are still outside. Help guide them home.",
+    "Connect words with similar meanings.",
+    "The lighthouse will grow brighter with each correct match.",
+    "Let's calm the storm together.",
   ],
-  chain_started: [
-    "Nice start! Find more words from the same group.",
-    "You've got a chain going! Keep tapping matching words.",
+
+  level_start: [
+    "Find the words that belong together.",
+    "These words share similar meanings.",
+    "Watch carefully — some meanings are subtle.",
+    "This stage introduces new paraphrasing patterns.",
   ],
-  chain_growing: [
-    "The chain is getting longer!",
-    "Great job! Keep going!",
-    "You're on fire!",
-  ],
-  chain_broken: [
-    "Oops! Those words don't match. Try again!",
-    "Careful! Start a new chain.",
-    "That broke the chain. Watch the storm!",
-  ],
-  group_complete: [
-    "Group complete! A duck is saved!",
-    "Well done! The lighthouse glows brighter!",
-    "Perfect chain! The storm backs away.",
-  ],
-  storm_high: [
-    "The storm is getting stronger! Hurry!",
-    "The lighthouse is fading! Match faster!",
-    "Storm's almost here! Light the lighthouse!",
-  ],
-  storm_low: [
-    "The storm is calming down. Nice work!",
-    "You're pushing the storm back!",
-  ],
-  combo_milestone: [
-    "Amazing combo streak!",
-    "You're unstoppable!",
-    "Incredible chaining!",
-  ],
-  victory: [
-    "You did it! The lighthouse is lit!",
-    "The storm is gone. Thank you!",
-    "All the ducks are safe! Well played!",
-  ],
-  gameover: [
-    "The storm took the lighthouse... Try again?",
-    "So close! Give it another shot!",
-    "Don't give up! The ducks need you!",
-  ],
+
   idle: [
-    "Tap matching words to create a chain.",
-    "Words that mean similar things belong together.",
+    "Some words are closer in meaning than others.",
+    "Try looking for paraphrasing pairs.",
+    "Think about how these words are used in IELTS.",
+    "Some connections are more academic.",
+  ],
+
+  correct_match: [
+    "Nice! Those words share a similar meaning.",
+    "Good catch — that's a paraphrasing pair.",
+    "Great connection!",
+    "The lighthouse is getting brighter.",
+    "The storm is calming down.",
+  ],
+
+  chain_combo: [
+    "Amazing chain!",
+    "You're connecting meanings quickly.",
+    "The light can reach farther now.",
+    "Excellent paraphrasing sense!",
+    "Beautiful chain!",
+  ],
+
+  wrong_match: [
+    "Not quite — those meanings are different.",
+    "Close, but those words are used differently.",
+    "That pair doesn't fully match.",
+    "Try another semantic connection.",
+    "The storm is getting stronger...",
+  ],
+
+  storm_warning: [
+    "Hurry — the storm is growing stronger.",
+    "The waves are getting rough.",
+    "We're running out of time.",
+    "The lighthouse light is fading.",
+    "Keep going — the ducklings still need help.",
+  ],
+
+  academic_groups: [
+    "These are more academic expressions.",
+    "This paraphrasing style often appears in IELTS Reading.",
+    "These words are harder to distinguish.",
+    "Careful — the meanings are similar but not identical.",
+  ],
+
+  logic_groups: [
+    "These words connect ideas and arguments.",
+    "Look for logical relationships.",
+    "This group focuses on transitions and structure.",
+    "These expressions help organize meaning.",
+  ],
+
+  victory: [
+    "You helped the ducklings find their way home.",
+    "The sea is calm again.",
+    "The lighthouse is shining brightly now.",
+    "Wonderful work.",
+    "You've mastered this group.",
+  ],
+
+  gameover: [
+    "The storm became too strong...",
+    "The ducklings are still waiting...",
+    "We can still try again.",
+    "Don't give up — the lighthouse still shines.",
+    "Let's guide them home next time.",
+  ],
+
+  long_play: [
+    "You've learned many new paraphrasing groups today.",
+    "Your semantic intuition is getting stronger.",
+    "You're beginning to recognize patterns naturally.",
+    "The lighthouse keeps growing brighter.",
+  ],
+
+  hard_mode: [
+    "These groups are more advanced.",
+    "Some meanings may feel less direct.",
+    "Take your time and think carefully.",
+    "You're entering deeper semantic waters.",
   ],
 };

@@ -1,7 +1,6 @@
 import { v4 as uuid } from "uuid";
 import type { GameState, ChelseaContext } from "@/lib/types";
 import { CHELSEA_TIPS } from "@/lib/data/chelseaTips";
-import { pickRandom } from "@/lib/utils/random";
 import {
   unlockAudio,
   playCorrectSound,
@@ -21,7 +20,6 @@ import type { SpawnItem } from "./LevelManager";
 import {
   COMBO_MILESTONE_INTERVAL,
   STORM_HIGH_THRESHOLD,
-  STORM_LOW_THRESHOLD,
   ENERGY_PARTICLE_DURATION_MS,
   ENERGY_PARTICLES_PER_GROUP,
   CHELSEA_TIP_DISPLAY_MS,
@@ -40,10 +38,28 @@ export class GameEngine {
   private tipTimer: number = 0;
   private tipContext: ChelseaContext = "idle";
   private meaningTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private matchCounter: number = 0;
+  private hardModeTipShown: boolean = false;
+  private longPlayTipShown: boolean = false;
 
   constructor(getState: StateGetter, setState: StateSetter) {
     this.getState = getState;
     this.setState = setState;
+  }
+
+  /** Pick a single random tip. */
+  private pickTip(ctx: ChelseaContext): string {
+    const pool = CHELSEA_TIPS[ctx] ?? [];
+    return pool[Math.floor(Math.random() * pool.length)] ?? "";
+  }
+
+  /** Show a tip for the given context, respecting throttle. */
+  private showTip(ctx: ChelseaContext, updates: Partial<GameState>) {
+    this.tipContext = ctx;
+    this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
+    updates.currentTipContext = ctx;
+    updates.currentTipText = this.pickTip(ctx);
+    updates.tipVisible = true;
   }
 
   /**
@@ -80,7 +96,16 @@ export class GameEngine {
 
     const now = Date.now();
 
-    this.tipContext = "game_start";
+    // Reset per-level counters
+    this.matchCounter = 0;
+    this.longPlayTipShown = false;
+
+    // Determine start tip context
+    const tipCtx: ChelseaContext =
+      stageId >= 3 && !this.hardModeTipShown ? "hard_mode" : "game_start";
+    if (stageId >= 3) this.hardModeTipShown = true;
+
+    this.tipContext = tipCtx;
     this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
 
     this.setState({
@@ -100,8 +125,8 @@ export class GameEngine {
       wrongMatches: 0,
       groupsCompleted: 0,
       maxCombo: 0,
-      currentTipContext: "game_start",
-      currentTipText: pickRandom(CHELSEA_TIPS.game_start),
+      currentTipContext: tipCtx,
+      currentTipText: this.pickTip(tipCtx),
       tipVisible: true,
       levelStartTime: now,
       elapsedMs: 0,
@@ -203,17 +228,7 @@ export class GameEngine {
         };
 
         if (extended.combo % COMBO_MILESTONE_INTERVAL === 0) {
-          this.tipContext = "combo_milestone";
-          this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-          updates.currentTipContext = "combo_milestone";
-          updates.currentTipText = pickRandom(CHELSEA_TIPS.combo_milestone);
-          updates.tipVisible = true;
-        } else {
-          this.tipContext = "chain_growing";
-          this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-          updates.currentTipContext = "chain_growing";
-          updates.currentTipText = pickRandom(CHELSEA_TIPS.chain_growing);
-          updates.tipVisible = true;
+          this.showTip("chain_combo", updates);
         }
 
         this.setState(updates);
@@ -242,18 +257,14 @@ export class GameEngine {
           return o;
         });
 
-        this.tipContext = "chain_broken";
-        this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-
-        this.setState({
+        const wrongUpdates: Partial<GameState> = {
           activeChain: null,
           orbs: updatedOrbs,
           stormMeter: newStorm,
           wrongMatches: state.wrongMatches + 1,
-          currentTipContext: "chain_broken",
-          currentTipText: pickRandom(CHELSEA_TIPS.chain_broken),
-          tipVisible: true,
-        });
+        };
+        this.showTip("wrong_match", wrongUpdates);
+        this.setState(wrongUpdates);
 
         setTimeout(() => {
           const current = this.getState();
@@ -274,16 +285,16 @@ export class GameEngine {
       o.orbId === orbId ? { ...o, status: "selected" as const } : o
     );
 
-    this.tipContext = "chain_started";
-    this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-
-    this.setState({
+    this.matchCounter++;
+    const startUpdates: Partial<GameState> = {
       activeChain: newChain,
       orbs: updatedOrbs,
-      currentTipContext: "chain_started",
-      currentTipText: pickRandom(CHELSEA_TIPS.chain_started),
-      tipVisible: true,
-    });
+    };
+    // Throttle: only show tip every 3rd new chain
+    if (this.matchCounter % 3 === 0) {
+      this.showTip("correct_match", startUpdates);
+    }
+    this.setState(startUpdates);
   }
 
   private completeGroup(groupId: string): void {
@@ -328,10 +339,7 @@ export class GameEngine {
         : d
     );
 
-    this.tipContext = "group_complete";
-    this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-
-    this.setState({
+    const completeUpdates: Partial<GameState> = {
       orbs: remainingOrbs,
       usedWords: newUsedWords,
       energyParticles: [...state.energyParticles, ...particles],
@@ -340,10 +348,9 @@ export class GameEngine {
       score: state.score + groupScore,
       ducks: updatedDucks,
       activeChain: null,
-      currentTipContext: "group_complete",
-      currentTipText: pickRandom(CHELSEA_TIPS.group_complete),
-      tipVisible: true,
-    });
+    };
+    this.showTip("correct_match", completeUpdates);
+    this.setState(completeUpdates);
 
     // Spawn 2 new groups every 2 completions
     if (this.spawnedBatchIndex < this.groupBatches.length && newGroupsCompleted % 2 === 0) {
@@ -386,7 +393,7 @@ export class GameEngine {
     this.setState({
       phase: "victory",
       currentTipContext: "victory",
-      currentTipText: pickRandom(CHELSEA_TIPS.victory),
+      currentTipText: this.pickTip("victory"),
       tipVisible: true,
     });
   }
@@ -398,7 +405,7 @@ export class GameEngine {
     this.setState({
       phase: "gameover",
       currentTipContext: "gameover",
-      currentTipText: pickRandom(CHELSEA_TIPS.gameover),
+      currentTipText: this.pickTip("gameover"),
       tipVisible: true,
     });
   }
@@ -438,21 +445,25 @@ export class GameEngine {
     let tipContext = this.tipContext;
     let tipText = state.currentTipText;
 
+    // Long play tip after 3 minutes
+    if (!this.longPlayTipShown && newElapsed > 180_000) {
+      this.longPlayTipShown = true;
+      tipVisible = true;
+      tipContext = "long_play";
+      tipText = this.pickTip("long_play");
+      this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
+      this.tipContext = "long_play";
+    }
+
     this.tipTimer -= deltaMs;
     if (this.tipTimer <= 0) {
       tipVisible = false;
       if (newStorm > STORM_HIGH_THRESHOLD) {
-        tipContext = "storm_high";
-        tipText = pickRandom(CHELSEA_TIPS.storm_high);
+        tipContext = "storm_warning";
+        tipText = this.pickTip("storm_warning");
         tipVisible = true;
         this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-        this.tipContext = "storm_high";
-      } else if (newStorm < STORM_LOW_THRESHOLD) {
-        tipContext = "storm_low";
-        tipText = pickRandom(CHELSEA_TIPS.storm_low);
-        tipVisible = true;
-        this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
-        this.tipContext = "storm_low";
+        this.tipContext = "storm_warning";
       }
     }
 

@@ -19,21 +19,46 @@ import { LightEnergy } from "./LightEnergy";
 import { PauseOverlay } from "./PauseOverlay";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { VictoryOverlay } from "./VictoryOverlay";
+import { DebugPanel } from "./DebugPanel";
 
 function resolveGlobalLevel(): number {
   if (typeof window === "undefined") return 1;
   const selected = localStorage.getItem("rescueDuckSelectedLevel");
-  if (selected) return parseInt(selected, 10);
-  const saved = localStorage.getItem("rescueDuckGlobalLevel");
-  return saved ? parseInt(saved, 10) : 1;
+  let raw: number;
+  if (selected) {
+    raw = parseInt(selected, 10);
+    // Also fix inflated selected level
+    if (raw > TOTAL_LEVELS) {
+      raw = 1;
+      localStorage.removeItem("rescueDuckSelectedLevel");
+    }
+  } else {
+    const saved = localStorage.getItem("rescueDuckGlobalLevel");
+    raw = saved ? parseInt(saved, 10) : 1;
+    // Auto-fix inflated global level (stale data from dev / old sessions)
+    if (raw > TOTAL_LEVELS + 1) {
+      localStorage.setItem("rescueDuckGlobalLevel", "1");
+      localStorage.removeItem("rescueDuckSemanticProgress");
+      raw = 1;
+    }
+  }
+  return Math.min(Math.max(1, raw), TOTAL_LEVELS);
 }
 
 export const GameScreen: React.FC = () => {
   const phase = useGameStore((s) => s.phase);
   const stormMeter = useGameStore((s) => s.stormMeter);
   const startGame = useGameStore((s) => s.startGame);
+  const resetGame = useGameStore((s) => s.resetGame);
   const [showIntro, setShowIntro] = useState(false);
   const [introDone, setIntroDone] = useState(false);
+
+  // Reset stale terminal state on mount
+  useEffect(() => {
+    if (phase === "gameover" || phase === "victory") {
+      resetGame();
+    }
+  }, []);
 
   // Check if intro should play on first mount
   useEffect(() => {
@@ -91,6 +116,9 @@ export const GameScreen: React.FC = () => {
         </div>
       </div>
 
+      {/* Lighthouse glow — top-right behind HUD */}
+      <Lighthouse />
+
       {/* Center play area - word orbs */}
       <WordOrbField />
 
@@ -115,6 +143,9 @@ export const GameScreen: React.FC = () => {
         {phase === "gameover" && <GameOverOverlay />}
         {phase === "victory" && <VictoryOverlay />}
       </AnimatePresence>
+
+      {/* Debug Panel — press ` to toggle */}
+      <DebugPanel />
     </main>
   );
 };

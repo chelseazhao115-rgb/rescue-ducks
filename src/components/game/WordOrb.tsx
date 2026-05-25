@@ -25,46 +25,46 @@ const STATUS_STYLES: Record<
 > = {
   idle: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(185,217,255,0.35), rgba(185,217,255,0.08))",
-    orbBorder: "rgba(185,217,255,0.25)",
-    textColor: "#c8dff8",
-    glowColor: "rgba(185,217,255,0.2)",
-    shadow: "0 0 20px rgba(185,217,255,0.15), inset 0 0 12px rgba(255,255,255,0.1)",
+      "radial-gradient(circle at 30% 30%, rgba(185,217,255,0.52), rgba(185,217,255,0.16))",
+    orbBorder: "rgba(185,217,255,0.4)",
+    textColor: "#ffffff",
+    glowColor: "rgba(185,217,255,0.3)",
+    shadow: "0 0 20px rgba(185,217,255,0.25), inset 0 0 12px rgba(255,255,255,0.14)",
   },
   selected: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(255,232,168,0.5), rgba(255,232,168,0.12))",
-    orbBorder: "rgba(255,232,168,0.45)",
-    textColor: "#ffe8a8",
-    glowColor: "rgba(255,232,168,0.45)",
+      "radial-gradient(circle at 30% 30%, rgba(255,232,168,0.68), rgba(255,232,168,0.22))",
+    orbBorder: "rgba(255,232,168,0.55)",
+    textColor: "#ffffff",
+    glowColor: "rgba(255,232,168,0.55)",
     shadow:
-      "0 0 30px rgba(255,232,168,0.35), 0 0 60px rgba(255,232,168,0.15), inset 0 0 16px rgba(255,255,255,0.2)",
+      "0 0 30px rgba(255,232,168,0.45), 0 0 60px rgba(255,232,168,0.25), inset 0 0 16px rgba(255,255,255,0.25)",
   },
   chained: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(255,217,122,0.5), rgba(255,217,122,0.12))",
-    orbBorder: "rgba(255,217,122,0.45)",
-    textColor: "#ffd97a",
-    glowColor: "rgba(255,217,122,0.5)",
+      "radial-gradient(circle at 30% 30%, rgba(255,217,122,0.68), rgba(255,217,122,0.22))",
+    orbBorder: "rgba(255,217,122,0.55)",
+    textColor: "#ffffff",
+    glowColor: "rgba(255,217,122,0.6)",
     shadow:
-      "0 0 30px rgba(255,217,122,0.4), 0 0 60px rgba(255,217,122,0.18), inset 0 0 16px rgba(255,255,255,0.2)",
+      "0 0 30px rgba(255,217,122,0.5), 0 0 60px rgba(255,217,122,0.26), inset 0 0 16px rgba(255,255,255,0.25)",
   },
   matched: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(255,232,168,0.6), rgba(255,232,168,0.2))",
-    orbBorder: "rgba(255,232,168,0.5)",
-    textColor: "#fff2cf",
-    glowColor: "rgba(255,232,168,0.6)",
+      "radial-gradient(circle at 30% 30%, rgba(255,232,168,0.78), rgba(255,232,168,0.32))",
+    orbBorder: "rgba(255,232,168,0.6)",
+    textColor: "#ffffff",
+    glowColor: "rgba(255,232,168,0.7)",
     shadow:
-      "0 0 40px rgba(255,232,168,0.5), 0 0 80px rgba(255,232,168,0.25), inset 0 0 20px rgba(255,255,255,0.3)",
+      "0 0 40px rgba(255,232,168,0.6), 0 0 80px rgba(255,232,168,0.35), inset 0 0 20px rgba(255,255,255,0.35)",
   },
   wrong: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(246,216,232,0.25), rgba(246,216,232,0.06))",
-    orbBorder: "rgba(246,216,232,0.2)",
-    textColor: "#e8c8d8",
-    glowColor: "rgba(246,216,232,0.15)",
-    shadow: "0 0 16px rgba(246,216,232,0.12)",
+      "radial-gradient(circle at 30% 30%, rgba(246,216,232,0.42), rgba(246,216,232,0.14))",
+    orbBorder: "rgba(246,216,232,0.35)",
+    textColor: "#ffffff",
+    glowColor: "rgba(246,216,232,0.25)",
+    shadow: "0 0 16px rgba(246,216,232,0.22)",
   },
 };
 
@@ -83,7 +83,13 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const styles = STATUS_STYLES[status];
 
   const chars = word.length;
-  const orbSizePx = chars <= 7 ? 120 : Math.min(220, 120 + (chars - 7) * 9);
+  const needsWrap = chars > 20;
+  const orbSizePx = needsWrap
+    ? Math.min(283, 123 + (chars - 7) * 9)
+    : chars <= 7
+      ? 123
+      : Math.min(223, 123 + (chars - 7) * 9);
+  const fontSize = needsWrap ? 23 : 31;
   const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
   const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
   const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
@@ -190,11 +196,18 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 
         {/* Word text */}
         <span
-          className="relative font-semibold text-center px-3 leading-tight whitespace-nowrap"
+          className={`relative font-semibold text-center px-3 leading-tight ${needsWrap ? "" : "whitespace-nowrap"}`}
           style={{
-            fontSize: "calc(28px * var(--vscale, 1))",
+            fontSize: `calc(${fontSize}px * var(--vscale, 1))`,
             color: styles.textColor,
             textShadow: `0 0 12px ${styles.glowColor}`,
+            ...(needsWrap
+              ? {
+                  maxWidth: `calc(${orbSizePx * 0.78}px * var(--vscale, 1))`,
+                  display: "inline-block" as const,
+                  wordBreak: "break-word" as const,
+                }
+              : {}),
           }}
         >
           {word}

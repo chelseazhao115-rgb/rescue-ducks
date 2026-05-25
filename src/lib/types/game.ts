@@ -4,16 +4,18 @@ export type GamePhase = "menu" | "playing" | "paused" | "victory" | "gameover";
 
 export type ChelseaContext =
   | "game_start"
-  | "chain_started"
-  | "chain_growing"
-  | "chain_broken"
-  | "group_complete"
-  | "storm_high"
-  | "storm_low"
-  | "combo_milestone"
+  | "level_start"
+  | "idle"
+  | "correct_match"
+  | "chain_combo"
+  | "wrong_match"
+  | "storm_warning"
+  | "academic_groups"
+  | "logic_groups"
   | "victory"
   | "gameover"
-  | "idle";
+  | "long_play"
+  | "hard_mode";
 
 export interface OrbInstance {
   orbId: string;

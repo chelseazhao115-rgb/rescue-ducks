@@ -3,226 +3,172 @@
 import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 
+/**
+ * Lighthouse glow overlay — renders golden halos and a progress ring
+ * on top of the background image's built-in lighthouse.
+ */
 export const Lighthouse: React.FC = () => {
   const brightness = useGameStore((s) => s.lighthouseBrightness);
+  const correctMatches = useGameStore((s) => s.correctMatches);
+  const matchSpark = Math.min(0.15, correctMatches * 0.005);
   const phase = useGameStore((s) => s.phase);
   const isVictory = phase === "victory";
   const progressPct = Math.round(brightness);
 
-  // Tower dimensions
-  const towerTopW = 56;
-  const towerBotW = 84;
-  const towerH = 240;
-  const containerW = towerBotW;
-
   return (
-    <div className="absolute right-[4%] bottom-[22%] pointer-events-none z-0">
-      {/* Progress label */}
-      <motion.div
-        className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
-        style={{ bottom: "105%", marginBottom: "8px" }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-      >
-        <span
-          className="text-xs font-bold"
-          style={{
-            color: "#ffd97a",
-            textShadow: "0 0 12px rgba(255,217,122,0.4)",
-          }}
-        >
-          {progressPct}%
-        </span>
-        {/* Mini progress bar */}
-        <div
-          className="mt-1 rounded-full overflow-hidden"
-          style={{
-            width: "40px",
-            height: "3px",
-            background: "rgba(255,255,255,0.1)",
-          }}
-        >
-          <motion.div
-            className="h-full rounded-full"
-            style={{
-              width: `${progressPct}%`,
-              background: "linear-gradient(90deg, #ffd97a, #ffe8a8)",
-              boxShadow: "0 0 6px rgba(255,217,122,0.4)",
-            }}
-            animate={{ width: `${progressPct}%` }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-      </motion.div>
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        // Position the glow centre over the background lighthouse lantern
+        right: "calc(16% + 42px)",
+        top: "23%",
+        transform: "translate(50%, -50%)",
+      }}
+    >
+      {/* ===== GLOW HALOS ===== */}
 
-      {/* Lighthouse glow */}
+      {/* Outer halo — large soft golden glow */}
       <motion.div
-        className="absolute rounded-full left-1/2 -translate-x-1/2"
+        className="absolute rounded-full"
         style={{
-          width: "160px",
-          height: "160px",
-          top: "-40px",
+          width: "200px",
+          height: "200px",
+          left: "-100px",
+          top: "-100px",
           background:
-            "radial-gradient(circle, rgba(255,235,170,0.85) 0%, rgba(255,215,120,0.4) 40%, rgba(255,215,120,0.06) 70%, transparent 100%)",
-          filter: "blur(14px)",
+            "radial-gradient(circle, rgba(255,220,130,0.7) 0%, rgba(255,190,100,0.35) 40%, transparent 70%)",
+          filter: "blur(10px)",
         }}
         animate={{
-          scale: isVictory ? [1, 1.1, 1] : [1, 1.06, 1],
-          opacity: isVictory ? [0.8, 1, 0.8] : [0.5 + brightness * 0.005, 0.7 + brightness * 0.003, 0.5 + brightness * 0.005],
+          scale: isVictory ? [1, 1.15, 1] : [1, 1.06, 1],
+          opacity: isVictory
+            ? [0.75, 1, 0.75]
+            : [0.65 + brightness * 0.0035, 0.85 + brightness * 0.0015, 0.65 + brightness * 0.0035],
         }}
         transition={{
-          duration: isVictory ? 2 : 4,
+          duration: isVictory ? 2 : 3.5,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       />
 
-      {/* Sparkle particles */}
-      {brightness > 15 && (
-        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: "-10px" }}>
-          {[0, 1, 2, 3].map((i) => (
-            <motion.div
-              key={`lh-sp-${i}`}
-              className="absolute rounded-full"
-              style={{
-                width: "3px",
-                height: "3px",
-                background: "rgba(255,240,190,0.7)",
-                filter: "blur(0.5px)",
-              }}
-              animate={{
-                x: [0, (Math.random() - 0.5) * 30],
-                y: [0, -10 - Math.random() * 15],
-                opacity: [0.5, 0, 0.5],
-                scale: [1, 0.3, 1],
-              }}
-              transition={{
-                duration: 1.5 + Math.random() * 2,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Light beam */}
+      {/* Medium halo — more concentrated */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 origin-top"
-        style={{ top: "30px" }}
-        animate={{ opacity: 0.04 + brightness * 0.006 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="absolute rounded-full"
+        style={{
+          width: "120px",
+          height: "120px",
+          left: "-60px",
+          top: "-60px",
+          background:
+            "radial-gradient(circle, rgba(255,240,170,0.85) 0%, rgba(255,215,120,0.5) 30%, transparent 65%)",
+          filter: "blur(5px)",
+        }}
+        animate={{
+          scale: isVictory ? [1, 1.1, 1] : [1, 1.05, 1],
+          opacity: isVictory
+            ? [0.8, 1, 0.8]
+            : [0.7 + brightness * 0.003, 0.88 + brightness * 0.0012, 0.7 + brightness * 0.003],
+        }}
+        transition={{
+          duration: isVictory ? 2.2 : 2.8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.2,
+        }}
+      />
+
+      {/* Inner core — bright centre on the lantern */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{
+          width: "70px",
+          height: "70px",
+          left: "-35px",
+          top: "-35px",
+          background:
+            "radial-gradient(circle, rgba(255,250,210,0.95) 0%, rgba(255,230,150,0.65) 25%, transparent 60%)",
+        }}
+        animate={{
+          scale: isVictory ? [1, 1.08, 1] : [1, 1.04, 1],
+          opacity: isVictory
+            ? [0.85, 1, 0.85]
+            : [0.75 + brightness * 0.0025 + matchSpark, 0.92 + brightness * 0.0008 + matchSpark, 0.75 + brightness * 0.0025 + matchSpark],
+        }}
+        transition={{
+          duration: isVictory ? 1.8 : 2.2,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.1,
+        }}
+      />
+
+      {/* ===== PROGRESS RING + PERCENTAGE ===== */}
+      <motion.div
+        className="absolute flex flex-col items-center"
+        style={{
+          left: "50%",
+          top: "-150px",
+          transform: "translateX(-50%)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <div
-          className="w-0 h-0"
+        {/* Circular progress ring */}
+        <svg
+          width="70"
+          height="70"
+          viewBox="0 0 40 40"
+          style={{ transform: "rotate(-90deg)" }}
+        >
+          <circle
+            cx="20"
+            cy="20"
+            r="16"
+            fill="none"
+            stroke="rgba(255,255,255,0.1)"
+            strokeWidth="2.5"
+          />
+          <motion.circle
+            cx="20"
+            cy="20"
+            r="16"
+            fill="none"
+            stroke="url(#lhGlowGrad)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray={`${2 * Math.PI * 16}`}
+            strokeDashoffset={`${2 * Math.PI * 16 * (1 - brightness / 100)}`}
+            style={{
+              filter: `drop-shadow(0 0 5px rgba(255,217,122,${0.3 + brightness * 0.006}))`,
+            }}
+            animate={{
+              strokeDashoffset: `${2 * Math.PI * 16 * (1 - brightness / 100)}`,
+            }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          />
+          <defs>
+            <linearGradient id="lhGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ffd97a" />
+              <stop offset="100%" stopColor="#ffe8a8" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Percentage */}
+        <span
+          className="font-extrabold mt-0.5"
           style={{
-            borderLeft: "40px solid transparent",
-            borderRight: "40px solid transparent",
-            borderBottom: "180px solid rgba(255,215,120,0.18)",
-            filter: "blur(12px)",
+            fontSize: "calc(30px * var(--vscale, 1))",
+            color: "#ffd97a",
+            textShadow:
+              "0 0 16px rgba(255,217,122,0.5), 0 0 32px rgba(255,200,100,0.25)",
           }}
-        />
+        >
+          {progressPct}%
+        </span>
       </motion.div>
-
-      {/* Lighthouse structure */}
-      <div
-        className="relative flex flex-col items-center"
-        style={{ width: `${containerW}px` }}
-      >
-        {/* Roof dome */}
-        <div
-          className="rounded-t-full"
-          style={{
-            width: `${towerTopW - 10}px`,
-            height: "6px",
-            background: "linear-gradient(to bottom, #d8d0c0, #c0b8a8)",
-          }}
-        />
-
-        {/* Lantern room */}
-        <motion.div
-          style={{
-            width: `${towerTopW - 16}px`,
-            height: "22px",
-            backgroundColor: `rgba(255,232,168, ${0.08 + brightness * 0.005})`,
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "2px 2px 0 0",
-          }}
-          animate={{
-            boxShadow: `0 0 ${12 + brightness * 0.3}px rgba(255,215,120,${0.15 + brightness * 0.005})`,
-          }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              background: `linear-gradient(to bottom, rgba(255,232,168,${0.14 + brightness * 0.004}), rgba(255,215,120,${0.07 + brightness * 0.002}))`,
-            }}
-          />
-        </motion.div>
-
-        {/* Gallery deck */}
-        <div
-          className="rounded-sm"
-          style={{
-            width: `${towerTopW - 4}px`,
-            height: "4px",
-            backgroundColor: "#c0b8a8",
-          }}
-        />
-
-        {/* Tower body — trapezoid narrowing upward */}
-        <div
-          style={{
-            width: `${towerBotW}px`,
-            height: `${towerH}px`,
-            background:
-              "linear-gradient(to right, #d8d0c0, #f0ead8 25%, #f8f2e8 50%, #f0ead8 75%, #d8d0c0)",
-            clipPath: `polygon(
-              ${((towerBotW - towerTopW) / 2 / towerBotW) * 100}% 0%,
-              ${100 - ((towerBotW - towerTopW) / 2 / towerBotW) * 100}% 0%,
-              100% 100%,
-              0% 100%
-            )`,
-          }}
-        >
-          {/* Red stripe 1 */}
-          <div
-            style={{
-              position: "absolute",
-              top: "28%",
-              left: 0,
-              right: 0,
-              height: "5px",
-              backgroundColor: "rgba(200,120,112,0.28)",
-            }}
-          />
-          {/* Red stripe 2 */}
-          <div
-            style={{
-              position: "absolute",
-              top: "58%",
-              left: 0,
-              right: 0,
-              height: "5px",
-              backgroundColor: "rgba(200,120,112,0.28)",
-            }}
-          />
-        </div>
-
-        {/* Base platform */}
-        <div
-          className="rounded-b"
-          style={{
-            width: `${towerBotW + 18}px`,
-            height: "12px",
-            background: "linear-gradient(to bottom, #d0c8b8, #c0b8a8)",
-          }}
-        />
-      </div>
     </div>
   );
 };

@@ -16,7 +16,17 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const getHighestUnlocked = (): number => {
     if (typeof window === "undefined") return 1;
     const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    return saved ? parseInt(saved, 10) : 1;
+    const raw = saved ? parseInt(saved, 10) : 1;
+
+    // Auto-fix: only reset truly impossible values (> total + 1)
+    if (raw > TOTAL_LEVELS + 1) {
+      localStorage.setItem("rescueDuckGlobalLevel", "1");
+      localStorage.removeItem("rescueDuckSemanticProgress");
+      localStorage.removeItem("rescueDuckSelectedLevel");
+      return 1;
+    }
+
+    return Math.min(raw, TOTAL_LEVELS + 1);
   };
 
   const highestUnlocked = getHighestUnlocked();
@@ -40,7 +50,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
     router.push("/game");
   };
 
-  const completedLevels = Math.max(0, highestUnlocked - 1);
+  const completedLevels = Math.min(TOTAL_LEVELS, Math.max(0, highestUnlocked - 1));
 
   return (
     <div className="flex flex-col items-center gap-3 px-4">

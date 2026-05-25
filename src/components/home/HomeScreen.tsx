@@ -10,13 +10,28 @@ import { LakeSurface } from "./LakeSurface";
 import { FireflyParticles } from "./FireflyParticles";
 import { LevelMap } from "./LevelMap";
 import { ToastContainer, showToast } from "./Toast";
+import { DebugPanel } from "@/components/game/DebugPanel";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
+import { TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
   const [showMap, setShowMap] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Auto-fix inflated / inconsistent global level on every visit to home screen
+  useEffect(() => {
+    const saved = localStorage.getItem("rescueDuckGlobalLevel");
+    if (!saved) return;
+    const raw = parseInt(saved, 10);
+    // Only reset truly impossible values (> total + 1)
+    if (raw > TOTAL_LEVELS + 1) {
+      localStorage.setItem("rescueDuckGlobalLevel", "1");
+      localStorage.removeItem("rescueDuckSemanticProgress");
+      localStorage.removeItem("rescueDuckSelectedLevel");
+    }
+  }, []);
 
   useEffect(() => {
     switchAmbience("home");
@@ -362,6 +377,9 @@ export const HomeScreen: React.FC = () => {
 
       {/* ===== TOAST CONTAINER ===== */}
       <ToastContainer />
+
+      {/* Debug Panel */}
+      <DebugPanel />
     </main>
   );
 };

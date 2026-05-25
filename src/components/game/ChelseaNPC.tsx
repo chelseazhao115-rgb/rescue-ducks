@@ -10,7 +10,7 @@ export const ChelseaNPC: React.FC = () => {
   return (
     <div
       className="absolute z-20 pointer-events-none"
-      style={{ left: "4%", bottom: "3%" }}
+      style={{ left: "1%", bottom: "18%" }}
     >
       <AnimatePresence>
         {tipVisible && tipText && (
@@ -21,12 +21,12 @@ export const ChelseaNPC: React.FC = () => {
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.35 }}
           >
-            {/* 头像 */}
+            {/* 头像 — 2x */}
             <div
               className="rounded-full overflow-hidden flex-shrink-0 border-2"
               style={{
-                width: "calc(88px * var(--vscale, 1))",
-                height: "calc(88px * var(--vscale, 1))",
+                width: "calc(176px * var(--vscale, 1))",
+                height: "calc(176px * var(--vscale, 1))",
                 borderColor: "rgba(255,255,255,0.25)",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
               }}
@@ -38,14 +38,14 @@ export const ChelseaNPC: React.FC = () => {
               />
             </div>
 
-            {/* 透明底对话框 */}
+            {/* 对话框 — 2x */}
             <div
               className="relative"
               style={{
-                maxWidth: "calc(380px * var(--vscale, 1))",
-                padding: "calc(12px * var(--vscale, 1)) calc(16px * var(--vscale, 1))",
-                borderRadius: "calc(16px * var(--vscale, 1))",
-                borderBottomLeftRadius: "calc(4px * var(--vscale, 1))",
+                maxWidth: "calc(760px * var(--vscale, 1))",
+                padding: "calc(14px * var(--vscale, 1)) calc(24px * var(--vscale, 1))",
+                borderRadius: "calc(32px * var(--vscale, 1))",
+                borderBottomLeftRadius: "calc(8px * var(--vscale, 1))",
                 background: "rgba(20, 12, 40, 0.55)",
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
@@ -53,11 +53,11 @@ export const ChelseaNPC: React.FC = () => {
                 boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
               }}
             >
-              {/* 名字 */}
+              {/* 名字 — 2x */}
               <div
                 style={{
                   color: "#ffe7b0",
-                  fontSize: "calc(16px * var(--vscale, 1))",
+                  fontSize: "calc(32px * var(--vscale, 1))",
                   fontWeight: 700,
                   marginBottom: "calc(4px * var(--vscale, 1))",
                   letterSpacing: "0.04em",
@@ -66,11 +66,11 @@ export const ChelseaNPC: React.FC = () => {
               >
                 Chelsea
               </div>
-              {/* 台词 */}
+              {/* 台词 — 2x */}
               <div
                 style={{
                   color: "rgba(255,255,255,0.92)",
-                  fontSize: "calc(15px * var(--vscale, 1))",
+                  fontSize: "calc(30px * var(--vscale, 1))",
                   lineHeight: 1.5,
                   fontWeight: 400,
                   wordWrap: "break-word",

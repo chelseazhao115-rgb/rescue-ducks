@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameStore } from "@/store/gameStore";
@@ -8,9 +9,32 @@ import {
   getLevelsInStage,
   resetAntiRepetition,
   getSemanticProgress,
+  TOTAL_LEVELS,
 } from "@/lib/engine/LevelGenerator";
 import { StarRating } from "./StarRating";
 import { calcStarRating } from "@/lib/engine/ScoringSystem";
+
+function computeNextGlobalLevel(
+  currentStage: number,
+  currentLevelInStage: number,
+  hasNextLevelInStage: boolean,
+  hasNextStage: boolean,
+): number {
+  let next = 0;
+  for (const s of CURRICULUM) {
+    const count = getLevelsInStage(s.id);
+    if (s.id < currentStage) {
+      next += count;
+    } else if (s.id === currentStage) {
+      next += hasNextLevelInStage ? currentLevelInStage + 1 : currentLevelInStage;
+      break;
+    }
+  }
+  if (!hasNextLevelInStage && hasNextStage) {
+    next += 1;
+  }
+  return Math.min(next, TOTAL_LEVELS + 1);
+}
 
 export const VictoryOverlay: React.FC = () => {
   const resetGame = useGameStore((s) => s.resetGame);
@@ -32,43 +56,52 @@ export const VictoryOverlay: React.FC = () => {
   const stage = CURRICULUM.find((s) => s.id === currentStage);
   const stageName = stage?.name ?? `Stage ${currentStage}`;
 
-  const getGlobalLevel = (): number => {
-    const saved = typeof window !== "undefined"
-      ? localStorage.getItem("rescueDuckGlobalLevel")
-      : null;
-    return saved ? parseInt(saved, 10) : 1;
-  };
+  const nextGlobalLevel = computeNextGlobalLevel(
+    currentStage,
+    currentLevelInStage,
+    hasNextLevelInStage,
+    hasNextStage,
+  );
 
-  const semanticProgress = getSemanticProgress(getGlobalLevel());
-
-  const handleNextLevel = () => {
-    let nextGlobalLevel = 0;
-    for (const s of CURRICULUM) {
-      const count = getLevelsInStage(s.id);
-      if (s.id < currentStage) {
-        nextGlobalLevel += count;
-      } else if (s.id === currentStage) {
-        nextGlobalLevel += hasNextLevelInStage ? currentLevelInStage + 1 : currentLevelInStage;
-        break;
-      }
+  // Compute current level's global number (for replay)
+  let currentGlobalLevel = 0;
+  for (const s of CURRICULUM) {
+    const count = getLevelsInStage(s.id);
+    if (s.id < currentStage) {
+      currentGlobalLevel += count;
+    } else if (s.id === currentStage) {
+      currentGlobalLevel += currentLevelInStage;
+      break;
     }
-    if (!hasNextLevelInStage && hasNextStage) {
-      nextGlobalLevel += 1;
-    }
+  }
 
-    const savedLevel = getGlobalLevel();
+  // Always advance game progress on victory, regardless of which button is clicked
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = localStorage.getItem("rescueDuckGlobalLevel");
+    const savedLevel = saved ? parseInt(saved, 10) : 1;
     if (nextGlobalLevel > savedLevel) {
       localStorage.setItem("rescueDuckGlobalLevel", String(nextGlobalLevel));
-      localStorage.removeItem("rescueDuckSelectedLevel");
-    } else {
-      localStorage.setItem("rescueDuckSelectedLevel", String(nextGlobalLevel));
     }
+  }, [nextGlobalLevel]);
 
+  const updatedGlobalLevel =
+    typeof window !== "undefined"
+      ? (() => {
+          const s = localStorage.getItem("rescueDuckGlobalLevel");
+          return s ? parseInt(s, 10) : 1;
+        })()
+      : 1;
+  const semanticProgress = getSemanticProgress(updatedGlobalLevel);
+
+  const handleNextLevel = () => {
+    localStorage.removeItem("rescueDuckSelectedLevel");
     resetGame();
     router.push("/game");
   };
 
   const handleReplay = () => {
+    localStorage.setItem("rescueDuckSelectedLevel", String(currentGlobalLevel));
     resetGame();
     router.push("/game");
   };
@@ -151,7 +184,7 @@ export const VictoryOverlay: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          {stageName} — Level {currentLevelInStage}/{levelsInThisStage}
+          {stageName} — Level {currentLevelInStage} / {levelsInThisStage}
         </motion.p>
 
         <motion.p

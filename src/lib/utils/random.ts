@@ -11,6 +11,13 @@ export function pickRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+/** Pick 2 unique random items from an array. If array has < 2 items, returns what's available. */
+export function pickTwoRandom<T>(array: T[]): T[] {
+  if (array.length <= 1) return [...array];
+  const shuffled = shuffle(array);
+  return shuffled.slice(0, 2);
+}
+
 export function pickWeighted<T>(items: T[], weights: number[]): T {
   const totalWeight = weights.reduce((sum, w) => sum + w, 0);
   let r = Math.random() * totalWeight;

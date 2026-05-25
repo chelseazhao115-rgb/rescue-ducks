@@ -275,6 +275,7 @@ export function getStageAndLevel(globalLevel: number): {
   let remaining = globalLevel;
   let levelInStage = 0;
   for (const stage of CURRICULUM) {
+    levelInStage = 0;
     for (const chapter of stage.chapters) {
       if (remaining <= chapter.levelCount) {
         return {
@@ -534,14 +535,14 @@ export function generateLevel(
     stageId,
     levelInStage,
     name: `${chapter.name} ${levelInChapter}`,
-    durationMs: chapter.durationMs + totalWords * 2000,
+    durationMs: 30000 + totalWords * 2000,
     stormTickRateMs: 500,
     stormTickAmount: stage.stormTickAmount,
     stormPenaltyOnWrong: stage.stormPenaltyOnWrong,
     stormReductionOnCorrect: stage.stormReductionOnCorrect,
     lighthouseGainPerGroup: Math.round((100 / groups.length) * 100) / 100,
     comboTimeoutMs: stage.comboTimeoutMs,
-    maxOrbsOnScreen: totalWords + 4,
+    maxOrbsOnScreen: Math.min(totalWords + 2, 14),
     orbSpawnIntervalMs: 2500,
     wordsPerGroup,
     groups,
@@ -573,12 +574,22 @@ export interface StageProgress {
 }
 
 const PROGRESS_KEY = "rescueDuckSemanticProgress";
+const GLOBAL_LEVEL_KEY = "rescueDuckGlobalLevel";
 
 function loadProgress(): Record<string, number> {
   if (typeof window === "undefined") return {};
   try {
     const raw = localStorage.getItem(PROGRESS_KEY);
-    return raw ? JSON.parse(raw) : {};
+    if (!raw) return {};
+    const data = JSON.parse(raw);
+    // Auto-clean if game progress was reset: low global level + inflated mastery
+    const globalRaw = localStorage.getItem(GLOBAL_LEVEL_KEY);
+    const globalLevel = globalRaw ? parseInt(globalRaw, 10) : 1;
+    if (globalLevel <= 10 && Object.keys(data).length > 60) {
+      localStorage.removeItem(PROGRESS_KEY);
+      return {};
+    }
+    return data;
   } catch {
     return {};
   }
@@ -610,6 +621,18 @@ export function getSemanticProgress(globalLevel: number): SemanticProgress {
   const progress = loadProgress();
   const { stageId, chapterId, chapterName } = getStageAndLevel(globalLevel);
 
+  // Only count groups the player can access (stages up to current)
+  const accessibleGroupIds = new Set<string>();
+  for (const stage of CURRICULUM) {
+    if (stage.id > stageId) break;
+    const [dMin, dMax] = stage.difficultyRange;
+    for (const g of semanticGroupsV2) {
+      if (g.difficulty >= dMin && g.difficulty <= dMax) {
+        accessibleGroupIds.add(g.id);
+      }
+    }
+  }
+
   const stages: StageProgress[] = CURRICULUM.map((stage) => {
     const [dMin, dMax] = stage.difficultyRange;
     const stageGroups = semanticGroupsV2.filter(
@@ -629,9 +652,9 @@ export function getSemanticProgress(globalLevel: number): SemanticProgress {
     };
   });
 
-  const totalGroups = semanticGroupsV2.length;
-  const encountered = Object.keys(progress).length;
-  const mastered = Object.values(progress).filter((v) => v >= 2).length;
+  // Global stats — scoped to stages the player has reached
+  const accessibleEncountered = [...accessibleGroupIds].filter((id) => (progress[id] ?? 0) >= 1).length;
+  const accessibleMastered = [...accessibleGroupIds].filter((id) => (progress[id] ?? 0) >= 2).length;
 
   const currentStage = stages.find((s) => s.stageId === stageId);
   const stageProgress = currentStage
@@ -639,16 +662,24 @@ export function getSemanticProgress(globalLevel: number): SemanticProgress {
     : 0;
 
   return {
-    totalGroupsInCurriculum: totalGroups,
-    groupsEncountered: encountered,
-    groupsMastered: mastered,
+    totalGroupsInCurriculum: semanticGroupsV2.length,
+    groupsEncountered: accessibleEncountered,
+    groupsMastered: accessibleMastered,
     currentStage: stageId,
     currentChapter: chapterId,
     currentChapterName: chapterName,
     stageProgress: Math.min(1, stageProgress),
-    overallProgress: totalGroups > 0 ? encountered / totalGroups : 0,
+    overallProgress: semanticGroupsV2.length > 0
+      ? accessibleEncountered / accessibleGroupIds.size
+      : 0,
     stages,
   };
+}
+
+/** Clear all semantic progress tracking data. */
+export function resetSemanticProgress(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(PROGRESS_KEY);
 }
 
 /** Get all chapters for a stage — for UI display. */
