@@ -20,6 +20,8 @@ import { PauseOverlay } from "./PauseOverlay";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { VictoryOverlay } from "./VictoryOverlay";
 import { DebugPanel } from "./DebugPanel";
+import { useAdaptiveStormAudio } from "@/lib/hooks/useSoundtrack";
+import { audioManager } from "@/lib/audio/AudioManager";
 
 function resolveGlobalLevel(): number {
   if (typeof window === "undefined") return 1;
@@ -83,6 +85,20 @@ export const GameScreen: React.FC = () => {
       startGame(stageId, levelInStage);
     }
   }, [introDone, phase, startGame]);
+
+  useAdaptiveStormAudio(stormMeter, phase === "playing");
+
+  useEffect(() => {
+    if (showIntro || !introDone) return;
+    if (phase === "playing") {
+      audioManager.playMusic("gameplay", 1.8);
+    } else if (phase === "victory") {
+      audioManager.crossFade("victory", 1.2);
+    } else if (phase === "gameover") {
+      audioManager.crossFade("failure", 1.2);
+      audioManager.playSfx("failure", 0.9);
+    }
+  }, [introDone, phase, showIntro]);
 
   // Show intro overlay
   if (showIntro) {

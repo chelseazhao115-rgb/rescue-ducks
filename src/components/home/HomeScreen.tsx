@@ -8,8 +8,10 @@ import { DuckCharacter } from "./DuckCharacter";
 import { CottageAndLighthouse } from "./CottageAndLighthouse";
 import { LakeSurface } from "./LakeSurface";
 import { FireflyParticles } from "./FireflyParticles";
+import { SlowStars } from "./SlowStars";
 import { LevelMap } from "./LevelMap";
-import { ToastContainer, showToast } from "./Toast";
+import { LearnMoreModal } from "./LearnMoreModal";
+import { ToastContainer } from "./Toast";
 import { DebugPanel } from "@/components/game/DebugPanel";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
@@ -18,19 +20,27 @@ import { TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
   const [showMap, setShowMap] = useState(false);
+  const [showLearnMore, setShowLearnMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [continueLevel, setContinueLevel] = useState(1);
 
   // Auto-fix inflated / inconsistent global level on every visit to home screen
   useEffect(() => {
     const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    if (!saved) return;
+    if (!saved) {
+      setContinueLevel(1);
+      return;
+    }
     const raw = parseInt(saved, 10);
     // Only reset truly impossible values (> total + 1)
     if (raw > TOTAL_LEVELS + 1) {
       localStorage.setItem("rescueDuckGlobalLevel", "1");
       localStorage.removeItem("rescueDuckSemanticProgress");
       localStorage.removeItem("rescueDuckSelectedLevel");
+      setContinueLevel(1);
+      return;
     }
+    setContinueLevel(Math.min(Math.max(1, raw), TOTAL_LEVELS));
   }, []);
 
   useEffect(() => {
@@ -54,6 +64,7 @@ export const HomeScreen: React.FC = () => {
     >
       {/* Sky + atmosphere layer */}
       <AnimatedBackground variant="home" stormIntensity={0} />
+      <SlowStars />
 
       {/* Scene container — gentle idle breathing, zoom on transition */}
       <motion.div
@@ -184,7 +195,7 @@ export const HomeScreen: React.FC = () => {
             ) : (
               <motion.div
                 key="buttons"
-                className="flex flex-col items-start gap-6"
+                className="flex flex-col items-start"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
@@ -215,13 +226,13 @@ export const HomeScreen: React.FC = () => {
                   whileTap={{ scale: 0.96 }}
                   transition={{ duration: 0.25 }}
                 >
-                  Start Journey
+                  {continueLevel > 1 ? `Continue · Level ${continueLevel}` : "Start Journey"}
                 </motion.button>
 
                 {/* Level Map — secondary */}
                 <motion.button
                   onClick={() => { playButtonClick(); setShowMap(true); }}
-                  className="font-medium tracking-wider tap-target"
+                  className="mt-6 font-medium tracking-wider tap-target"
                   style={{
                     fontSize: "clamp(1rem, 2vw, 1.75rem)",
                     color: "#ffffff",
@@ -239,94 +250,112 @@ export const HomeScreen: React.FC = () => {
                 >
                   Level Map
                 </motion.button>
+
+                <motion.button
+                  onClick={() => { playButtonClick(); setShowLearnMore(true); }}
+                  className="hidden"
+                  style={{
+                    fontSize: "clamp(0.82rem, 1.12vw, 1rem)",
+                    color: "rgba(255,236,196,0.62)",
+                    padding: "5px 2px",
+                    marginLeft: "64px",
+                    background: "transparent",
+                    border: "none",
+                    textShadow: "0 0 12px rgba(255,217,122,0.2)",
+                  }}
+                  whileHover={{
+                    y: -2,
+                    color: "rgba(255,244,216,0.9)",
+                    textShadow: "0 0 18px rgba(255,217,122,0.44)",
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                >
+                  <motion.span
+                    className="absolute -left-3 top-1/2 h-px w-2 -translate-y-1/2"
+                    style={{
+                      background: "linear-gradient(90deg, transparent, rgba(255,231,176,0.58))",
+                    }}
+                    animate={{ opacity: [0.18, 0.5, 0.18] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                  <span className="relative inline-flex items-center gap-1.5">
+                    <motion.span
+                      aria-hidden="true"
+                      animate={{ opacity: [0.52, 0.86, 0.52], scale: [0.94, 1.06, 0.94] }}
+                      transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      {"\u2728"}
+                    </motion.span>
+                    <motion.span
+                      aria-hidden="true"
+                      style={{ display: "none" }}
+                      animate={{ opacity: [0.52, 0.86, 0.52], scale: [0.94, 1.06, 0.94] }}
+                      transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      ✨
+                    </motion.span>
+                    <motion.span
+                      aria-hidden="true"
+                      style={{ display: "none" }}
+                      animate={{ opacity: [0.58, 0.95, 0.58], scale: [0.92, 1.08, 0.92] }}
+                      transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      ✧
+                    </motion.span>
+                    <motion.span
+                      aria-hidden="true"
+                      style={{ display: "none" }}
+                      animate={{ opacity: [0.58, 0.95, 0.58], scale: [0.92, 1.08, 0.92] }}
+                      transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      ✦
+                    </motion.span>
+                    <span>More adventures with Chelsea</span>
+                  </span>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
 
-      {/* ===== BOTTOM-LEFT ICONS ===== */}
-      <div className="absolute bottom-4 left-[6%] z-20 flex items-center gap-3">
-        {/* Settings */}
-        <motion.button
-          onClick={() => { playButtonClick(); showToast("Coming Soon"); }}
-          className="flex items-center justify-center rounded-full tap-target"
-          style={{
-            width: "38px",
-            height: "38px",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.35)",
-            backdropFilter: "blur(8px)",
-          }}
-          whileHover={{
-            background: "rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.65)",
-            scale: 1.05,
-          }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <motion.button
+        onClick={() => { playButtonClick(); setShowLearnMore(true); }}
+        className="absolute bottom-5 left-[6%] z-20 font-medium tracking-wide tap-target"
+        style={{
+          fontSize: "clamp(1rem, 1.55vw, 1.35rem)",
+          color: "rgba(255,236,196,0.72)",
+          padding: "6px 2px",
+          background: "transparent",
+          border: "none",
+          textShadow: "0 0 14px rgba(255,217,122,0.28)",
+        }}
+        whileHover={{
+          y: -2,
+          color: "rgba(255,244,216,0.94)",
+          textShadow: "0 0 20px rgba(255,217,122,0.48)",
+        }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+      >
+        <span className="inline-flex items-center gap-2">
+          <motion.span
+            aria-hidden="true"
+            animate={{ opacity: [0.58, 0.92, 0.58], scale: [0.94, 1.08, 0.94] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-          </svg>
-        </motion.button>
-
-        {/* Leaderboard */}
-        <motion.button
-          onClick={() => { playButtonClick(); showToast("Coming Soon"); }}
-          className="flex items-center justify-center rounded-full tap-target"
-          style={{
-            width: "38px",
-            height: "38px",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.35)",
-            backdropFilter: "blur(8px)",
-          }}
-          whileHover={{
-            background: "rgba(255,255,255,0.1)",
-            color: "rgba(255,255,255,0.65)",
-            scale: 1.05,
-          }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
-            <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
-            <path d="M4 22h16" />
-            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-            <path d="M18 2H6v7a6 6 0 0012 0V2z" />
-          </svg>
-        </motion.button>
-
-        {/* Version */}
-        <span
-          className="text-[10px] ml-1"
-          style={{ color: "rgba(255,255,255,0.18)" }}
-        >
-          v1.0.0
+            {"\u2728"}
+          </motion.span>
+          <span>More adventures with Chelsea</span>
         </span>
-      </div>
+      </motion.button>
+
+      <AnimatePresence>
+        {showLearnMore && (
+          <LearnMoreModal onClose={() => setShowLearnMore(false)} />
+        )}
+      </AnimatePresence>
 
       {/* ===== TRANSITION OVERLAY ===== */}
       <AnimatePresence>

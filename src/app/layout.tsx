@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ViewportScale } from "@/components/shared/ViewportScale";
+import { AudioUnlocker } from "@/components/shared/AudioUnlocker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <ViewportScale />
+        <AudioUnlocker />
         {children}
       </body>
     </html>

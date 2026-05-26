@@ -99,6 +99,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 
   return (
     <motion.button
+      data-orb-id={orbId}
       onClick={() => onTap(orbId)}
       className="absolute flex flex-col items-center justify-center cursor-pointer tap-target"
       style={{

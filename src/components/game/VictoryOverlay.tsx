@@ -116,10 +116,13 @@ export const VictoryOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12 overflow-y-auto"
+      className="absolute inset-0 z-50 flex flex-col items-start justify-center px-12 overflow-y-auto"
       style={{
-        background:
-          "radial-gradient(circle at center, rgba(255,235,180,0.15), rgba(20,26,40,0.92))",
+        backgroundImage:
+          "linear-gradient(rgba(20,26,40,0.28), rgba(20,26,40,0.62)), url('/victory.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
       }}
@@ -159,7 +162,7 @@ export const VictoryOverlay: React.FC = () => {
 
       <motion.div
         className="flex flex-col items-center w-full"
-        style={{ maxWidth: "calc(680px * var(--vscale, 1))" }}
+        style={{ maxWidth: "calc(680px * var(--vscale, 1))", marginLeft: "calc(8vw * var(--vscale, 1))" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.15, duration: 0.5 }}

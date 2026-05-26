@@ -8,6 +8,7 @@ import {
   playChainSound,
   playGroupCompleteSound,
   playVictorySound,
+  playFailureSound,
 } from "@/lib/utils/sound";
 import { canTransition } from "./StateMachine";
 import { tickStorm, applyWrongPenalty, applyCorrectReduction } from "./StormSystem";
@@ -235,7 +236,12 @@ export class GameEngine {
 
         const updatedState = this.getState();
         if (isGroupFullyChained(updatedState, chain.groupId)) {
-          this.completeGroup(chain.groupId);
+          setTimeout(() => {
+            const current = this.getState();
+            if (current.activeChain?.chainId === extended.chainId) {
+              this.completeGroup(chain.groupId);
+            }
+          }, 420);
         }
         return;
       } else {
@@ -401,6 +407,8 @@ export class GameEngine {
   private onGameOver(): void {
     this.stopLoop();
     this.clearMeaningTimers();
+
+    playFailureSound();
 
     this.setState({
       phase: "gameover",

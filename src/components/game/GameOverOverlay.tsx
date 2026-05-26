@@ -18,10 +18,13 @@ export const GameOverOverlay: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center px-12"
+      className="absolute inset-0 z-50 flex flex-col items-start justify-center px-12"
       style={{
-        background:
-          "radial-gradient(circle at center, rgba(80,90,130,0.2), rgba(15,20,35,0.95))",
+        backgroundImage:
+          "linear-gradient(rgba(15,20,35,0.4), rgba(15,20,35,0.78)), url('/lose.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
       }}
@@ -57,7 +60,7 @@ export const GameOverOverlay: React.FC = () => {
 
       <motion.div
         className="flex flex-col items-center w-full"
-        style={{ maxWidth: "calc(780px * var(--vscale, 1))" }}
+        style={{ maxWidth: "calc(780px * var(--vscale, 1))", marginLeft: "calc(8vw * var(--vscale, 1))" }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
