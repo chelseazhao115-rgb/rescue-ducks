@@ -51,7 +51,8 @@ export const VictoryOverlay: React.FC = () => {
 
   const levelsInThisStage = getLevelsInStage(currentStage);
   const hasNextLevelInStage = currentLevelInStage < levelsInThisStage;
-  const hasNextStage = currentStage < CURRICULUM.length;
+  const maxStageId = Math.max(...CURRICULUM.map((s) => s.id));
+  const hasNextStage = currentStage < maxStageId;
 
   const stage = CURRICULUM.find((s) => s.id === currentStage);
   const stageName = stage?.name ?? `Stage ${currentStage}`;
@@ -95,7 +96,7 @@ export const VictoryOverlay: React.FC = () => {
   const semanticProgress = getSemanticProgress(updatedGlobalLevel);
 
   const handleNextLevel = () => {
-    localStorage.removeItem("rescueDuckSelectedLevel");
+    localStorage.setItem("rescueDuckSelectedLevel", String(nextGlobalLevel));
     resetGame();
     router.push("/game");
   };

@@ -83,13 +83,14 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const styles = STATUS_STYLES[status];
 
   const chars = word.length;
-  const needsWrap = chars > 20;
+  const hasSpaces = word.trim().includes(" ");
+  const needsWrap = chars > 10 || hasSpaces;
   const orbSizePx = needsWrap
-    ? Math.min(283, 123 + (chars - 7) * 9)
+    ? Math.min(350, 130 + (chars - 7) * 14)
     : chars <= 7
       ? 123
       : Math.min(223, 123 + (chars - 7) * 9);
-  const fontSize = needsWrap ? 23 : 31;
+  const fontSize = hasSpaces ? 26 : chars > 20 ? 23 : chars > 10 ? 28 : 31;
   const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
   const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
   const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
@@ -196,16 +197,16 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 
         {/* Word text */}
         <span
-          className={`relative font-semibold text-center px-3 leading-tight ${needsWrap ? "" : "whitespace-nowrap"}`}
+          className={`relative font-semibold text-center px-3 leading-tight ${needsWrap && hasSpaces ? "" : "whitespace-nowrap"}`}
           style={{
             fontSize: `calc(${fontSize}px * var(--vscale, 1))`,
             color: styles.textColor,
             textShadow: `0 0 12px ${styles.glowColor}`,
-            ...(needsWrap
+            ...(needsWrap && hasSpaces
               ? {
                   maxWidth: `calc(${orbSizePx * 0.78}px * var(--vscale, 1))`,
                   display: "inline-block" as const,
-                  wordBreak: "break-word" as const,
+                  whiteSpace: "normal" as const,
                 }
               : {}),
           }}
