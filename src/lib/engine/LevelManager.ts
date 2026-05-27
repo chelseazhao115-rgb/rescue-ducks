@@ -20,6 +20,12 @@ const LEVEL_TITLE_X_MIN = 0.22;
 const LEVEL_TITLE_X_MAX = 0.78;
 const LEVEL_TITLE_Y_MAX = 0.28;
 
+// Opening meaning hint exclusion zone — top-center, below the level title
+const MEANING_HINT_X_MIN = 0.18;
+const MEANING_HINT_X_MAX = 0.82;
+const MEANING_HINT_Y_MIN = 0.18;
+const MEANING_HINT_Y_MAX = 0.32;
+
 function isInExcludedZone(pos: { x: number; y: number }): boolean {
   if (pos.x < CHELSEA_X_MAX && pos.y > CHELSEA_Y_MIN) return true; // Chelsea area
   if (pos.x > LIGHTHOUSE_X_MIN && pos.y < LIGHTHOUSE_Y_MAX) return true; // Lighthouse area
@@ -28,6 +34,12 @@ function isInExcludedZone(pos: { x: number; y: number }): boolean {
     pos.x < LEVEL_TITLE_X_MAX &&
     pos.y < LEVEL_TITLE_Y_MAX
   ) return true; // Level title area
+  if (
+    pos.x > MEANING_HINT_X_MIN &&
+    pos.x < MEANING_HINT_X_MAX &&
+    pos.y > MEANING_HINT_Y_MIN &&
+    pos.y < MEANING_HINT_Y_MAX
+  ) return true; // Meaning hint area
   return false;
 }
 

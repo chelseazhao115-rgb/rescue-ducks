@@ -146,7 +146,7 @@ export const GameScreen: React.FC = () => {
         {phase === "playing" && levelConfig && (
           <motion.div
             key={`${levelConfig.levelId}-meaning-hint`}
-            className="absolute left-1/2 bottom-[19%] z-20 -translate-x-1/2 rounded-full border px-5 py-2 text-center font-semibold text-white/82 pointer-events-none"
+            className="absolute left-1/2 top-[22%] z-20 -translate-x-1/2 rounded-full border px-5 py-2 text-center font-semibold text-white/82 pointer-events-none"
             style={{
               fontSize: "calc(30px * var(--vscale, 1))",
               background: "rgba(20, 12, 40, 0.48)",
@@ -159,7 +159,7 @@ export const GameScreen: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: [0, 1, 1, 0], y: [6, 0, 0, -4] }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 5.2, times: [0, 0.16, 0.72, 1], ease: "easeOut" }}
+            transition={{ delay: 3.2, duration: 3, times: [0, 0.16, 0.7, 1], ease: "easeOut" }}
           >
             Double-click a word to reveal its Chinese meaning
           </motion.div>

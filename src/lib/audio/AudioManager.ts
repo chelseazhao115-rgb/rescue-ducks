@@ -25,11 +25,11 @@ interface TrackNode {
 }
 
 const MUSIC_TARGETS: Record<MusicCue, number> = {
-  home: 0.48,
-  intro: 0.46,
-  gameplay: 0.36,
-  victory: 0.5,
-  failure: 0.42,
+  home: 1.6,
+  intro: 0.7,
+  gameplay: 0.6,
+  victory: 0.6,
+  failure: 0.6,
 };
 
 function safeRamp(gain: AudioParam, ctx: AudioContext, value: number, seconds: number): void {
@@ -155,9 +155,9 @@ export class AudioManager {
     const intensity = Math.min(1, Math.max(0, value));
     this.setStormIntensity(intensity * 0.55, 0.8);
 
-    if (intensity > 0.72 && performance.now() - this.lastStormPulseAt > 9000) {
+    if (intensity > 0.66 && performance.now() - this.lastStormPulseAt > 7500) {
       this.lastStormPulseAt = performance.now();
-      this.playSfx("stormPulse", 0.24 + intensity * 0.2);
+      this.playSfx("stormPulse", 0.28 + intensity * 0.24);
     }
   }
 
@@ -354,7 +354,7 @@ export class AudioManager {
       this.stormLayer.output.connect(this.ensureAmbienceBus());
     }
 
-    safeRamp(this.stormLayer.output.gain, ctx, this.stormIntensity * 0.42, fadeSeconds);
+    safeRamp(this.stormLayer.output.gain, ctx, this.stormIntensity * 0.68, fadeSeconds);
   }
 
   private createStormLayer(): ProceduralLoop {
@@ -363,36 +363,69 @@ export class AudioManager {
     out.gain.value = 0.0001;
 
     const wind = ctx.createBufferSource();
-    wind.buffer = noiseBuffer(ctx, 3);
+    wind.buffer = noiseBuffer(ctx, 4);
     wind.loop = true;
-    const windFilter = ctx.createBiquadFilter();
-    windFilter.type = "bandpass";
-    windFilter.frequency.value = 620;
-    windFilter.Q.value = 0.5;
-    const rain = ctx.createBufferSource();
-    rain.buffer = noiseBuffer(ctx, 1);
-    rain.loop = true;
-    const rainFilter = ctx.createBiquadFilter();
-    rainFilter.type = "highpass";
-    rainFilter.frequency.value = 2100;
-    const rainGain = ctx.createGain();
-    rainGain.gain.value = 0.22;
 
-    wind.connect(windFilter);
-    windFilter.connect(out);
-    rain.connect(rainFilter);
-    rainFilter.connect(rainGain);
-    rainGain.connect(out);
+    const windHighpass = ctx.createBiquadFilter();
+    windHighpass.type = "highpass";
+    windHighpass.frequency.value = 38;
+
+    const windLowpass = ctx.createBiquadFilter();
+    windLowpass.type = "lowpass";
+    windLowpass.frequency.value = 560;
+    windLowpass.Q.value = 0.45;
+
+    const windGain = ctx.createGain();
+    windGain.gain.value = 0.42;
+
+    const distantAir = ctx.createBufferSource();
+    distantAir.buffer = noiseBuffer(ctx, 5);
+    distantAir.loop = true;
+
+    const airFilter = ctx.createBiquadFilter();
+    airFilter.type = "bandpass";
+    airFilter.frequency.value = 180;
+    airFilter.Q.value = 0.7;
+
+    const airGain = ctx.createGain();
+    airGain.gain.value = 0.16;
+
+    const windEdge = ctx.createBufferSource();
+    windEdge.buffer = noiseBuffer(ctx, 2);
+    windEdge.loop = true;
+
+    const edgeFilter = ctx.createBiquadFilter();
+    edgeFilter.type = "bandpass";
+    edgeFilter.frequency.value = 780;
+    edgeFilter.Q.value = 0.65;
+
+    const edgeGain = ctx.createGain();
+    edgeGain.gain.value = 0.045;
+
+    wind.connect(windHighpass);
+    windHighpass.connect(windLowpass);
+    windLowpass.connect(windGain);
+    windGain.connect(out);
+
+    distantAir.connect(airFilter);
+    airFilter.connect(airGain);
+    airGain.connect(out);
+
+    windEdge.connect(edgeFilter);
+    edgeFilter.connect(edgeGain);
+    edgeGain.connect(out);
+
     wind.start();
-    rain.start();
+    distantAir.start();
+    windEdge.start();
 
     return {
       output: out,
       stop: (fadeSeconds = 0.6) => {
         safeRamp(out.gain, ctx, 0, fadeSeconds);
         window.setTimeout(() => {
-          [wind, rain].forEach((n) => { try { n.stop(); } catch {} });
-          [wind, windFilter, rain, rainFilter, rainGain, out].forEach((n) => { try { n.disconnect(); } catch {} });
+          [wind, distantAir, windEdge].forEach((n) => { try { n.stop(); } catch {} });
+          [wind, windHighpass, windLowpass, windGain, distantAir, airFilter, airGain, windEdge, edgeFilter, edgeGain, out].forEach((n) => { try { n.disconnect(); } catch {} });
         }, fadeSeconds * 1000 + 120);
       },
     };
@@ -509,21 +542,22 @@ export class AudioManager {
   private thunderPulse(volume: number, destination: AudioNode): void {
     const ctx = this.getContext();
     const osc = ctx.createOscillator();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(82, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(32, ctx.currentTime + 1.2);
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(68, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(36, ctx.currentTime + 1.45);
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 170;
+    filter.frequency.value = 165;
+    filter.Q.value = 0.45;
     const gain = ctx.createGain();
     gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.2);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.4);
+    gain.gain.linearRampToValueAtTime(volume * 0.5, ctx.currentTime + 0.22);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.65);
     osc.connect(filter);
     filter.connect(gain);
     gain.connect(destination);
     osc.start();
-    osc.stop(ctx.currentTime + 1.5);
+    osc.stop(ctx.currentTime + 1.75);
   }
 }
 
