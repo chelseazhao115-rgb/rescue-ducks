@@ -32,14 +32,6 @@ const MUSIC_TARGETS: Record<MusicCue, number> = {
   failure: 0.42,
 };
 
-const ASSET_PATHS: Record<MusicCue, string> = {
-  home: "/audio/home-theme.mp3",
-  intro: "/audio/intro-ambient.mp3",
-  gameplay: "/audio/gameplay-loop.mp3",
-  victory: "/audio/victory.mp3",
-  failure: "/audio/failure.mp3",
-};
-
 function safeRamp(gain: AudioParam, ctx: AudioContext, value: number, seconds: number): void {
   const now = ctx.currentTime;
   gain.cancelScheduledValues(now);
@@ -248,19 +240,11 @@ export class AudioManager {
     const out = ctx.createGain();
     out.gain.value = 1;
 
-    const asset = this.createAssetLoop(cue);
-    if (asset) return asset;
-
     if (cue === "home") return this.createPadLoop([130.81, 196, 261.63, 329.63], 0.055, 0.08, out);
     if (cue === "intro") return this.createPadLoop([146.83, 220, 293.66, 349.23], 0.05, 0.06, out);
     if (cue === "gameplay") return this.createPadLoop([174.61, 261.63, 329.63, 392], 0.044, 0.16, out, true);
     if (cue === "victory") return this.createPadLoop([196, 246.94, 293.66, 392, 493.88], 0.06, 0.04, out);
     return this.createPadLoop([146.83, 174.61, 220, 293.66], 0.048, 0.04, out);
-  }
-
-  private createAssetLoop(cue: MusicCue): ProceduralLoop | null {
-    void ASSET_PATHS[cue];
-    return null;
   }
 
   private createPadLoop(

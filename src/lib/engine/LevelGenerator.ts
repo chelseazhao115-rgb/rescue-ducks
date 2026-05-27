@@ -13,6 +13,16 @@ import { semanticGroupsV2 } from "@/data/semanticGroupsV2";
 import type { SemanticGroupV2, AtmosphereTag } from "@/data/semanticGroupsV2";
 import { shuffle } from "@/lib/utils/random";
 import type { RuntimeLevelConfig, RuntimeGroupConfig, RuntimeWordConfig } from "@/lib/types";
+import {
+  clearRecentGroups,
+  clearSemanticProgress,
+  getValidatedGlobalLevel,
+  loadRecentGroups,
+  loadSemanticProgress,
+  saveRecentGroups as persistRecentGroups,
+  saveSemanticProgress,
+  shouldResetSemanticProgress,
+} from "@/lib/storage/saveData";
 
 // ── Chapter Definition ───────────────────────────────────────
 
@@ -421,24 +431,66 @@ function buildCurriculumMap(): Map<string, AssignedLevel> {
 /** The one true curriculum — built once at module load */
 const CURRICULUM_MAP = buildCurriculumMap();
 
+function connectionLabelForCategory(category: SemanticGroupV2["category"]): string {
+  if (category === "logic_relation") return "Logic";
+  if (category === "academic_expression") return "Academic";
+  if (category === "contextual_synonym") return "Context";
+  if (category === "theme_cluster") return "Theme";
+  return "Synonym";
+}
+
 // ── Anti-Repetition ──────────────────────────────────────────
 
 const RECENT_WINDOW = 30;
 const recentGroupIds: string[] = [];
+let recentHydrated = false;
 
-function markAsUsed(ids: string[]): void {
+function getGlobalLevelForStage(stageId: number, levelInStage: number): number {
+  let globalLevel = levelInStage;
+  for (const stage of CURRICULUM) {
+    if (stage.id >= stageId) break;
+    globalLevel += getLevelsInStage(stage.id);
+  }
+  return Math.max(1, Math.min(TOTAL_LEVELS, globalLevel));
+}
+
+function getSavedGlobalLevel(): number {
+  return getValidatedGlobalLevel(TOTAL_LEVELS);
+}
+
+function hydrateRecentGroups(): void {
+  if (recentHydrated || typeof window === "undefined") return;
+  recentHydrated = true;
+
+  const data = loadRecentGroups();
+  if (!data) return;
+
+  if (data.globalLevel > getSavedGlobalLevel()) {
+    clearRecentGroups();
+    return;
+  }
+
+  recentGroupIds.push(...data.ids.slice(-RECENT_WINDOW));
+}
+
+function markAsUsed(ids: string[], globalLevel: number): void {
+  hydrateRecentGroups();
   recentGroupIds.push(...ids);
   while (recentGroupIds.length > RECENT_WINDOW) {
     recentGroupIds.shift();
   }
+  persistRecentGroups({ globalLevel, ids: recentGroupIds });
 }
 
 function isRecent(id: string): boolean {
+  hydrateRecentGroups();
   return recentGroupIds.includes(id);
 }
 
 export function resetAntiRepetition(): void {
   recentGroupIds.length = 0;
+  recentHydrated = true;
+  clearRecentGroups();
 }
 
 // ── RUNTIME LEVEL GENERATION ─────────────────────────────────
@@ -486,17 +538,22 @@ export function generateLevel(
   // ── Select groups for this play ─────────────────────────────
   // Core groups are ALWAYS included (fixed curriculum)
   // Variation: pick from pool, but avoid word overlap across groups
-  const varCount = chapter.groupsPerLevel - assignment.coreGroupIds.length;
   const availableVars = assignment.variationPoolIds.filter((id) => !isRecent(id));
 
   // Build priority-ordered pool: core first, then shuffled variations
   const neededCount = chapter.groupsPerLevel;
   const coreIds = [...assignment.coreGroupIds];
-  const varPool = shuffle([...availableVars]).filter((id) => !coreIds.includes(id));
+  const groupLookup = new Map(semanticGroupsV2.map((g) => [g.id, g]));
+  const varPool = shuffle([...availableVars])
+    .filter((id) => !coreIds.includes(id))
+    .sort((a, b) => {
+      const aWeight = groupLookup.get(a)?.resurfacingWeight ?? 1;
+      const bWeight = groupLookup.get(b)?.resurfacingWeight ?? 1;
+      return bWeight - aWeight;
+    });
   const priorityIds = [...coreIds, ...varPool];
 
   // ── Build RuntimeGroupConfigs (with cross-group word dedup) ──
-  const groupLookup = new Map(semanticGroupsV2.map((g) => [g.id, g]));
 
   const progressInStage = (levelInStage - 1) / Math.max(1, getLevelsInStage(stageId) - 1);
   const [chainMin, chainMax] = chapter.chainWords;
@@ -504,6 +561,18 @@ export function generateLevel(
     Math.round(chainMin + (chainMax - chainMin) * progressInStage),
     6
   ); // hard cap: no chain longer than 6
+
+  const getWordCountForGroup = (group: SemanticGroupV2): number => {
+    const [recommendedMin, recommendedMax] = group.recommendedChainRange;
+    const recommendedCap = wordsPerGroup < recommendedMin
+      ? wordsPerGroup
+      : Math.min(wordsPerGroup, recommendedMax);
+
+    return Math.max(
+      2,
+      Math.min(group.words.length, 6, recommendedCap)
+    );
+  };
 
   const groups: RuntimeGroupConfig[] = [];
   const usedWordTexts = new Set<string>();
@@ -518,7 +587,7 @@ export function generateLevel(
 
     // Select words for this group (capped at 6)
     const shuffled = shuffle([...sg.words]);
-    const levelWords = shuffled.slice(0, Math.min(wordsPerGroup, shuffled.length));
+    const levelWords = shuffled.slice(0, getWordCountForGroup(sg));
     if (levelWords.length < 2) continue; // need at least 2 words
 
     // Check cross-group word overlap — skip if any word already used
@@ -532,6 +601,7 @@ export function generateLevel(
     const runtimeWords: RuntimeWordConfig[] = levelWords.map((w) => ({
       text: w.text,
       meaning: sg.keywordsChinese,
+      connectionLabel: connectionLabelForCategory(sg.category),
       groupId: sg.id,
       visualWeight: w.visualWeight,
       wordDifficulty: w.wordDifficulty,
@@ -546,11 +616,9 @@ export function generateLevel(
     });
   }
 
-  markAsUsed([...usedGroupIds]);
+  markAsUsed([...usedGroupIds], getGlobalLevelForStage(stageId, levelInStage));
 
   // ── Calculate timing ────────────────────────────────────────
-  const totalWords = groups.reduce((sum, g) => sum + g.words.length, 0);
-
   return {
     levelId: levelKey,
     stageId,
@@ -564,8 +632,6 @@ export function generateLevel(
     stormReductionOnCorrect: stage.stormReductionOnCorrect,
     lighthouseGainPerGroup: Math.round((100 / groups.length) * 100) / 100,
     comboTimeoutMs: stage.comboTimeoutMs,
-    maxOrbsOnScreen: Math.min(totalWords + 2, 14),
-    orbSpawnIntervalMs: 2500,
     wordsPerGroup,
     groups,
   };
@@ -595,32 +661,16 @@ export interface StageProgress {
   isCompleted: boolean;
 }
 
-const PROGRESS_KEY = "rescueDuckSemanticProgress";
-const GLOBAL_LEVEL_KEY = "rescueDuckGlobalLevel";
-
 function loadProgress(): Record<string, number> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
-    if (!raw) return {};
-    const data = JSON.parse(raw);
-    // Auto-clean if game progress was reset: low global level + inflated mastery
-    const globalRaw = localStorage.getItem(GLOBAL_LEVEL_KEY);
-    const parsedGlobalLevel = globalRaw ? parseInt(globalRaw, 10) : 1;
-    const globalLevel = Number.isFinite(parsedGlobalLevel) ? parsedGlobalLevel : 1;
-    if (globalLevel <= 10 && Object.keys(data).length > 60) {
-      localStorage.removeItem(PROGRESS_KEY);
-      return {};
-    }
-    return data;
-  } catch {
+  if (shouldResetSemanticProgress(TOTAL_LEVELS)) {
+    clearSemanticProgress();
     return {};
   }
+  return loadSemanticProgress();
 }
 
 function saveProgress(data: Record<string, number>): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
+  saveSemanticProgress(data);
 }
 
 /** Record that a group was encountered (seen by the player). */
@@ -701,8 +751,7 @@ export function getSemanticProgress(globalLevel: number): SemanticProgress {
 
 /** Clear all semantic progress tracking data. */
 export function resetSemanticProgress(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(PROGRESS_KEY);
+  clearSemanticProgress();
 }
 
 /** Get all chapters for a stage — for UI display. */

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useGameStore } from "@/store/gameStore";
 import { StarRating } from "./StarRating";
 import { calcStarRating } from "@/lib/engine/ScoringSystem";
+import { clearSelectedLevel } from "@/lib/storage/saveData";
 
 export const GameOverOverlay: React.FC = () => {
   const resetGame = useGameStore((s) => s.resetGame);
@@ -134,7 +135,7 @@ export const GameOverOverlay: React.FC = () => {
           </motion.button>
 
           <motion.button
-            onClick={() => { localStorage.removeItem("rescueDuckSelectedLevel"); resetGame(); router.push("/"); }}
+            onClick={() => { clearSelectedLevel(); resetGame(); router.push("/"); }}
             className="w-full font-semibold text-white/70"
             style={{
               fontSize: "calc(28px * var(--vscale, 1))",

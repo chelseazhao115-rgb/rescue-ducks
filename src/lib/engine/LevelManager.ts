@@ -15,9 +15,19 @@ const CHELSEA_Y_MIN = 0.60;
 const LIGHTHOUSE_X_MIN = 0.68;
 const LIGHTHOUSE_Y_MAX = 0.50;
 
+// Cinematic level title exclusion zone — top-center
+const LEVEL_TITLE_X_MIN = 0.22;
+const LEVEL_TITLE_X_MAX = 0.78;
+const LEVEL_TITLE_Y_MAX = 0.28;
+
 function isInExcludedZone(pos: { x: number; y: number }): boolean {
   if (pos.x < CHELSEA_X_MAX && pos.y > CHELSEA_Y_MIN) return true; // Chelsea area
   if (pos.x > LIGHTHOUSE_X_MIN && pos.y < LIGHTHOUSE_Y_MAX) return true; // Lighthouse area
+  if (
+    pos.x > LEVEL_TITLE_X_MIN &&
+    pos.x < LEVEL_TITLE_X_MAX &&
+    pos.y < LEVEL_TITLE_Y_MAX
+  ) return true; // Level title area
   return false;
 }
 
@@ -52,6 +62,7 @@ export interface SpawnItem {
   word: string;
   groupId: string;
   meaning: string;
+  connectionLabel: string;
   visualWeight: number;
   wordDifficulty: number;
 }
@@ -81,6 +92,7 @@ export function loadLevel(config: RuntimeLevelConfig): {
       word: w.text,
       groupId: group.groupId,
       meaning: w.meaning,
+      connectionLabel: w.connectionLabel,
       visualWeight: w.visualWeight,
       wordDifficulty: w.wordDifficulty,
     }));
@@ -141,6 +153,7 @@ export function spawnGroupOrbs(
       orbId: uuid(),
       word: groupItems[i].word,
       meaning: groupItems[i].meaning,
+      connectionLabel: groupItems[i].connectionLabel,
       groupId: groupItems[i].groupId,
       position,
       status: "idle",

@@ -21,36 +21,13 @@ import { GameOverOverlay } from "./GameOverOverlay";
 import { VictoryOverlay } from "./VictoryOverlay";
 import { useAdaptiveStormAudio } from "@/lib/hooks/useSoundtrack";
 import { audioManager } from "@/lib/audio/AudioManager";
+import { getPlayableGlobalLevel, getSelectedLevel } from "@/lib/storage/saveData";
 
 function resolveGlobalLevel(): number {
   if (typeof window === "undefined") return 1;
-  const selected = localStorage.getItem("rescueDuckSelectedLevel");
-  if (selected) {
-    const selectedLevel = parseInt(selected, 10);
-    if (
-      Number.isFinite(selectedLevel) &&
-      selectedLevel >= 1 &&
-      selectedLevel <= TOTAL_LEVELS
-    ) {
-      return selectedLevel;
-    }
-    localStorage.removeItem("rescueDuckSelectedLevel");
-  }
-
-  const saved = localStorage.getItem("rescueDuckGlobalLevel");
-  const raw = saved ? parseInt(saved, 10) : 1;
-  if (!Number.isFinite(raw)) {
-    localStorage.setItem("rescueDuckGlobalLevel", "1");
-    localStorage.removeItem("rescueDuckSemanticProgress");
-    return 1;
-  }
-  // Auto-fix inflated global level (stale data from dev / old sessions)
-  if (raw > TOTAL_LEVELS + 1) {
-    localStorage.setItem("rescueDuckGlobalLevel", "1");
-    localStorage.removeItem("rescueDuckSemanticProgress");
-    return 1;
-  }
-  return Math.min(Math.max(1, raw), TOTAL_LEVELS);
+  const selected = getSelectedLevel(TOTAL_LEVELS);
+  if (selected) return selected;
+  return getPlayableGlobalLevel(TOTAL_LEVELS);
 }
 
 export const GameScreen: React.FC = () => {
@@ -134,7 +111,7 @@ export const GameScreen: React.FC = () => {
         {phase === "playing" && levelConfig && (
           <motion.div
             key={levelConfig.levelId}
-            className="absolute left-1/2 top-[14%] z-30 -translate-x-1/2 text-center pointer-events-none"
+            className="absolute left-1/2 top-[10%] z-30 w-[min(78vw,760px)] -translate-x-1/2 text-center pointer-events-none"
             initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
             animate={{
               opacity: [0, 1, 1, 0],
@@ -147,8 +124,9 @@ export const GameScreen: React.FC = () => {
             <div
               className="font-extrabold tracking-wide"
               style={{
-                fontSize: "calc(42px * var(--vscale, 1))",
+                fontSize: "clamp(1.9rem, calc(42px * var(--vscale, 1)), 3.2rem)",
                 color: "#fff2cf",
+                lineHeight: 1.08,
                 textShadow: "0 0 34px rgba(255,217,122,0.38), 0 3px 18px rgba(0,0,0,0.45)",
               }}
             >

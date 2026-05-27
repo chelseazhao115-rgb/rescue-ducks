@@ -3,15 +3,15 @@ import type { ChelseaContext } from "@/lib/types";
 export const CHELSEA_TIPS: Record<ChelseaContext, string[]> = {
   game_start: [
     "The ducklings are still outside. Help guide them home.",
-    "Connect words with similar meanings.",
+    "Connect words that belong to the same meaning pattern.",
     "The lighthouse will grow brighter with each correct match.",
     "Let's calm the storm together.",
   ],
 
   level_start: [
     "Find the words that belong together.",
-    "These words share similar meanings.",
-    "Watch carefully — some meanings are subtle.",
+    "Some groups share meaning; others share function or context.",
+    "Watch carefully — some connections are subtle.",
     "This stage introduces new paraphrasing patterns.",
   ],
 
@@ -23,8 +23,8 @@ export const CHELSEA_TIPS: Record<ChelseaContext, string[]> = {
   ],
 
   correct_match: [
-    "Nice! Those words share a similar meaning.",
-    "Good catch — that's a paraphrasing pair.",
+    "Nice! Those words belong together.",
+    "Good catch — that's a useful IELTS connection.",
     "Great connection!",
     "The lighthouse is getting brighter.",
     "The storm is calming down.",
@@ -39,8 +39,8 @@ export const CHELSEA_TIPS: Record<ChelseaContext, string[]> = {
   ],
 
   wrong_match: [
-    "Not quite — those meanings are different.",
-    "Close, but those words are used differently.",
+    "Not quite — that connection works differently.",
+    "Close, but those words play different roles here.",
     "That pair doesn't fully match.",
     "Try another semantic connection.",
     "The storm is getting stronger...",

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CURRICULUM, TOTAL_LEVELS, getLevelsInStage } from "@/lib/engine/LevelGenerator";
+import { getValidatedGlobalLevel, setSelectedLevel } from "@/lib/storage/saveData";
 
 export interface LevelMapProps {
   onSelectLevel: (levelId: number) => void;
@@ -14,26 +15,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const [activeStageIdx, setActiveStageIdx] = useState(0);
 
   const getHighestUnlocked = (): number => {
-    if (typeof window === "undefined") return 1;
-    const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    const raw = saved ? parseInt(saved, 10) : 1;
-
-    if (!Number.isFinite(raw)) {
-      localStorage.setItem("rescueDuckGlobalLevel", "1");
-      localStorage.removeItem("rescueDuckSemanticProgress");
-      localStorage.removeItem("rescueDuckSelectedLevel");
-      return 1;
-    }
-
-    // Auto-fix: only reset truly impossible values (> total + 1)
-    if (raw > TOTAL_LEVELS + 1) {
-      localStorage.setItem("rescueDuckGlobalLevel", "1");
-      localStorage.removeItem("rescueDuckSemanticProgress");
-      localStorage.removeItem("rescueDuckSelectedLevel");
-      return 1;
-    }
-
-    return Math.min(raw, TOTAL_LEVELS + 1);
+    return getValidatedGlobalLevel(TOTAL_LEVELS);
   };
 
   const highestUnlocked = getHighestUnlocked();
@@ -63,7 +45,7 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
   const levelsInStage = currentStageRange.levelsCount;
 
   const handleLevelClick = (globalLevel: number) => {
-    localStorage.setItem("rescueDuckSelectedLevel", String(globalLevel));
+    setSelectedLevel(globalLevel, TOTAL_LEVELS);
     onSelectLevel(globalLevel);
     router.push("/game");
   };

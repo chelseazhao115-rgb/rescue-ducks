@@ -20,6 +20,7 @@ export const WordOrbField: React.FC = () => {
                 orbId={orb.orbId}
                 word={orb.word}
                 meaning={orb.meaning}
+                connectionLabel={orb.connectionLabel}
                 showMeaning={orb.showMeaning}
                 groupId={orb.groupId}
                 status={orb.status}

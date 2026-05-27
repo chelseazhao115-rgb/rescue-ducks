@@ -6,6 +6,7 @@ export interface WordOrbProps {
   orbId: string;
   word: string;
   meaning: string;
+  connectionLabel: string;
   groupId: string;
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
   showMeaning: boolean;
@@ -72,6 +73,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   orbId,
   word,
   meaning,
+  connectionLabel,
   status,
   showMeaning,
   position,
@@ -233,7 +235,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25 }}
           >
-            {meaning}
+            {connectionLabel} · {meaning}
           </motion.span>
         )}
       </AnimatePresence>

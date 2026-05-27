@@ -81,6 +81,13 @@ export class GameEngine {
     return "game_start";
   }
 
+  private pickGroupTip(groupId: string, fallback: ChelseaContext): ChelseaContext {
+    const group = this.getState().activeGroups.find((g) => g.groupId === groupId);
+    if (group?.category === "logic_relation") return "logic_groups";
+    if (group?.category === "academic_expression") return "academic_groups";
+    return fallback;
+  }
+
   /**
    * Start a level using the V2 semantic group runtime generator.
    * @param stageId - Stage number (1-4)
@@ -317,7 +324,7 @@ export class GameEngine {
     };
     // Throttle: only show tip every 3rd new chain
     if (this.matchCounter % 3 === 0) {
-      this.showTip("correct_match", startUpdates);
+      this.showTip(this.pickGroupTip(orb.groupId, "correct_match"), startUpdates);
     }
     this.setState(startUpdates);
   }
@@ -376,7 +383,7 @@ export class GameEngine {
       ducks: updatedDucks,
       activeChain: null,
     };
-    this.showTip("correct_match", completeUpdates);
+    this.showTip(this.pickGroupTip(groupId, "correct_match"), completeUpdates);
     this.setState(completeUpdates);
 
     // Spawn 2 new groups every 2 completions

@@ -7,12 +7,17 @@ import { useGameStore } from "@/store/gameStore";
 import {
   CURRICULUM,
   getLevelsInStage,
-  resetAntiRepetition,
   getSemanticProgress,
   TOTAL_LEVELS,
 } from "@/lib/engine/LevelGenerator";
 import { StarRating } from "./StarRating";
 import { calcStarRating } from "@/lib/engine/ScoringSystem";
+import {
+  advanceGlobalLevel,
+  clearSelectedLevel,
+  getValidatedGlobalLevel,
+  setSelectedLevel,
+} from "@/lib/storage/saveData";
 
 function computeNextGlobalLevel(
   currentStage: number,
@@ -83,40 +88,26 @@ export const VictoryOverlay: React.FC = () => {
 
   // Always advance game progress on victory, regardless of which button is clicked
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    const rawSavedLevel = saved ? parseInt(saved, 10) : 1;
-    const savedLevel = Number.isFinite(rawSavedLevel) ? rawSavedLevel : 1;
-    if (nextGlobalLevel > savedLevel) {
-      localStorage.setItem("rescueDuckGlobalLevel", String(nextGlobalLevel));
-    }
+    advanceGlobalLevel(nextGlobalLevel, TOTAL_LEVELS);
   }, [nextGlobalLevel]);
 
-  const updatedGlobalLevel =
-    typeof window !== "undefined"
-      ? (() => {
-          const s = localStorage.getItem("rescueDuckGlobalLevel");
-          const raw = s ? parseInt(s, 10) : 1;
-          return Number.isFinite(raw) ? raw : 1;
-        })()
-      : 1;
+  const updatedGlobalLevel = getValidatedGlobalLevel(TOTAL_LEVELS);
   const semanticProgress = getSemanticProgress(updatedGlobalLevel);
 
   const handleNextLevel = () => {
-    localStorage.setItem("rescueDuckSelectedLevel", String(nextGlobalLevel));
+    setSelectedLevel(nextGlobalLevel, TOTAL_LEVELS);
     resetGame();
     router.push("/game");
   };
 
   const handleReplay = () => {
-    localStorage.setItem("rescueDuckSelectedLevel", String(currentGlobalLevel));
+    setSelectedLevel(currentGlobalLevel, TOTAL_LEVELS);
     resetGame();
     router.push("/game");
   };
 
   const handleBackToMap = () => {
-    localStorage.removeItem("rescueDuckSelectedLevel");
-    resetAntiRepetition();
+    clearSelectedLevel();
     resetGame();
     router.push("/");
   };

@@ -15,6 +15,7 @@ import { ToastContainer } from "./Toast";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
 import { TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
+import { clearSelectedLevel, getPlayableGlobalLevel } from "@/lib/storage/saveData";
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
@@ -25,28 +26,7 @@ export const HomeScreen: React.FC = () => {
 
   // Auto-fix inflated / inconsistent global level on every visit to home screen
   useEffect(() => {
-    const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    if (!saved) {
-      setContinueLevel(1);
-      return;
-    }
-    const raw = parseInt(saved, 10);
-    if (!Number.isFinite(raw)) {
-      localStorage.setItem("rescueDuckGlobalLevel", "1");
-      localStorage.removeItem("rescueDuckSemanticProgress");
-      localStorage.removeItem("rescueDuckSelectedLevel");
-      setContinueLevel(1);
-      return;
-    }
-    // Only reset truly impossible values (> total + 1)
-    if (raw > TOTAL_LEVELS + 1) {
-      localStorage.setItem("rescueDuckGlobalLevel", "1");
-      localStorage.removeItem("rescueDuckSemanticProgress");
-      localStorage.removeItem("rescueDuckSelectedLevel");
-      setContinueLevel(1);
-      return;
-    }
-    setContinueLevel(Math.min(Math.max(1, raw), TOTAL_LEVELS));
+    setContinueLevel(getPlayableGlobalLevel(TOTAL_LEVELS));
   }, []);
 
   useEffect(() => {
@@ -57,7 +37,7 @@ export const HomeScreen: React.FC = () => {
   const handleStartJourney = () => {
     unlockAudio();
     setIsTransitioning(true);
-    localStorage.removeItem("rescueDuckSelectedLevel");
+    clearSelectedLevel();
     setTimeout(() => {
       router.push("/game");
     }, 1500);

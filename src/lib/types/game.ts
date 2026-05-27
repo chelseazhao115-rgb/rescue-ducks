@@ -21,6 +21,7 @@ export interface OrbInstance {
   orbId: string;
   word: string;
   meaning: string;
+  connectionLabel: string;
   groupId: string;
   position: { x: number; y: number };
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
@@ -79,6 +80,7 @@ export interface GameSummary {
 export interface RuntimeWordConfig {
   text: string;
   meaning: string;
+  connectionLabel: string;
   groupId: string;
   visualWeight: number;
   wordDifficulty: number;
@@ -105,8 +107,6 @@ export interface RuntimeLevelConfig {
   stormReductionOnCorrect: number;
   lighthouseGainPerGroup: number;
   comboTimeoutMs: number;
-  maxOrbsOnScreen: number;
-  orbSpawnIntervalMs: number;
   wordsPerGroup: number;
   groups: RuntimeGroupConfig[];
 }

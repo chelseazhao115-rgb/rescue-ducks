@@ -3,10 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
-import { CURRICULUM, TOTAL_LEVELS, getLevelsInStage } from "@/lib/engine/LevelGenerator";
+import { CURRICULUM, TOTAL_LEVELS, getLevelsInStage, resetAntiRepetition } from "@/lib/engine/LevelGenerator";
 import { semanticGroupsV2 } from "@/data/semanticGroupsV2";
 import { loadLevel, spawnGroupOrbs } from "@/lib/engine/LevelManager";
 import type { RuntimeLevelConfig } from "@/lib/types";
+import {
+  clearSelectedLevel,
+  resetAllProgress,
+  setGlobalLevel,
+} from "@/lib/storage/saveData";
 
 export const DebugPanel: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -44,23 +49,22 @@ export const DebugPanel: React.FC = () => {
       if (s.id >= stageId) break;
       global += getLevelsInStage(s.id);
     }
-    localStorage.setItem("rescueDuckGlobalLevel", String(global));
-    localStorage.removeItem("rescueDuckSelectedLevel");
+    setGlobalLevel(global, TOTAL_LEVELS);
+    clearSelectedLevel();
     useGameStore.getState().resetGame();
     window.location.href = "/game";
   };
 
   const unlockAll = () => {
-    localStorage.setItem("rescueDuckGlobalLevel", String(TOTAL_LEVELS + 1));
-    localStorage.removeItem("rescueDuckSelectedLevel");
+    setGlobalLevel(TOTAL_LEVELS + 1, TOTAL_LEVELS);
+    clearSelectedLevel();
     useGameStore.getState().resetGame();
     window.location.href = "/";
   };
 
   const resetSave = () => {
-    localStorage.removeItem("rescueDuckGlobalLevel");
-    localStorage.removeItem("rescueDuckSelectedLevel");
-    localStorage.removeItem("rescueDuckSemanticProgress");
+    resetAllProgress();
+    resetAntiRepetition();
     useGameStore.getState().resetGame();
     window.location.href = "/";
   };
@@ -82,8 +86,6 @@ export const DebugPanel: React.FC = () => {
       stormReductionOnCorrect: 3,
       lighthouseGainPerGroup: 100,
       comboTimeoutMs: 8000,
-      maxOrbsOnScreen: 10,
-      orbSpawnIntervalMs: 2500,
       wordsPerGroup: selectedWords.length,
       groups: [{
         groupId: group.id,
@@ -93,6 +95,7 @@ export const DebugPanel: React.FC = () => {
         words: selectedWords.map((w) => ({
           text: w.text,
           meaning: group.keywordsChinese,
+          connectionLabel: group.category,
           groupId: group.id,
           visualWeight: w.visualWeight,
           wordDifficulty: w.wordDifficulty,
