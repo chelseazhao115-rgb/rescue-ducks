@@ -7,6 +7,7 @@ import { WordOrb } from "./WordOrb";
 export const WordOrbField: React.FC = () => {
   const orbs = useGameStore((s) => s.orbs);
   const tapOrb = useGameStore((s) => s.tapOrb);
+  const peekOrb = useGameStore((s) => s.peekOrb);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -26,6 +27,7 @@ export const WordOrbField: React.FC = () => {
                 status={orb.status}
                 position={orb.position}
                 onTap={tapOrb}
+                onPeek={peekOrb}
               />
             ))}
         </AnimatePresence>

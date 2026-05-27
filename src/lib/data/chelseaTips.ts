@@ -3,6 +3,7 @@ import type { ChelseaContext } from "@/lib/types";
 export const CHELSEA_TIPS: Record<ChelseaContext, string[]> = {
   game_start: [
     "The ducklings are still outside. Help guide them home.",
+    "Double-click a word to reveal its Chinese meaning, then connect words that belong together.",
     "Connect words that belong to the same meaning pattern.",
     "The lighthouse will grow brighter with each correct match.",
     "Let's calm the storm together.",

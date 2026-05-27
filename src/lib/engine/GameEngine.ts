@@ -88,6 +88,35 @@ export class GameEngine {
     return fallback;
   }
 
+  private revealOrbMeaning(orbId: string): void {
+    const state = this.getState();
+    if (state.phase !== "playing") return;
+
+    const orb = getOrbById(state, orbId);
+    if (!orb || !orb.meaning) return;
+
+    this.setState({
+      orbs: state.orbs.map((o) =>
+        o.orbId === orbId ? { ...o, showMeaning: true } : o
+      ),
+    });
+
+    const prevTimer = this.meaningTimers.get(orbId);
+    if (prevTimer) clearTimeout(prevTimer);
+    this.meaningTimers.set(
+      orbId,
+      setTimeout(() => {
+        const current = this.getState();
+        this.setState({
+          orbs: current.orbs.map((o) =>
+            o.orbId === orbId ? { ...o, showMeaning: false } : o
+          ),
+        });
+        this.meaningTimers.delete(orbId);
+      }, 2200)
+    );
+  }
+
   /**
    * Start a level using the V2 semantic group runtime generator.
    * @param stageId - Stage number (1-4)
@@ -194,27 +223,6 @@ export class GameEngine {
     if (orb.status === "matched" || orb.status === "wrong") return;
 
     unlockAudio();
-
-    // Show Chinese meaning briefly
-    this.setState({
-      orbs: state.orbs.map((o) =>
-        o.orbId === orbId ? { ...o, showMeaning: true } : o
-      ),
-    });
-    const prevTimer = this.meaningTimers.get(orbId);
-    if (prevTimer) clearTimeout(prevTimer);
-    this.meaningTimers.set(
-      orbId,
-      setTimeout(() => {
-        const current = this.getState();
-        this.setState({
-          orbs: current.orbs.map((o) =>
-            o.orbId === orbId ? { ...o, showMeaning: false } : o
-          ),
-        });
-        this.meaningTimers.delete(orbId);
-      }, 1500)
-    );
 
     const now = Date.now();
 
@@ -416,6 +424,11 @@ export class GameEngine {
     if (newLighthouse >= 100) {
       this.onVictory();
     }
+  }
+
+  handleOrbPeek(orbId: string): void {
+    unlockAudio();
+    this.revealOrbMeaning(orbId);
   }
 
   private onVictory(): void {

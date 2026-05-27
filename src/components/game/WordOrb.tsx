@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface WordOrbProps {
@@ -12,6 +13,7 @@ export interface WordOrbProps {
   showMeaning: boolean;
   position: { x: number; y: number };
   onTap: (orbId: string) => void;
+  onPeek: (orbId: string) => void;
 }
 
 const STATUS_STYLES: Record<
@@ -78,7 +80,10 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   showMeaning,
   position,
   onTap,
+  onPeek,
 }) => {
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastPointerUpAtRef = useRef(0);
   const isMatched = status === "matched";
   const isWrong = status === "wrong";
   const isSelected = status === "selected" || status === "chained";
@@ -99,10 +104,45 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const highlightW = `calc(${orbSizePx * 0.6}px * var(--vscale, 1))`;
   const highlightH = `calc(${orbSizePx * 0.35}px * var(--vscale, 1))`;
 
+  const clearTapTimer = () => {
+    if (tapTimerRef.current) {
+      clearTimeout(tapTimerRef.current);
+      tapTimerRef.current = null;
+    }
+  };
+
+  const handlePointerUp = () => {
+    const now = window.performance.now();
+    if (now - lastPointerUpAtRef.current < 320) {
+      clearTapTimer();
+      lastPointerUpAtRef.current = 0;
+      onPeek(orbId);
+      return;
+    }
+
+    lastPointerUpAtRef.current = now;
+    clearTapTimer();
+    tapTimerRef.current = setTimeout(() => {
+      onTap(orbId);
+      tapTimerRef.current = null;
+    }, 230);
+  };
+
   return (
     <motion.button
       data-orb-id={orbId}
-      onClick={() => onTap(orbId)}
+      onPointerUp={handlePointerUp}
+      onDoubleClick={(event) => {
+        event.preventDefault();
+        clearTapTimer();
+        onPeek(orbId);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onTap(orbId);
+        }
+      }}
       className="absolute flex flex-col items-center justify-center cursor-pointer tap-target"
       style={{
         left: `${position.x * 100}%`,

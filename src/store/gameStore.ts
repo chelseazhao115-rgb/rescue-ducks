@@ -35,6 +35,7 @@ interface GameActions {
   pauseGame: () => void;
   resumeGame: () => void;
   tapOrb: (orbId: string) => void;
+  peekOrb: (orbId: string) => void;
   resetGame: () => void;
   quitToMenu: () => void;
   getEngine: () => GameEngine | null;
@@ -70,6 +71,10 @@ export const useGameStore = create<GameState & GameActions>()(
 
       tapOrb: (orbId: string) => {
         engine?.handleOrbTap(orbId);
+      },
+
+      peekOrb: (orbId: string) => {
+        engine?.handleOrbPeek(orbId);
       },
 
       resetGame: () => {
