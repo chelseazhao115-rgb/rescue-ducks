@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CURRICULUM, TOTAL_LEVELS, getLevelsInStage } from "@/lib/engine/LevelGenerator";
@@ -18,6 +18,13 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
     const saved = localStorage.getItem("rescueDuckGlobalLevel");
     const raw = saved ? parseInt(saved, 10) : 1;
 
+    if (!Number.isFinite(raw)) {
+      localStorage.setItem("rescueDuckGlobalLevel", "1");
+      localStorage.removeItem("rescueDuckSemanticProgress");
+      localStorage.removeItem("rescueDuckSelectedLevel");
+      return 1;
+    }
+
     // Auto-fix: only reset truly impossible values (> total + 1)
     if (raw > TOTAL_LEVELS + 1) {
       localStorage.setItem("rescueDuckGlobalLevel", "1");
@@ -31,14 +38,25 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
 
   const highestUnlocked = getHighestUnlocked();
 
-  let globalLevelOffset = 0;
-  const stageRanges = CURRICULUM.map((s) => {
-    const count = getLevelsInStage(s.id);
-    const start = globalLevelOffset + 1;
-    const end = globalLevelOffset + count;
-    globalLevelOffset += count;
-    return { ...s, start, end, levelsCount: count };
-  });
+  const stageRanges = useMemo(() => {
+    let globalLevelOffset = 0;
+    return CURRICULUM.map((s) => {
+      const count = getLevelsInStage(s.id);
+      const start = globalLevelOffset + 1;
+      const end = globalLevelOffset + count;
+      globalLevelOffset += count;
+      return { ...s, start, end, levelsCount: count };
+    });
+  }, []);
+
+  useEffect(() => {
+    const currentIdx = stageRanges.findIndex(
+      (stage) => highestUnlocked >= stage.start && highestUnlocked <= stage.end + 1
+    );
+    if (currentIdx >= 0) {
+      setActiveStageIdx(currentIdx);
+    }
+  }, [highestUnlocked, stageRanges]);
 
   const currentStageRange = stageRanges[activeStageIdx];
   if (!currentStageRange) return null;

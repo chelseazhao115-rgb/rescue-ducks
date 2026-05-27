@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface Star {
@@ -31,6 +32,16 @@ const STARS: Star[] = Array.from({ length: 30 }, (_, i) => {
 });
 
 export const SlowStars: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {STARS.map((star) => {

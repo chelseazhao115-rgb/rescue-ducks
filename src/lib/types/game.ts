@@ -97,6 +97,7 @@ export interface RuntimeLevelConfig {
   stageId: number;
   levelInStage: number;
   name: string;
+  displayTitle: string;
   durationMs: number;
   stormTickRateMs: number;
   stormTickAmount: number;

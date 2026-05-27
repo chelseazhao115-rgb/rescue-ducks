@@ -74,6 +74,7 @@ export const DebugPanel: React.FC = () => {
       stageId: 1,
       levelInStage: 1,
       name: `Debug: ${group.category}`,
+      displayTitle: `Debug · ${group.category}`,
       durationMs: 120_000,
       stormTickRateMs: 500,
       stormTickAmount: 0.3,

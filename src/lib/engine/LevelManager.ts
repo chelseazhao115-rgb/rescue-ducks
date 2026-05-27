@@ -5,6 +5,7 @@ import { shuffle } from "@/lib/utils/random";
 const GRID_COLS = 6;
 const GRID_ROWS = 6;
 const ORB_MIN_DISTANCE = 0.15;
+const ORB_DISTANCE_SCALE_PX = 1250;
 
 // Chelsea NPC exclusion zone — bottom-left
 const CHELSEA_X_MAX = 0.48;
@@ -26,8 +27,25 @@ function orbDistance(a: { x: number; y: number }, b: { x: number; y: number }): 
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function isTooClose(pos: { x: number; y: number }, existing: OrbInstance[], minDist: number): boolean {
-  return existing.some((o) => orbDistance(pos, o.position) < minDist);
+function estimateOrbSizePx(word: string): number {
+  const chars = word.length;
+  const hasSpaces = word.trim().includes(" ");
+  const needsWrap = chars > 10 || hasSpaces;
+
+  if (needsWrap) {
+    return Math.min(350, 130 + (chars - 7) * 14);
+  }
+
+  return chars <= 7 ? 123 : Math.min(223, 123 + (chars - 7) * 9);
+}
+
+function minDistanceForWords(a: string, b: string): number {
+  const combinedRadiusPx = (estimateOrbSizePx(a) + estimateOrbSizePx(b)) / 2;
+  return Math.max(ORB_MIN_DISTANCE, combinedRadiusPx / ORB_DISTANCE_SCALE_PX);
+}
+
+function isTooClose(pos: { x: number; y: number }, word: string, existing: OrbInstance[]): boolean {
+  return existing.some((o) => orbDistance(pos, o.position) < minDistanceForWords(word, o.word));
 }
 
 export interface SpawnItem {
@@ -104,7 +122,7 @@ export function spawnGroupOrbs(
           y: base.y + (Math.random() - 0.5) * 0.03,
         };
         if (
-          !isTooClose(pos, [...existingOrbs, ...orbs], ORB_MIN_DISTANCE) &&
+          !isTooClose(pos, groupItems[i].word, [...existingOrbs, ...orbs]) &&
           !isInExcludedZone(pos)
         ) {
           position = pos;
@@ -116,7 +134,7 @@ export function spawnGroupOrbs(
 
     // Fallback: any free position
     if (!position) {
-      position = findFreePosition([...existingOrbs, ...orbs]);
+      position = findFreePosition(groupItems[i].word, [...existingOrbs, ...orbs]);
     }
 
     orbs.push({
@@ -147,7 +165,7 @@ function gridCell(col: number, row: number): { x: number; y: number } {
   };
 }
 
-function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number } {
+function findFreePosition(word: string, existingOrbs: OrbInstance[]): { x: number; y: number } {
   const cells: { col: number; row: number }[] = [];
   const mid = GRID_ROWS / 2;
   for (let c = 0; c < GRID_COLS; c++) {
@@ -166,7 +184,7 @@ function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number }
         x: base.x + (Math.random() - 0.5) * 0.07,
         y: base.y + (Math.random() - 0.5) * 0.05,
       };
-      if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE) && !isInExcludedZone(pos)) {
+      if (!isTooClose(pos, word, existingOrbs) && !isInExcludedZone(pos)) {
         return pos;
       }
     }
@@ -178,27 +196,27 @@ function findFreePosition(existingOrbs: OrbInstance[]): { x: number; y: number }
       x: 0.08 + Math.random() * 0.72,
       y: 0.08 + Math.random() * 0.58,
     };
-    if (!isTooClose(pos, existingOrbs, ORB_MIN_DISTANCE) && !isInExcludedZone(pos)) {
+    if (!isTooClose(pos, word, existingOrbs) && !isInExcludedZone(pos)) {
       return pos;
     }
   }
 
   // Last resort: among all candidates, pick the one furthest from existing orbs
   let bestPos = { x: 0.4, y: 0.35 };
-  let bestDist = 0;
+  let bestDist = -Infinity;
   for (let attempt = 0; attempt < 100; attempt++) {
     const pos = {
       x: 0.08 + Math.random() * 0.72,
       y: 0.08 + Math.random() * 0.58,
     };
     if (isInExcludedZone(pos)) continue;
-    let minDist = Infinity;
+    let minClearance = Infinity;
     for (const o of existingOrbs) {
-      const d = orbDistance(pos, o.position);
-      if (d < minDist) minDist = d;
+      const clearance = orbDistance(pos, o.position) - minDistanceForWords(word, o.word);
+      if (clearance < minClearance) minClearance = clearance;
     }
-    if (minDist > bestDist) {
-      bestDist = minDist;
+    if (minClearance > bestDist) {
+      bestDist = minClearance;
       bestPos = pos;
     }
   }

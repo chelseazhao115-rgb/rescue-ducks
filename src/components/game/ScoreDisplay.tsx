@@ -58,8 +58,8 @@ export const ScoreDisplay: React.FC = () => {
 
       {levelConfig && (
         <div className="flex items-center gap-2 mt-1">
-          <span style={{fontSize:"15px"}} className="text-white/60">Lv.{levelConfig.levelId}</span>
-          <span style={{fontSize:"15px"}} className="text-white/50">{levelConfig.name}</span>
+          <span style={{fontSize:"15px"}} className="text-white/70">{levelConfig.displayTitle}</span>
+          <span style={{fontSize:"15px"}} className="text-white/45">Level {levelConfig.levelInStage}</span>
         </div>
       )}
     </div>

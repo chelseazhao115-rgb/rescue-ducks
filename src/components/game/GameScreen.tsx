@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { getStageAndLevel, TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
@@ -19,30 +19,36 @@ import { LightEnergy } from "./LightEnergy";
 import { PauseOverlay } from "./PauseOverlay";
 import { GameOverOverlay } from "./GameOverOverlay";
 import { VictoryOverlay } from "./VictoryOverlay";
-import { DebugPanel } from "./DebugPanel";
 import { useAdaptiveStormAudio } from "@/lib/hooks/useSoundtrack";
 import { audioManager } from "@/lib/audio/AudioManager";
 
 function resolveGlobalLevel(): number {
   if (typeof window === "undefined") return 1;
   const selected = localStorage.getItem("rescueDuckSelectedLevel");
-  let raw: number;
   if (selected) {
-    raw = parseInt(selected, 10);
-    // Also fix inflated selected level
-    if (raw > TOTAL_LEVELS) {
-      raw = 1;
-      localStorage.removeItem("rescueDuckSelectedLevel");
+    const selectedLevel = parseInt(selected, 10);
+    if (
+      Number.isFinite(selectedLevel) &&
+      selectedLevel >= 1 &&
+      selectedLevel <= TOTAL_LEVELS
+    ) {
+      return selectedLevel;
     }
-  } else {
-    const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    raw = saved ? parseInt(saved, 10) : 1;
-    // Auto-fix inflated global level (stale data from dev / old sessions)
-    if (raw > TOTAL_LEVELS + 1) {
-      localStorage.setItem("rescueDuckGlobalLevel", "1");
-      localStorage.removeItem("rescueDuckSemanticProgress");
-      raw = 1;
-    }
+    localStorage.removeItem("rescueDuckSelectedLevel");
+  }
+
+  const saved = localStorage.getItem("rescueDuckGlobalLevel");
+  const raw = saved ? parseInt(saved, 10) : 1;
+  if (!Number.isFinite(raw)) {
+    localStorage.setItem("rescueDuckGlobalLevel", "1");
+    localStorage.removeItem("rescueDuckSemanticProgress");
+    return 1;
+  }
+  // Auto-fix inflated global level (stale data from dev / old sessions)
+  if (raw > TOTAL_LEVELS + 1) {
+    localStorage.setItem("rescueDuckGlobalLevel", "1");
+    localStorage.removeItem("rescueDuckSemanticProgress");
+    return 1;
   }
   return Math.min(Math.max(1, raw), TOTAL_LEVELS);
 }
@@ -50,6 +56,7 @@ function resolveGlobalLevel(): number {
 export const GameScreen: React.FC = () => {
   const phase = useGameStore((s) => s.phase);
   const stormMeter = useGameStore((s) => s.stormMeter);
+  const levelConfig = useGameStore((s) => s.levelConfig);
   const startGame = useGameStore((s) => s.startGame);
   const resetGame = useGameStore((s) => s.resetGame);
   const [showIntro, setShowIntro] = useState(false);
@@ -123,6 +130,40 @@ export const GameScreen: React.FC = () => {
     <main className="relative w-full h-dvh bg-storm-dark overflow-hidden select-none">
       <AnimatedBackground variant="game" stormIntensity={stormIntensity} />
 
+      <AnimatePresence>
+        {phase === "playing" && levelConfig && (
+          <motion.div
+            key={levelConfig.levelId}
+            className="absolute left-1/2 top-[14%] z-30 -translate-x-1/2 text-center pointer-events-none"
+            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+            animate={{
+              opacity: [0, 1, 1, 0],
+              y: [10, 0, 0, -6],
+              filter: ["blur(4px)", "blur(0px)", "blur(0px)", "blur(3px)"],
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 3.4, times: [0, 0.18, 0.72, 1], ease: "easeOut" }}
+          >
+            <div
+              className="font-extrabold tracking-wide"
+              style={{
+                fontSize: "calc(42px * var(--vscale, 1))",
+                color: "#fff2cf",
+                textShadow: "0 0 34px rgba(255,217,122,0.38), 0 3px 18px rgba(0,0,0,0.45)",
+              }}
+            >
+              {levelConfig.displayTitle}
+            </div>
+            <div
+              className="mx-auto mt-3 h-px w-40"
+              style={{
+                background: "linear-gradient(90deg, transparent, rgba(255,231,176,0.74), transparent)",
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top HUD */}
       <div className="absolute top-0 left-0 right-0 z-10 flex items-start justify-between">
         <ScoreDisplay />
@@ -160,8 +201,6 @@ export const GameScreen: React.FC = () => {
         {phase === "victory" && <VictoryOverlay />}
       </AnimatePresence>
 
-      {/* Debug Panel — press ` to toggle */}
-      <DebugPanel />
     </main>
   );
 };

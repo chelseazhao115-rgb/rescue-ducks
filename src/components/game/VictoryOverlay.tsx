@@ -56,6 +56,11 @@ export const VictoryOverlay: React.FC = () => {
 
   const stage = CURRICULUM.find((s) => s.id === currentStage);
   const stageName = stage?.name ?? `Stage ${currentStage}`;
+  const clearTitle = hasNextLevelInStage
+    ? "LEVEL CLEAR!"
+    : hasNextStage
+      ? "STAGE CLEAR!"
+      : "JOURNEY COMPLETE!";
 
   const nextGlobalLevel = computeNextGlobalLevel(
     currentStage,
@@ -80,7 +85,8 @@ export const VictoryOverlay: React.FC = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = localStorage.getItem("rescueDuckGlobalLevel");
-    const savedLevel = saved ? parseInt(saved, 10) : 1;
+    const rawSavedLevel = saved ? parseInt(saved, 10) : 1;
+    const savedLevel = Number.isFinite(rawSavedLevel) ? rawSavedLevel : 1;
     if (nextGlobalLevel > savedLevel) {
       localStorage.setItem("rescueDuckGlobalLevel", String(nextGlobalLevel));
     }
@@ -90,7 +96,8 @@ export const VictoryOverlay: React.FC = () => {
     typeof window !== "undefined"
       ? (() => {
           const s = localStorage.getItem("rescueDuckGlobalLevel");
-          return s ? parseInt(s, 10) : 1;
+          const raw = s ? parseInt(s, 10) : 1;
+          return Number.isFinite(raw) ? raw : 1;
         })()
       : 1;
   const semanticProgress = getSemanticProgress(updatedGlobalLevel);
@@ -178,7 +185,7 @@ export const VictoryOverlay: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          STAGE CLEAR!
+          {clearTitle}
         </motion.h2>
 
         <motion.p

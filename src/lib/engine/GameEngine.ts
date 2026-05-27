@@ -42,6 +42,7 @@ export class GameEngine {
   private matchCounter: number = 0;
   private hardModeTipShown: boolean = false;
   private longPlayTipShown: boolean = false;
+  private groupsWithMistakes: Set<string> = new Set();
 
   constructor(getState: StateGetter, setState: StateSetter) {
     this.getState = getState;
@@ -61,6 +62,23 @@ export class GameEngine {
     updates.currentTipContext = ctx;
     updates.currentTipText = this.pickTip(ctx);
     updates.tipVisible = true;
+  }
+
+  private pickLevelStartTip(stageId: number, groups: Array<{ category: string }>): ChelseaContext {
+    if (groups.some((g) => g.category === "logic_relation")) {
+      return "logic_groups";
+    }
+
+    if (groups.some((g) => g.category === "academic_expression")) {
+      return "academic_groups";
+    }
+
+    if (stageId >= 3 && !this.hardModeTipShown) {
+      this.hardModeTipShown = true;
+      return "hard_mode";
+    }
+
+    return "game_start";
   }
 
   /**
@@ -100,11 +118,10 @@ export class GameEngine {
     // Reset per-level counters
     this.matchCounter = 0;
     this.longPlayTipShown = false;
+    this.groupsWithMistakes.clear();
 
-    // Determine start tip context
-    const tipCtx: ChelseaContext =
-      stageId >= 3 && !this.hardModeTipShown ? "hard_mode" : "game_start";
-    if (stageId >= 3) this.hardModeTipShown = true;
+    // Determine start tip context from the semantic shape of this level.
+    const tipCtx = this.pickLevelStartTip(stageId, config.groups);
 
     this.tipContext = tipCtx;
     this.tipTimer = CHELSEA_TIP_DISPLAY_MS;
@@ -247,6 +264,8 @@ export class GameEngine {
       } else {
         // Wrong match — break chain and reset all chained orbs
         playWrongSound();
+        this.groupsWithMistakes.add(chain.groupId);
+        this.groupsWithMistakes.add(orb.groupId);
 
         const newStorm = applyWrongPenalty(state.stormMeter, {
           stormTickRateMs: state.levelConfig!.stormTickRateMs,
@@ -307,8 +326,10 @@ export class GameEngine {
     const state = this.getState();
     const config = state.levelConfig!;
 
-    // Track semantic mastery — group completed successfully
-    recordGroupMastered(groupId);
+    // Track semantic mastery only when this group was completed cleanly.
+    if (!this.groupsWithMistakes.has(groupId)) {
+      recordGroupMastered(groupId);
+    }
 
     playGroupCompleteSound();
 

@@ -187,6 +187,7 @@ export const LearnMoreModal: React.FC<LearnMoreModalProps> = ({ onClose }) => {
             “Words are like little lights. Once you connect them, the world becomes clearer.”
           </blockquote>
 
+          
           <div className="mt-7">
             <p className="mb-3 text-sm font-bold tracking-wide text-[#ffe7b0]/80">
               ✦ Continue the journey

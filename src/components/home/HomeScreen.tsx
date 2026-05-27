@@ -12,7 +12,6 @@ import { SlowStars } from "./SlowStars";
 import { LevelMap } from "./LevelMap";
 import { LearnMoreModal } from "./LearnMoreModal";
 import { ToastContainer } from "./Toast";
-import { DebugPanel } from "@/components/game/DebugPanel";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
 import { TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
@@ -32,6 +31,13 @@ export const HomeScreen: React.FC = () => {
       return;
     }
     const raw = parseInt(saved, 10);
+    if (!Number.isFinite(raw)) {
+      localStorage.setItem("rescueDuckGlobalLevel", "1");
+      localStorage.removeItem("rescueDuckSemanticProgress");
+      localStorage.removeItem("rescueDuckSelectedLevel");
+      setContinueLevel(1);
+      return;
+    }
     // Only reset truly impossible values (> total + 1)
     if (raw > TOTAL_LEVELS + 1) {
       localStorage.setItem("rescueDuckGlobalLevel", "1");
@@ -406,9 +412,6 @@ export const HomeScreen: React.FC = () => {
 
       {/* ===== TOAST CONTAINER ===== */}
       <ToastContainer />
-
-      {/* Debug Panel */}
-      <DebugPanel />
     </main>
   );
 };

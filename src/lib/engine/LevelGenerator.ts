@@ -392,6 +392,27 @@ function buildCurriculumMap(): Map<string, AssignedLevel> {
         groupCursor = (start + chapter.groupsPerLevel) % pool.length;
       }
     }
+
+    const stageAssignments = [...map.values()].filter(
+      (assignment) => assignment.stageId === stage.id
+    );
+
+    sorted.forEach((group, index) => {
+      const assignment = stageAssignments[
+        Math.min(
+          stageAssignments.length - 1,
+          Math.floor((index * stageAssignments.length) / sorted.length)
+        )
+      ];
+
+      if (
+        assignment &&
+        !assignment.coreGroupIds.includes(group.id) &&
+        !assignment.variationPoolIds.includes(group.id)
+      ) {
+        assignment.variationPoolIds.push(group.id);
+      }
+    });
   }
 
   return map;
@@ -535,7 +556,8 @@ export function generateLevel(
     stageId,
     levelInStage,
     name: `${chapter.name} ${levelInChapter}`,
-    durationMs: 30000 + totalWords * 2000,
+    displayTitle: `${stage.name} · ${chapter.name}`,
+    durationMs: chapter.durationMs,
     stormTickRateMs: 500,
     stormTickAmount: stage.stormTickAmount,
     stormPenaltyOnWrong: stage.stormPenaltyOnWrong,
@@ -584,7 +606,8 @@ function loadProgress(): Record<string, number> {
     const data = JSON.parse(raw);
     // Auto-clean if game progress was reset: low global level + inflated mastery
     const globalRaw = localStorage.getItem(GLOBAL_LEVEL_KEY);
-    const globalLevel = globalRaw ? parseInt(globalRaw, 10) : 1;
+    const parsedGlobalLevel = globalRaw ? parseInt(globalRaw, 10) : 1;
+    const globalLevel = Number.isFinite(parsedGlobalLevel) ? parsedGlobalLevel : 1;
     if (globalLevel <= 10 && Object.keys(data).length > 60) {
       localStorage.removeItem(PROGRESS_KEY);
       return {};
