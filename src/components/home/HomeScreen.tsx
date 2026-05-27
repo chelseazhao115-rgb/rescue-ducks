@@ -45,7 +45,7 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <main
-      className="relative w-full h-dvh overflow-hidden"
+      className="relative w-full h-dvh overflow-hidden touch-manipulation"
       style={{ background: "#1a1040" }}
     >
       {/* Sky + atmosphere layer */}
@@ -54,7 +54,7 @@ export const HomeScreen: React.FC = () => {
 
       {/* Scene container — gentle idle breathing, zoom on transition */}
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         animate={
           isTransitioning
             ? { scale: 1.08, x: "-2%", y: "-1.5%" }
@@ -83,7 +83,23 @@ export const HomeScreen: React.FC = () => {
       </motion.div>
 
       {/* ===== UI PANEL — LEFT SIDE ===== */}
-      <div className="absolute left-[6%] top-[8%] bottom-[12%] flex flex-col items-start z-20 pointer-events-none">
+      <div className="mobile-home-actions pointer-events-auto">
+        <button
+          onClick={() => { playButtonClick(); handleStartJourney(); }}
+          disabled={isTransitioning}
+          className="tap-target"
+        >
+          {continueLevel > 1 ? `Continue · Level ${continueLevel}` : "Start Journey"}
+        </button>
+        <button
+          onClick={() => { playButtonClick(); setShowMap(true); }}
+          className="tap-target"
+        >
+          Level Map
+        </button>
+      </div>
+
+      <div className="absolute left-[6%] top-[8%] bottom-[12%] flex flex-col items-start z-20 pointer-events-none max-[900px]:top-[3%] max-[900px]:bottom-[8%] max-[900px]:left-[4%]">
         {/* Title group — fixed at top */}
         <div className="pointer-events-auto flex-shrink-0 flex flex-col items-start">
           <div className="flex flex-col items-start">
@@ -91,7 +107,7 @@ export const HomeScreen: React.FC = () => {
               <motion.h1
                 className="font-extrabold tracking-tight text-left"
                 style={{
-                  fontSize: "clamp(4rem, 8vw, 9rem)",
+                  fontSize: "clamp(2.35rem, 8vw, 9rem)",
                   color: "#ffe7b0",
                   textShadow:
                     "0 0 60px rgba(255,217,122,0.5), 0 4px 24px rgba(0,0,0,0.35)",
@@ -124,9 +140,9 @@ export const HomeScreen: React.FC = () => {
 
             {/* Subtitle */}
             <motion.p
-              className="font-medium text-left mt-3"
+              className="font-medium text-left mt-3 max-[900px]:mt-1"
               style={{
-                fontSize: "clamp(1rem, 2vw, 2.25rem)",
+                fontSize: "clamp(0.95rem, 2vw, 2.25rem)",
                 color: "#ffe7b0",
                 opacity: 0.85,
                 textShadow: "0 2px 12px rgba(0,0,0,0.3)",
@@ -142,7 +158,7 @@ export const HomeScreen: React.FC = () => {
         </div>
 
         {/* Buttons / Level Map — fills remaining space, scrolls if needed */}
-        <div className="pointer-events-auto flex-1 min-h-0 w-full mt-6">
+        <div className="pointer-events-auto flex-1 min-h-0 w-full mt-6 max-[900px]:mt-3">
           <AnimatePresence mode="wait">
             {showMap ? (
               <motion.div
@@ -193,8 +209,8 @@ export const HomeScreen: React.FC = () => {
                   disabled={isTransitioning}
                   className="relative font-bold tracking-wide tap-target"
                   style={{
-                    fontSize: "clamp(1.25rem, 2.5vw, 2.25rem)",
-                    padding: "28px 80px",
+                    fontSize: "clamp(1rem, 2.5vw, 2.25rem)",
+                    padding: "clamp(14px, 2.2vw, 28px) clamp(34px, 6.2vw, 80px)",
                     borderRadius: "999px",
                     background:
                       "linear-gradient(180deg, #ffe8af, #f0c860)",
@@ -220,9 +236,9 @@ export const HomeScreen: React.FC = () => {
                   onClick={() => { playButtonClick(); setShowMap(true); }}
                   className="mt-6 font-medium tracking-wider tap-target"
                   style={{
-                    fontSize: "clamp(1rem, 2vw, 1.75rem)",
+                    fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
                     color: "#ffffff",
-                    padding: "18px 80px",
+                    padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
                     borderRadius: "999px",
                     border: "1px solid rgba(255,255,255,0.25)",
                     background: "rgba(255,255,255,0.12)",
@@ -308,9 +324,9 @@ export const HomeScreen: React.FC = () => {
 
       <motion.button
         onClick={() => { playButtonClick(); setShowLearnMore(true); }}
-        className="absolute bottom-5 left-[6%] z-20 font-medium tracking-wide tap-target"
+        className="absolute bottom-5 left-[6%] z-20 font-medium tracking-wide tap-target pointer-events-auto max-[900px]:bottom-2 max-[900px]:left-[4%]"
         style={{
-          fontSize: "clamp(1rem, 1.55vw, 1.35rem)",
+          fontSize: "clamp(0.78rem, 1.55vw, 1.35rem)",
           color: "rgba(255,236,196,0.72)",
           padding: "6px 2px",
           background: "transparent",
