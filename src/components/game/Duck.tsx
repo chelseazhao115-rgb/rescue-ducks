@@ -36,7 +36,7 @@ export const Duck: React.FC<DuckProps> = ({ duckId, rescued, index, total }) => 
       <img
         src="/duck_2d_pure.png"
         alt=""
-        className="w-24 h-[4.5rem] object-contain"
+        className="w-30 h-[5.6rem] object-contain"
         style={{
           filter: rescued
             ? "drop-shadow(0 0 6px rgba(255,217,122,0.35))"

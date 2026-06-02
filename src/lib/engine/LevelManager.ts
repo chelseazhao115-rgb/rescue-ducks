@@ -55,10 +55,10 @@ function estimateOrbSizePx(word: string): number {
   const needsWrap = chars > 10 || hasSpaces;
 
   if (needsWrap) {
-    return Math.min(350, 130 + (chars - 7) * 14);
+    return Math.min(405, 150 + (chars - 7) * 16);
   }
 
-  return chars <= 7 ? 123 : Math.min(223, 123 + (chars - 7) * 9);
+  return chars <= 7 ? 142 : Math.min(258, 142 + (chars - 7) * 10);
 }
 
 function minDistanceForWords(a: string, b: string): number {

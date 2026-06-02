@@ -93,11 +93,11 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const hasSpaces = word.trim().includes(" ");
   const needsWrap = chars > 10 || hasSpaces;
   const orbSizePx = needsWrap
-    ? Math.min(350, 130 + (chars - 7) * 14)
+    ? Math.min(405, 150 + (chars - 7) * 16)
     : chars <= 7
-      ? 123
-      : Math.min(223, 123 + (chars - 7) * 9);
-  const fontSize = hasSpaces ? 26 : chars > 20 ? 23 : chars > 10 ? 28 : 31;
+      ? 142
+      : Math.min(258, 142 + (chars - 7) * 10);
+  const fontSize = hasSpaces ? 30 : chars > 20 ? 27 : chars > 10 ? 32 : 35;
   const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
   const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
   const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
@@ -262,13 +262,15 @@ export const WordOrb: React.FC<WordOrbProps> = ({
       <AnimatePresence>
         {showMeaning && meaning && (
           <motion.span
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2
-                       text-white/70 backdrop-blur-md rounded-full px-2.5 py-0.5
+            className="absolute -bottom-11 left-1/2 -translate-x-1/2
+                       text-white/92 backdrop-blur-md rounded-full px-4 py-1.5
                        whitespace-nowrap pointer-events-none"
             style={{
-              fontSize: "calc(18px * var(--vscale, 1))",
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              fontSize: "clamp(18px, calc(26px * var(--vscale, 1)), 34px)",
+              background: "rgba(24,28,48,0.68)",
+              border: "1px solid rgba(255,231,176,0.28)",
+              boxShadow: "0 0 24px rgba(255,217,122,0.18), 0 8px 22px rgba(0,0,0,0.24)",
+              textShadow: "0 1px 8px rgba(0,0,0,0.42)",
             }}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}

@@ -45,11 +45,11 @@ interface SemanticLine {
 }
 
 const SCENES: SceneDefinition[] = [
-  { id: "calm", duration: 3200, ambience: "night" },
-  { id: "storm", duration: 2800, ambience: "storm" },
-  { id: "chelsea", duration: 2400, ambience: "chelsea" },
-  { id: "magic", duration: 2800, ambience: "orb" },
-  { id: "journey", duration: 2500, ambience: "fade" },
+  { id: "calm", duration: 5200, ambience: "night" },
+  { id: "storm", duration: 4400, ambience: "storm" },
+  { id: "chelsea", duration: 5200, ambience: "chelsea" },
+  { id: "magic", duration: 5000, ambience: "orb" },
+  { id: "journey", duration: 4200, ambience: "fade" },
 ];
 
 const TOTAL_DURATION = SCENES.reduce((sum, scene) => sum + scene.duration, 0);
@@ -681,6 +681,9 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
         <p className="text-lg font-semibold uppercase tracking-[0.24em] text-[#f6ead3]/[0.82] sm:text-2xl">
           A calm night by the lake
         </p>
+        <p className="mt-2 text-sm font-medium leading-snug text-[#f6ead3]/[0.66] sm:text-lg">
+          The lighthouse keeps every little duck safe.
+        </p>
       </WarmCaption>
 
       <WarmCaption
@@ -689,6 +692,9 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
       >
         <p className="text-lg font-semibold lowercase tracking-[0.2em] text-[#f3e7d3]/76 sm:text-2xl">
           the wind is rising
+        </p>
+        <p className="mt-2 text-sm font-medium leading-snug text-[#f3e7d3]/[0.66] sm:text-lg">
+          The storm scatters the ducklings from the shore.
         </p>
       </WarmCaption>
 
@@ -708,6 +714,9 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
         withPanel
       >
         <p className="text-2xl font-semibold tracking-wide text-[#fff0cf] sm:text-4xl">Light the way home.</p>
+        <p className="mt-2 text-base font-medium leading-snug text-[#f7e8c9]/[0.78] sm:text-xl">
+          Every meaning you connect becomes a path through the dark.
+        </p>
       </WarmCaption>
 
       <motion.div
