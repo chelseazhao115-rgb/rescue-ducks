@@ -190,9 +190,19 @@ export const LevelMap: React.FC<LevelMapProps> = ({ onSelectLevel }) => {
                     {chapterName}
                   </span>
                 ) : !unlocked ? (
-                  <svg width="calc(18px * var(--vscale, 1))" height="calc(18px * var(--vscale, 1))" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: "rgba(255,255,255,0.15)" }}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    style={{
+                      width: "clamp(10px, calc(12px * var(--vscale, 1)), 18px)",
+                      height: "clamp(10px, calc(12px * var(--vscale, 1)), 18px)",
+                      color: "rgba(255,255,255,0.12)",
+                    }}
+                  >
                     <rect x="3" y="11" width="18" height="11" rx="2" />
-                    <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="1.5" />
+                    <path d="M7 11V7a5 5 0 0110 0v4" />
                   </svg>
                 ) : null}
                 {isLatest && (
