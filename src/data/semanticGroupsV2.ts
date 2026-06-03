@@ -1263,14 +1263,14 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "can not escape",
+        "text": "escape",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3
       },
       {
-        "text": "inevitable",
-        "wordDifficulty": 3,
+        "text": "evitable",
+        "wordDifficulty": 2,
         "frequency": 3,
         "visualWeight": 3
       }
