@@ -165,9 +165,9 @@ export const GameScreen: React.FC = () => {
         {phase === "playing" && levelConfig && (
           <motion.div
             key={`${levelConfig.levelId}-meaning-hint`}
-            className="absolute left-1/2 top-[22%] z-20 -translate-x-1/2 rounded-full border px-5 py-2 text-center font-semibold text-white/82 pointer-events-none"
+            className="absolute left-1/2 top-[13%] z-20 -translate-x-1/2 rounded-full border px-5 py-2 text-center font-semibold text-white/82 pointer-events-none"
             style={{
-              fontSize: "calc(30px * var(--vscale, 1))",
+              fontSize: "calc(36px * var(--vscale, 1))",
               background: "rgba(20, 12, 40, 0.48)",
               borderColor: "rgba(255,255,255,0.18)",
               backdropFilter: "blur(10px)",

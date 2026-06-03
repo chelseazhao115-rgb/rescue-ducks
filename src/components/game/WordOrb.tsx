@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface WordOrbProps {
@@ -9,6 +9,7 @@ export interface WordOrbProps {
   meaning: string;
   connectionLabel: string;
   groupId: string;
+  groupColorIndex?: number;
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
   showMeaning: boolean;
   position: { x: number; y: number };
@@ -71,11 +72,71 @@ const STATUS_STYLES: Record<
   },
 };
 
+const HEALING_ORB_PALETTE = [
+  { rgb: "126,190,255", border: "rgba(126,190,255,0.66)" },
+  { rgb: "255,210,102", border: "rgba(255,210,102,0.68)" },
+  { rgb: "128,224,198", border: "rgba(128,224,198,0.62)" },
+  { rgb: "194,158,255", border: "rgba(194,158,255,0.64)" },
+  { rgb: "244,158,202", border: "rgba(244,158,202,0.6)" },
+  { rgb: "168,218,128", border: "rgba(168,218,128,0.6)" },
+  { rgb: "255,162,134", border: "rgba(255,162,134,0.6)" },
+  { rgb: "132,204,226", border: "rgba(132,204,226,0.62)" },
+];
+
+export const WORD_ORB_COLOR_COUNT = HEALING_ORB_PALETTE.length;
+
+function hashString(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+function getGroupOrbColor(groupId: string, groupColorIndex?: number) {
+  const index = typeof groupColorIndex === "number"
+    ? groupColorIndex
+    : hashString(groupId);
+  return HEALING_ORB_PALETTE[index % HEALING_ORB_PALETTE.length];
+}
+
+function groupOrbStyles(
+  status: WordOrbProps["status"],
+  groupId: string,
+  groupColorIndex: number | undefined,
+  hovered: boolean,
+): typeof STATUS_STYLES.idle {
+  if (status === "wrong") return STATUS_STYLES.wrong;
+
+  const color = getGroupOrbColor(groupId, groupColorIndex);
+  const selected = status === "selected" || status === "chained";
+  const matched = status === "matched";
+  const innerOpacity = matched ? 0.9 : selected ? 0.82 : hovered ? 0.76 : 0.5;
+  const outerOpacity = matched ? 0.42 : selected ? 0.36 : hovered ? 0.32 : 0.16;
+  const glowOpacity = matched ? 0.84 : selected ? 0.74 : hovered ? 0.68 : 0.3;
+  const shadowOpacity = matched ? 0.68 : selected ? 0.58 : hovered ? 0.54 : 0.24;
+  const wideShadowOpacity = matched ? 0.38 : selected ? 0.3 : hovered ? 0.28 : 0.08;
+
+  return {
+    orbBg: `radial-gradient(circle at 30% 30%, rgba(${color.rgb},${innerOpacity}), rgba(${color.rgb},${outerOpacity}))`,
+    orbBorder: selected || hovered || matched ? color.border : `rgba(${color.rgb},0.34)`,
+    textColor: "#ffffff",
+    glowColor: `rgba(${color.rgb},${glowOpacity})`,
+    shadow: [
+      `0 0 ${hovered || selected ? 42 : 20}px rgba(${color.rgb},${shadowOpacity})`,
+      `0 0 ${hovered || selected ? 96 : 42}px rgba(${color.rgb},${wideShadowOpacity})`,
+      `inset 0 0 ${selected || matched ? 18 : 12}px rgba(255,255,255,${selected || matched ? 0.25 : 0.14})`,
+    ].join(", "),
+  };
+}
+
 export const WordOrb: React.FC<WordOrbProps> = ({
   orbId,
   word,
   meaning,
   connectionLabel,
+  groupId,
+  groupColorIndex,
   status,
   showMeaning,
   position,
@@ -84,20 +145,23 @@ export const WordOrb: React.FC<WordOrbProps> = ({
 }) => {
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastPointerUpAtRef = useRef(0);
+  const [isHovered, setIsHovered] = useState(false);
   const isMatched = status === "matched";
   const isWrong = status === "wrong";
   const isSelected = status === "selected" || status === "chained";
-  const styles = STATUS_STYLES[status];
+  const styles = groupOrbStyles(status, groupId, groupColorIndex, isHovered);
 
   const chars = word.length;
   const hasSpaces = word.trim().includes(" ");
   const needsWrap = chars > 10 || hasSpaces;
-  const orbSizePx = needsWrap
+  const baseOrbSizePx = needsWrap
     ? Math.min(405, 150 + (chars - 7) * 16)
     : chars <= 7
       ? 142
       : Math.min(258, 142 + (chars - 7) * 10);
-  const fontSize = hasSpaces ? 30 : chars > 20 ? 27 : chars > 10 ? 32 : 35;
+  const baseFontSize = hasSpaces ? 30 : chars > 20 ? 27 : chars > 10 ? 32 : 35;
+  const orbSizePx = Math.round(baseOrbSizePx * 1.1);
+  const fontSize = Math.round(baseFontSize * 1.1);
   const orbSize = `calc(${orbSizePx}px * var(--vscale, 1))`;
   const glowRingSize = `calc(${orbSizePx + 16}px * var(--vscale, 1))`;
   const glowRing2Size = `calc(${orbSizePx + 8}px * var(--vscale, 1))`;
@@ -131,6 +195,8 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   return (
     <motion.button
       data-orb-id={orbId}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => setIsHovered(false)}
       onPointerUp={handlePointerUp}
       onDoubleClick={(event) => {
         event.preventDefault();
@@ -221,6 +287,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
           boxShadow: styles.shadow,
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
+          transition: "background 220ms ease, border-color 220ms ease, box-shadow 220ms ease",
         }}
       >
         {/* Inner highlight */}

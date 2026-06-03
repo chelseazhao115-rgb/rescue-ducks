@@ -13,6 +13,7 @@ import { LevelMap } from "./LevelMap";
 import { LearnMoreModal } from "./LearnMoreModal";
 import { AccessCodeModal } from "./AccessCodeModal";
 import { showToast, ToastContainer } from "./Toast";
+import { BorderGlow } from "@/components/shared/BorderGlow";
 import { resetIntroSeen } from "@/components/game/IntroSequence";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
@@ -62,6 +63,16 @@ export const HomeScreen: React.FC = () => {
     setContinueLevel(1);
     setShowMap(false);
     showToast("Progress reset. Start again from Level 1.");
+  };
+
+  const homeButtonGlow = {
+    borderRadius: 999,
+    glowRadius: 22,
+    glowColor: "43 92 78",
+    colors: ["rgba(255,232,168,0.28)", "rgba(217,200,255,0.18)", "rgba(144,176,224,0.16)"],
+    fillOpacity: 0.22,
+    glowIntensity: 0.78,
+    coneSpread: 28,
   };
 
   return (
@@ -231,80 +242,89 @@ export const HomeScreen: React.FC = () => {
                 transition={{ duration: 0.4, ease: "easeInOut" }}
               >
                 {/* Start Journey — primary */}
-                <motion.button
-                  onClick={() => { playButtonClick(); handleStartJourney(); }}
-                  disabled={isTransitioning}
-                  className="relative font-bold tracking-wide tap-target"
-                  style={{
-                    fontSize: "clamp(1rem, 2.5vw, 2.25rem)",
-                    padding: "clamp(14px, 2.2vw, 28px) clamp(34px, 6.2vw, 80px)",
-                    borderRadius: "999px",
-                    background:
-                      "linear-gradient(180deg, #ffe8af, #f0c860)",
-                    color: "#5a4a28",
-                    border: "1px solid rgba(255,255,255,0.35)",
-                    whiteSpace: "nowrap",
-                    boxShadow:
-                      "0 0 48px rgba(255,220,120,0.4), 0 6px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
-                  }}
-                  whileHover={{
-                    y: -2,
-                    scale: 1.04,
-                    boxShadow:
-                      "0 0 64px rgba(255,220,120,0.6), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
-                  }}
+                <motion.div
+                  whileHover={{ y: -2, scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                   transition={{ duration: 0.25 }}
                 >
-                  {continueLevel > 1 ? `Continue · Level ${continueLevel}` : "Start Journey"}
-                </motion.button>
+                  <BorderGlow
+                    className="button-glow-frame"
+                    {...homeButtonGlow}
+                    backgroundColor="#f0c860"
+                  >
+                    <button
+                      onClick={() => { playButtonClick(); handleStartJourney(); }}
+                      disabled={isTransitioning}
+                      className="relative font-bold tracking-wide tap-target"
+                      style={{
+                        fontSize: "clamp(1rem, 2.5vw, 2.25rem)",
+                        background: "linear-gradient(180deg, #ffe8af, #f0c860)",
+                        padding: "clamp(14px, 2.2vw, 28px) clamp(34px, 6.2vw, 80px)",
+                        borderRadius: "999px",
+                        color: "#5a4a28",
+                        border: "none",
+                        whiteSpace: "nowrap",
+                        boxShadow:
+                          "0 0 48px rgba(255,220,120,0.34), 0 6px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
+                      }}
+                    >
+                      {continueLevel > 1 ? `Continue · Level ${continueLevel}` : "Start Journey"}
+                    </button>
+                  </BorderGlow>
+                </motion.div>
 
                 {/* Level Map — secondary */}
-                <motion.button
-                  onClick={() => { playButtonClick(); setShowMap(true); }}
-                  className="mt-6 font-medium tracking-wider tap-target"
-                  style={{
-                    fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
-                    width: "clamp(230px, 24vw, 360px)",
-                    color: "#ffffff",
-                    padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
-                    borderRadius: "999px",
-                    border: "1px solid rgba(255,255,255,0.25)",
-                    background: "rgba(255,255,255,0.12)",
-                    backdropFilter: "blur(8px)",
-                    whiteSpace: "nowrap",
-                  }}
-                  whileHover={{
-                    scale: 1.04,
-                    background: "rgba(255,255,255,0.2)",
-                    borderColor: "rgba(255,255,255,0.35)",
-                  }}
-                >
-                  Level Map
-                </motion.button>
+                <motion.div className="mt-6" whileHover={{ scale: 1.04 }} transition={{ duration: 0.25 }}>
+                  <BorderGlow
+                    className="button-glow-frame"
+                    {...homeButtonGlow}
+                    backgroundColor="rgba(255,255,255,0.12)"
+                  >
+                    <button
+                      onClick={() => { playButtonClick(); setShowMap(true); }}
+                      className="font-medium tracking-wider tap-target"
+                      style={{
+                        fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
+                        width: "clamp(230px, 24vw, 360px)",
+                        background: "transparent",
+                        color: "#ffffff",
+                        padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
+                        borderRadius: "999px",
+                        border: "none",
+                        backdropFilter: "blur(8px)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Level Map
+                    </button>
+                  </BorderGlow>
+                </motion.div>
 
-                <motion.button
-                  onClick={() => { playButtonClick(); handleResetProgress(); }}
-                  className="mt-6 font-medium tracking-wider tap-target"
-                  style={{
-                    fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
-                    width: "clamp(230px, 24vw, 360px)",
-                    color: "#ffffff",
-                    padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
-                    borderRadius: "999px",
-                    border: "1px solid rgba(255,255,255,0.25)",
-                    background: "rgba(255,255,255,0.12)",
-                    backdropFilter: "blur(8px)",
-                    whiteSpace: "nowrap",
-                  }}
-                  whileHover={{
-                    scale: 1.04,
-                    background: "rgba(255,255,255,0.2)",
-                    borderColor: "rgba(255,255,255,0.35)",
-                  }}
-                >
-                  Reset Progress
-                </motion.button>
+                <motion.div className="mt-6" whileHover={{ scale: 1.04 }} transition={{ duration: 0.25 }}>
+                  <BorderGlow
+                    className="button-glow-frame"
+                    {...homeButtonGlow}
+                    backgroundColor="rgba(255,255,255,0.12)"
+                  >
+                    <button
+                      onClick={() => { playButtonClick(); handleResetProgress(); }}
+                      className="font-medium tracking-wider tap-target"
+                      style={{
+                        fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
+                        width: "clamp(230px, 24vw, 360px)",
+                        background: "transparent",
+                        color: "#ffffff",
+                        padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
+                        borderRadius: "999px",
+                        border: "none",
+                        backdropFilter: "blur(8px)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Reset Progress
+                    </button>
+                  </BorderGlow>
+                </motion.div>
 
                 <motion.button
                   onClick={() => { playButtonClick(); setShowLearnMore(true); }}

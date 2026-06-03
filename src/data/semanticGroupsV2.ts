@@ -1263,7 +1263,7 @@ export const semanticGroupsV2: SemanticGroupV2[] = [
         "visualWeight": 4
       },
       {
-        "text": "escape",
+        "text": "can not escape",
         "wordDifficulty": 1,
         "frequency": 3,
         "visualWeight": 3

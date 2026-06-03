@@ -15,20 +15,24 @@ const CHELSEA_Y_MIN = 0.60;
 const LIGHTHOUSE_X_MIN = 0.68;
 const LIGHTHOUSE_Y_MAX = 0.50;
 
+// Duck parade exclusion zone — bottom band where rescued ducks gather
+const DUCK_PARADE_Y_MIN = 0.70;
+
 // Cinematic level title exclusion zone — top-center
 const LEVEL_TITLE_X_MIN = 0.22;
 const LEVEL_TITLE_X_MAX = 0.78;
 const LEVEL_TITLE_Y_MAX = 0.28;
 
-// Opening meaning hint exclusion zone — top-center, below the level title
+// Opening meaning hint exclusion zone — top-center, aligned near the level title
 const MEANING_HINT_X_MIN = 0.18;
 const MEANING_HINT_X_MAX = 0.82;
-const MEANING_HINT_Y_MIN = 0.18;
-const MEANING_HINT_Y_MAX = 0.32;
+const MEANING_HINT_Y_MIN = 0.09;
+const MEANING_HINT_Y_MAX = 0.20;
 
 function isInExcludedZone(pos: { x: number; y: number }): boolean {
   if (pos.x < CHELSEA_X_MAX && pos.y > CHELSEA_Y_MIN) return true; // Chelsea area
   if (pos.x > LIGHTHOUSE_X_MIN && pos.y < LIGHTHOUSE_Y_MAX) return true; // Lighthouse area
+  if (pos.y > DUCK_PARADE_Y_MIN) return true; // Duck parade area
   if (
     pos.x > LEVEL_TITLE_X_MIN &&
     pos.x < LEVEL_TITLE_X_MAX &&
@@ -55,10 +59,10 @@ function estimateOrbSizePx(word: string): number {
   const needsWrap = chars > 10 || hasSpaces;
 
   if (needsWrap) {
-    return Math.min(405, 150 + (chars - 7) * 16);
+    return Math.round(Math.min(405, 150 + (chars - 7) * 16) * 1.1);
   }
 
-  return chars <= 7 ? 142 : Math.min(258, 142 + (chars - 7) * 10);
+  return Math.round((chars <= 7 ? 142 : Math.min(258, 142 + (chars - 7) * 10)) * 1.1);
 }
 
 function minDistanceForWords(a: string, b: string): number {
@@ -181,7 +185,7 @@ function gridCell(col: number, row: number): { x: number; y: number } {
   const marginRight = 0.12;
   const marginY = 0.06;
   const usableW = 1 - marginLeft - marginRight;
-  const usableH = 0.74;
+  const usableH = 0.62;
   const cellW = usableW / GRID_COLS;
   const cellH = usableH / GRID_ROWS;
   return {
@@ -219,7 +223,7 @@ function findFreePosition(word: string, existingOrbs: OrbInstance[]): { x: numbe
   for (let attempt = 0; attempt < 200; attempt++) {
     const pos = {
       x: 0.08 + Math.random() * 0.72,
-      y: 0.08 + Math.random() * 0.58,
+      y: 0.08 + Math.random() * 0.50,
     };
     if (!isTooClose(pos, word, existingOrbs) && !isInExcludedZone(pos)) {
       return pos;
@@ -232,7 +236,7 @@ function findFreePosition(word: string, existingOrbs: OrbInstance[]): { x: numbe
   for (let attempt = 0; attempt < 100; attempt++) {
     const pos = {
       x: 0.08 + Math.random() * 0.72,
-      y: 0.08 + Math.random() * 0.58,
+      y: 0.08 + Math.random() * 0.50,
     };
     if (isInExcludedZone(pos)) continue;
     let minClearance = Infinity;
