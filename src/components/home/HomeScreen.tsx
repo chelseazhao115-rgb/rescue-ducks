@@ -11,11 +11,14 @@ import { FireflyParticles } from "./FireflyParticles";
 import { SlowStars } from "./SlowStars";
 import { LevelMap } from "./LevelMap";
 import { LearnMoreModal } from "./LearnMoreModal";
-import { ToastContainer } from "./Toast";
+import { AccessCodeModal } from "./AccessCodeModal";
+import { showToast, ToastContainer } from "./Toast";
+import { resetIntroSeen } from "@/components/game/IntroSequence";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
-import { TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
-import { clearSelectedLevel, getPlayableGlobalLevel } from "@/lib/storage/saveData";
+import { TOTAL_LEVELS, resetAntiRepetition } from "@/lib/engine/LevelGenerator";
+import { clearSelectedLevel, getPlayableGlobalLevel, resetAllProgress } from "@/lib/storage/saveData";
+import { getStoredAudience, type AudienceProfile } from "@/lib/audience";
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
@@ -23,10 +26,14 @@ export const HomeScreen: React.FC = () => {
   const [showLearnMore, setShowLearnMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [continueLevel, setContinueLevel] = useState(1);
+  const [audience, setAudience] = useState<AudienceProfile | null>(null);
+  const [checkedAudience, setCheckedAudience] = useState(false);
 
   // Auto-fix inflated / inconsistent global level on every visit to home screen
   useEffect(() => {
     setContinueLevel(getPlayableGlobalLevel(TOTAL_LEVELS));
+    setAudience(getStoredAudience());
+    setCheckedAudience(true);
   }, []);
 
   useEffect(() => {
@@ -41,6 +48,20 @@ export const HomeScreen: React.FC = () => {
     setTimeout(() => {
       router.push("/game");
     }, 1500);
+  };
+
+  const handleResetProgress = () => {
+    const confirmed = window.confirm(
+      "Reset all level progress and start again from Level 1?"
+    );
+    if (!confirmed) return;
+
+    resetAllProgress();
+    resetAntiRepetition();
+    resetIntroSeen();
+    setContinueLevel(1);
+    setShowMap(false);
+    showToast("Progress reset. Start again from Level 1.");
   };
 
   return (
@@ -96,6 +117,12 @@ export const HomeScreen: React.FC = () => {
           className="tap-target"
         >
           Level Map
+        </button>
+        <button
+          onClick={() => { playButtonClick(); handleResetProgress(); }}
+          className="tap-target"
+        >
+          Reset Progress
         </button>
       </div>
 
@@ -216,6 +243,7 @@ export const HomeScreen: React.FC = () => {
                       "linear-gradient(180deg, #ffe8af, #f0c860)",
                     color: "#5a4a28",
                     border: "1px solid rgba(255,255,255,0.35)",
+                    whiteSpace: "nowrap",
                     boxShadow:
                       "0 0 48px rgba(255,220,120,0.4), 0 6px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4)",
                   }}
@@ -237,12 +265,14 @@ export const HomeScreen: React.FC = () => {
                   className="mt-6 font-medium tracking-wider tap-target"
                   style={{
                     fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
+                    width: "clamp(230px, 24vw, 360px)",
                     color: "#ffffff",
                     padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
                     borderRadius: "999px",
                     border: "1px solid rgba(255,255,255,0.25)",
                     background: "rgba(255,255,255,0.12)",
                     backdropFilter: "blur(8px)",
+                    whiteSpace: "nowrap",
                   }}
                   whileHover={{
                     scale: 1.04,
@@ -251,6 +281,29 @@ export const HomeScreen: React.FC = () => {
                   }}
                 >
                   Level Map
+                </motion.button>
+
+                <motion.button
+                  onClick={() => { playButtonClick(); handleResetProgress(); }}
+                  className="mt-6 font-medium tracking-wider tap-target"
+                  style={{
+                    fontSize: "clamp(0.9rem, 2vw, 1.75rem)",
+                    width: "clamp(230px, 24vw, 360px)",
+                    color: "#ffffff",
+                    padding: "clamp(11px, 1.6vw, 18px) clamp(34px, 6.2vw, 80px)",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(255,255,255,0.25)",
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    whiteSpace: "nowrap",
+                  }}
+                  whileHover={{
+                    scale: 1.04,
+                    background: "rgba(255,255,255,0.2)",
+                    borderColor: "rgba(255,255,255,0.35)",
+                  }}
+                >
+                  Reset Progress
                 </motion.button>
 
                 <motion.button
@@ -356,6 +409,12 @@ export const HomeScreen: React.FC = () => {
       <AnimatePresence>
         {showLearnMore && (
           <LearnMoreModal onClose={() => setShowLearnMore(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {checkedAudience && !audience && (
+          <AccessCodeModal onVerified={setAudience} />
         )}
       </AnimatePresence>
 

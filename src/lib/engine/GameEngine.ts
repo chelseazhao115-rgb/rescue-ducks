@@ -203,7 +203,7 @@ export class GameEngine {
   resume(): void {
     const state = this.getState();
     if (!canTransition(state.phase, "playing")) return;
-    this.lastTickTime = Date.now();
+    this.lastTickTime = 0;
     this.setState({ phase: "playing" });
     this.startLoop();
   }
@@ -548,7 +548,7 @@ export class GameEngine {
     this.stopLoop();
     const loop = (timestamp: number) => {
       if (this.lastTickTime === 0) this.lastTickTime = timestamp;
-      const delta = Math.min(timestamp - this.lastTickTime, 100);
+      const delta = Math.max(0, Math.min(timestamp - this.lastTickTime, 100));
       this.lastTickTime = timestamp;
       this.tick(delta);
       this.animFrameId = requestAnimationFrame(loop);

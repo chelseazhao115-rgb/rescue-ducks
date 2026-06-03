@@ -25,11 +25,11 @@ interface TrackNode {
 }
 
 const MUSIC_TARGETS: Record<MusicCue, number> = {
-  home: 1.6,
-  intro: 0.7,
-  gameplay: 0.6,
-  victory: 0.6,
-  failure: 0.6,
+  home: 1.45,
+  intro: 0.95,
+  gameplay: 1.25,
+  victory: 0.9,
+  failure: 0.85,
 };
 
 function safeRamp(gain: AudioParam, ctx: AudioContext, value: number, seconds: number): void {
@@ -163,6 +163,8 @@ export class AudioManager {
 
   playSfx(cue: SfxCue, amount = 1): void {
     const ctx = this.getContext();
+    if (ctx.state === "suspended") void ctx.resume();
+
     const bus = this.ensureSfxBus();
     const scale = Math.max(0, Math.min(1.2, amount));
 
@@ -199,7 +201,7 @@ export class AudioManager {
     if (!this.ctx) {
       this.ctx = new AudioContext();
       this.master = this.ctx.createGain();
-      this.master.gain.value = 0.82;
+      this.master.gain.value = 0.95;
       this.master.connect(this.ctx.destination);
     }
     return this.ctx;
@@ -209,7 +211,7 @@ export class AudioManager {
     const ctx = this.getContext();
     if (!this.musicBus) {
       this.musicBus = ctx.createGain();
-      this.musicBus.gain.value = 0.72;
+      this.musicBus.gain.value = 0.92;
       this.musicBus.connect(this.master!);
     }
     return this.musicBus;
@@ -219,7 +221,7 @@ export class AudioManager {
     const ctx = this.getContext();
     if (!this.ambienceBus) {
       this.ambienceBus = ctx.createGain();
-      this.ambienceBus.gain.value = 0.7;
+      this.ambienceBus.gain.value = 0.58;
       this.ambienceBus.connect(this.master!);
     }
     return this.ambienceBus;
@@ -242,7 +244,7 @@ export class AudioManager {
 
     if (cue === "home") return this.createPadLoop([130.81, 196, 261.63, 329.63], 0.055, 0.08, out);
     if (cue === "intro") return this.createPadLoop([146.83, 220, 293.66, 349.23], 0.05, 0.06, out);
-    if (cue === "gameplay") return this.createPadLoop([174.61, 261.63, 329.63, 392], 0.044, 0.16, out, true);
+    if (cue === "gameplay") return this.createPadLoop([174.61, 261.63, 329.63, 392, 523.25], 0.064, 0.22, out, true);
     if (cue === "victory") return this.createPadLoop([196, 246.94, 293.66, 392, 493.88], 0.06, 0.04, out);
     return this.createPadLoop([146.83, 174.61, 220, 293.66], 0.048, 0.04, out);
   }

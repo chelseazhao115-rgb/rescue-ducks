@@ -418,11 +418,11 @@ function ChelseaPanel({ active }: { active: boolean }) {
         className="mb-3 rounded-2xl border border-white/[0.12] bg-[#111827]/[0.38] px-4 py-3 shadow-2xl backdrop-blur-md sm:px-5 sm:py-4"
         style={{ textShadow: "0 2px 14px rgba(8, 10, 20, 0.68)" }}
       >
-        <p className="text-xl font-semibold leading-tight text-[#fff1d2] sm:text-3xl">快点……</p>
-        <p className="mt-1 text-base font-medium leading-tight text-[#f6ead3]/[0.85] sm:text-xl">Hurry...</p>
+        <p className="text-xl font-semibold leading-tight text-[#fff1d2] sm:text-3xl">Hurry...</p>
+        <p className="mt-1 text-base font-medium leading-tight text-[#f6ead3]/[0.85] sm:text-xl">快点……</p>
         <div className="mt-3 h-px bg-white/10" />
-        <p className="mt-3 text-base leading-snug text-[#fff3dc]/[0.88] sm:text-xl">小鸭子们还在外面。</p>
-        <p className="mt-1 text-sm leading-snug text-[#eee2ce]/60 sm:text-base">The ducklings are still out there.</p>
+        <p className="mt-3 text-base leading-snug text-[#fff3dc]/[0.88] sm:text-xl">The ducklings are still out there.</p>
+        <p className="mt-1 text-sm leading-snug text-[#eee2ce]/60 sm:text-base">小鸭子们还在外面。</p>
       </div>
     </motion.div>
   );
@@ -676,25 +676,37 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
 
       <WarmCaption
         active={sceneId === "calm"}
-        className="bottom-[13%] left-[7%] max-w-[320px] sm:bottom-[15%] sm:left-[9%]"
+        className="bottom-[11%] left-1/2 w-[min(86vw,520px)] -translate-x-1/2 text-center sm:bottom-[12%]"
       >
         <p className="text-lg font-semibold uppercase tracking-[0.24em] text-[#f6ead3]/[0.82] sm:text-2xl">
           A calm night by the lake
         </p>
-        <p className="mt-2 text-sm font-medium leading-snug text-[#f6ead3]/[0.66] sm:text-lg">
+        <p className="mt-2 text-sm font-semibold leading-snug text-[#fff1d2]/[0.84] sm:text-xl">
+          湖边宁静的夜晚
+        </p>
+        <p className="mt-3 text-sm font-medium leading-snug text-[#f6ead3]/[0.66] sm:text-lg">
           The lighthouse keeps every little duck safe.
+        </p>
+        <p className="mt-1 text-sm font-medium leading-snug text-[#f6ead3]/[0.62] sm:text-lg">
+          灯塔守护着每一只小鸭子。
         </p>
       </WarmCaption>
 
       <WarmCaption
         active={sceneId === "storm"}
-        className="bottom-[13%] left-[7%] max-w-[320px] sm:bottom-[15%] sm:left-[9%]"
+        className="bottom-[11%] left-1/2 w-[min(86vw,520px)] -translate-x-1/2 text-center sm:bottom-[12%]"
       >
-        <p className="text-lg font-semibold lowercase tracking-[0.2em] text-[#f3e7d3]/76 sm:text-2xl">
+        <p className="text-lg font-semibold uppercase tracking-[0.24em] text-[#f6ead3]/[0.82] sm:text-2xl">
           the wind is rising
         </p>
-        <p className="mt-2 text-sm font-medium leading-snug text-[#f3e7d3]/[0.66] sm:text-lg">
+        <p className="mt-2 text-sm font-semibold leading-snug text-[#fff1d2]/[0.84] sm:text-xl">
+          风渐渐大了
+        </p>
+        <p className="mt-3 text-sm font-medium leading-snug text-[#f3e7d3]/[0.66] sm:text-lg">
           The storm scatters the ducklings from the shore.
+        </p>
+        <p className="mt-1 text-sm font-medium leading-snug text-[#f3e7d3]/[0.62] sm:text-lg">
+          暴风雨把小鸭子们从岸边冲散。
         </p>
       </WarmCaption>
 
@@ -703,19 +715,36 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
         className="bottom-[8%] left-1/2 w-[min(88vw,440px)] -translate-x-1/2 text-center sm:bottom-[9%]"
         withPanel
       >
-        <p className="text-2xl font-semibold leading-tight text-[#fff0cf] sm:text-4xl">连接词义，点亮灯塔。</p>
-        <p className="mt-2 text-base font-medium leading-snug text-[#f7e8c9]/[0.82] sm:text-xl">Connect meanings.</p>
-        <p className="text-base font-medium leading-snug text-[#f7e8c9]/[0.82] sm:text-xl">Light the lighthouse.</p>
+        <p className="text-lg font-semibold uppercase tracking-[0.24em] text-[#f6ead3]/[0.82] sm:text-2xl">
+          Connect meanings
+        </p>
+        <p className="mt-2 text-sm font-semibold leading-snug text-[#fff1d2]/[0.84] sm:text-xl">
+          连接有相同意思的单词
+        </p>
+        <p className="mt-3 text-sm font-medium leading-snug text-[#f6ead3]/[0.66] sm:text-lg">
+          Light the lighthouse.
+        </p>
+        <p className="mt-1 text-sm font-medium leading-snug text-[#f6ead3]/[0.62] sm:text-lg">
+          点亮灯塔。
+        </p>
       </WarmCaption>
 
       <WarmCaption
         active={sceneId === "journey"}
-        className="bottom-[11%] left-1/2 w-[min(86vw,420px)] -translate-x-1/2 text-center sm:bottom-[12%]"
+        className="bottom-[11%] left-1/2 w-[min(94vw,780px)] -translate-x-1/2 text-center sm:bottom-[12%]"
         withPanel
       >
-        <p className="text-2xl font-semibold tracking-wide text-[#fff0cf] sm:text-4xl">Light the way home.</p>
-        <p className="mt-2 text-base font-medium leading-snug text-[#f7e8c9]/[0.78] sm:text-xl">
+        <p className="text-lg font-semibold uppercase tracking-[0.24em] text-[#f6ead3]/[0.82] sm:text-2xl">
+          Light the way home
+        </p>
+        <p className="mt-2 text-sm font-semibold leading-snug text-[#fff1d2]/[0.84] sm:text-xl">
+          点亮回家的路。
+        </p>
+        <p className="mt-3 whitespace-nowrap text-sm font-medium leading-snug text-[#f6ead3]/[0.66] sm:text-lg">
           Every meaning you connect becomes a path through the dark.
+        </p>
+        <p className="mt-1 whitespace-nowrap text-sm font-medium leading-snug text-[#f6ead3]/[0.62] sm:text-lg">
+          你连接的每一层意思，都会成为穿过黑暗的路。
         </p>
       </WarmCaption>
 
@@ -741,5 +770,11 @@ export function shouldPlayIntro(): boolean {
 export function markIntroSeen(): void {
   if (typeof window !== "undefined") {
     localStorage.setItem("rescueDuckIntroSeenV2", "true");
+  }
+}
+
+export function resetIntroSeen(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("rescueDuckIntroSeenV2");
   }
 }

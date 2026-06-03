@@ -12,9 +12,9 @@ export const PauseButton: React.FC = () => {
   return (
     <motion.button
       onClick={pauseGame}
-      className="absolute top-3 right-3 z-20 w-9 h-9 flex items-center justify-center"
+      className="relative z-20 mt-3 mr-7 flex h-9 items-center justify-center gap-2 px-3"
       style={{
-        borderRadius: "50%",
+        borderRadius: "999px",
         background: "rgba(255,255,255,0.08)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
@@ -34,6 +34,7 @@ export const PauseButton: React.FC = () => {
         <rect x="6" y="4" width="4" height="16" rx="1" />
         <rect x="14" y="4" width="4" height="16" rx="1" />
       </svg>
+      <span className="text-sm font-semibold tracking-wide">Pause</span>
     </motion.button>
   );
 };

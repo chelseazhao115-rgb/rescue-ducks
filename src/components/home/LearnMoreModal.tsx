@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { playButtonClick } from "@/lib/utils/sound";
+import { getStoredAudience, isOrganizationAudience } from "@/lib/audience";
 import { showToast } from "./Toast";
 
 interface LearnMoreModalProps {
@@ -18,6 +19,8 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
 }));
 
 export const LearnMoreModal: React.FC<LearnMoreModalProps> = ({ onClose }) => {
+  const isOrganization = isOrganizationAudience(getStoredAudience());
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -192,35 +195,39 @@ export const LearnMoreModal: React.FC<LearnMoreModalProps> = ({ onClose }) => {
             <p className="mb-3 text-sm font-bold tracking-wide text-[#ffe7b0]/80">
               ✦ Continue the journey
             </p>
-            <div className="grid gap-3 sm:grid-cols-3">
-              <motion.a
-                href="https://xhslink.com/m/6XQBd2XIsCH"
-                target="_blank"
-                rel="noreferrer"
-                onClick={playButtonClick}
-                className="flex items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-[#fff2cf]"
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  border: "1px solid rgba(255,255,255,0.16)",
-                }}
-                whileHover={{ y: -2, background: "rgba(255,255,255,0.15)" }}
-                whileTap={{ scale: 0.97 }}
-              >
-                Xiaohongshu
-              </motion.a>
-              <motion.button
-                type="button"
-                onClick={copyWeChat}
-                className="rounded-full px-4 py-3 text-sm font-bold text-[#fff2cf]"
-                style={{
-                  background: "rgba(255,231,176,0.11)",
-                  border: "1px solid rgba(255,231,176,0.18)",
-                }}
-                whileHover={{ y: -2, background: "rgba(255,231,176,0.16)" }}
-                whileTap={{ scale: 0.97 }}
-              >
-                WeChat
-              </motion.button>
+            <div className={`grid gap-3 ${isOrganization ? "" : "sm:grid-cols-3"}`}>
+              {!isOrganization && (
+                <>
+                  <motion.a
+                    href="https://xhslink.com/m/6XQBd2XIsCH"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={playButtonClick}
+                    className="flex items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-bold text-[#fff2cf]"
+                    style={{
+                      background: "rgba(255,255,255,0.1)",
+                      border: "1px solid rgba(255,255,255,0.16)",
+                    }}
+                    whileHover={{ y: -2, background: "rgba(255,255,255,0.15)" }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    Xiaohongshu
+                  </motion.a>
+                  <motion.button
+                    type="button"
+                    onClick={copyWeChat}
+                    className="rounded-full px-4 py-3 text-sm font-bold text-[#fff2cf]"
+                    style={{
+                      background: "rgba(255,231,176,0.11)",
+                      border: "1px solid rgba(255,231,176,0.18)",
+                    }}
+                    whileHover={{ y: -2, background: "rgba(255,231,176,0.16)" }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    WeChat
+                  </motion.button>
+                </>
+              )}
               <motion.a
                 href="mailto:chelsea299@163.com"
                 onClick={playButtonClick}

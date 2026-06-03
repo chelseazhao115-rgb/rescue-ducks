@@ -6,6 +6,7 @@ import { useGameStore } from "@/store/gameStore";
 import { getStageAndLevel, TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
 import { IntroSequence, shouldPlayIntro, markIntroSeen } from "./IntroSequence";
+import { AccessCodeModal } from "@/components/home/AccessCodeModal";
 import { StormMeter } from "./StormMeter";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { PauseButton } from "./PauseButton";
@@ -22,6 +23,7 @@ import { VictoryOverlay } from "./VictoryOverlay";
 import { useAdaptiveStormAudio } from "@/lib/hooks/useSoundtrack";
 import { audioManager } from "@/lib/audio/AudioManager";
 import { getPlayableGlobalLevel, getSelectedLevel } from "@/lib/storage/saveData";
+import { getStoredAudience, type AudienceProfile } from "@/lib/audience";
 
 function resolveGlobalLevel(): number {
   if (typeof window === "undefined") return 1;
@@ -38,6 +40,8 @@ export const GameScreen: React.FC = () => {
   const resetGame = useGameStore((s) => s.resetGame);
   const [showIntro, setShowIntro] = useState(false);
   const [introDone, setIntroDone] = useState(false);
+  const [audience, setAudience] = useState<AudienceProfile | null>(null);
+  const [checkedAudience, setCheckedAudience] = useState(false);
 
   // Reset stale terminal state on mount
   useEffect(() => {
@@ -48,12 +52,18 @@ export const GameScreen: React.FC = () => {
 
   // Check if intro should play on first mount
   useEffect(() => {
+    setAudience(getStoredAudience());
+    setCheckedAudience(true);
+  }, []);
+
+  useEffect(() => {
+    if (!checkedAudience || !audience) return;
     if (shouldPlayIntro()) {
       setShowIntro(true);
     } else {
       setIntroDone(true);
     }
-  }, []);
+  }, [audience, checkedAudience]);
 
   const handleIntroComplete = useCallback(() => {
     markIntroSeen();
@@ -63,12 +73,12 @@ export const GameScreen: React.FC = () => {
 
   // Start game after intro is done and phase is menu
   useEffect(() => {
-    if (introDone && phase === "menu") {
+    if (audience && introDone && phase === "menu") {
       const globalLevel = resolveGlobalLevel();
       const { stageId, levelInStage } = getStageAndLevel(globalLevel);
       startGame(stageId, levelInStage);
     }
-  }, [introDone, phase, startGame]);
+  }, [audience, introDone, phase, startGame]);
 
   useAdaptiveStormAudio(stormMeter, phase === "playing");
 
@@ -85,6 +95,15 @@ export const GameScreen: React.FC = () => {
   }, [introDone, phase, showIntro]);
 
   // Show intro overlay
+  if (checkedAudience && !audience) {
+    return (
+      <div className="relative w-full h-dvh bg-storm-dark overflow-hidden">
+        <AnimatedBackground variant="home" stormIntensity={0} />
+        <AccessCodeModal onVerified={setAudience} />
+      </div>
+    );
+  }
+
   if (showIntro) {
     return (
       <div className="relative w-full h-dvh bg-storm-dark overflow-hidden">
