@@ -1,6 +1,7 @@
 "use client";
 
 export type MusicCue = "home" | "intro" | "gameplay" | "victory" | "failure";
+export type HomeThemeId = "rainDrift" | "goldenSignals" | "midnightVocabulary";
 export type IntroAudioScene = "calm" | "storm" | "chelsea" | "magic" | "journey";
 export type SfxCue =
   | "button"
@@ -24,12 +25,42 @@ interface TrackNode {
   loop: ProceduralLoop;
 }
 
+interface HomeThemePreset {
+  freqs: number[];
+  gainValue: number;
+  pulseRate: number;
+}
+
 const MUSIC_TARGETS: Record<MusicCue, number> = {
   home: 1.45,
   intro: 0.95,
   gameplay: 1.25,
   victory: 0.9,
   failure: 0.85,
+};
+
+const HOME_THEME_IDS: HomeThemeId[] = [
+  "rainDrift",
+  "goldenSignals",
+  "midnightVocabulary",
+];
+
+const HOME_THEME_PRESETS: Record<HomeThemeId, HomeThemePreset> = {
+  rainDrift: {
+    freqs: [123.47, 185, 246.94, 293.66],
+    gainValue: 0.048,
+    pulseRate: 0.055,
+  },
+  goldenSignals: {
+    freqs: [130.81, 196, 261.63, 329.63, 392],
+    gainValue: 0.056,
+    pulseRate: 0.095,
+  },
+  midnightVocabulary: {
+    freqs: [110, 164.81, 220, 277.18],
+    gainValue: 0.043,
+    pulseRate: 0.038,
+  },
 };
 
 function safeRamp(gain: AudioParam, ctx: AudioContext, value: number, seconds: number): void {
@@ -63,6 +94,7 @@ export class AudioManager {
   private unlocked = false;
   private stormIntensity = 0;
   private lastStormPulseAt = 0;
+  private homeThemeId: HomeThemeId = "rainDrift";
 
   static get(): AudioManager {
     if (!AudioManager.instance) AudioManager.instance = new AudioManager();
@@ -77,6 +109,12 @@ export class AudioManager {
 
   isUnlocked(): boolean {
     return this.unlocked;
+  }
+
+  randomizeHomeTheme(): HomeThemeId {
+    const nextTheme = HOME_THEME_IDS[Math.floor(Math.random() * HOME_THEME_IDS.length)] ?? "rainDrift";
+    this.homeThemeId = nextTheme;
+    return nextTheme;
   }
 
   playMusic(cue: MusicCue, fadeSeconds = 1.6): void {
@@ -242,7 +280,10 @@ export class AudioManager {
     const out = ctx.createGain();
     out.gain.value = 1;
 
-    if (cue === "home") return this.createPadLoop([130.81, 196, 261.63, 329.63], 0.055, 0.08, out);
+    if (cue === "home") {
+      const theme = HOME_THEME_PRESETS[this.homeThemeId];
+      return this.createPadLoop(theme.freqs, theme.gainValue, theme.pulseRate, out);
+    }
     if (cue === "intro") return this.createPadLoop([146.83, 220, 293.66, 349.23], 0.05, 0.06, out);
     if (cue === "gameplay") return this.createPadLoop([174.61, 261.63, 329.63, 392, 523.25], 0.064, 0.22, out, true);
     if (cue === "victory") return this.createPadLoop([196, 246.94, 293.66, 392, 493.88], 0.06, 0.04, out);

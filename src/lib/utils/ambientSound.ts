@@ -3,6 +3,7 @@ import type { IntroAudioScene } from "@/lib/audio/AudioManager";
 
 export function switchAmbience(scene: string): void {
   if (scene === "home") {
+    audioManager.randomizeHomeTheme();
     audioManager.playMusic("home", 1.8);
     audioManager.setGameplayStorm(0);
     return;
