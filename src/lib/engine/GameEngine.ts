@@ -39,6 +39,7 @@ export class GameEngine {
   private tipTimer: number = 0;
   private tipContext: ChelseaContext = "idle";
   private meaningTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private chelseaHintTimer: ReturnType<typeof setTimeout> | null = null;
   private matchCounter: number = 0;
   private hardModeTipShown: boolean = false;
   private longPlayTipShown: boolean = false;
@@ -117,6 +118,13 @@ export class GameEngine {
     );
   }
 
+  private clearChelseaHintTimer(): void {
+    if (this.chelseaHintTimer) {
+      clearTimeout(this.chelseaHintTimer);
+      this.chelseaHintTimer = null;
+    }
+  }
+
   /**
    * Start a level using the V2 semantic group runtime generator.
    * @param stageId - Stage number (1-4)
@@ -182,6 +190,8 @@ export class GameEngine {
       currentTipContext: tipCtx,
       currentTipText: this.pickTip(tipCtx),
       tipVisible: true,
+      chelseaHelpUsed: false,
+      chelseaHintGroupId: null,
       levelStartTime: now,
       elapsedMs: 0,
       remainingMs: config.durationMs,
@@ -431,14 +441,62 @@ export class GameEngine {
     this.revealOrbMeaning(orbId);
   }
 
+  requestChelseaHelp(): void {
+    const state = this.getState();
+    if (state.phase !== "playing" || state.chelseaHelpUsed) return;
+
+    const visibleOrbs = state.orbs.filter((o) => o.status !== "matched");
+    const activeGroupId = state.activeChain?.groupId;
+    const activeGroupCount = activeGroupId
+      ? visibleOrbs.filter((o) => o.groupId === activeGroupId).length
+      : 0;
+
+    let hintGroupId = activeGroupId && activeGroupCount > 1 ? activeGroupId : null;
+    if (!hintGroupId) {
+      const candidates = Array.from(
+        visibleOrbs.reduce((counts, orb) => {
+          counts.set(orb.groupId, (counts.get(orb.groupId) ?? 0) + 1);
+          return counts;
+        }, new Map<string, number>())
+      )
+        .filter(([, count]) => count > 1)
+        .map(([groupId]) => groupId);
+
+      hintGroupId = candidates[Math.floor(Math.random() * candidates.length)] ?? null;
+    }
+
+    if (!hintGroupId) return;
+
+    this.clearChelseaHintTimer();
+    this.tipContext = "idle";
+    this.tipTimer = 5_000;
+    this.setState({
+      chelseaHelpUsed: true,
+      chelseaHintGroupId: hintGroupId,
+      currentTipContext: "idle",
+      currentTipText: "Try this color trail. Look for the words carrying the same idea.",
+      tipVisible: true,
+    });
+
+    this.chelseaHintTimer = setTimeout(() => {
+      const current = this.getState();
+      if (current.chelseaHintGroupId === hintGroupId) {
+        this.setState({ chelseaHintGroupId: null });
+      }
+      this.chelseaHintTimer = null;
+    }, 5_000);
+  }
+
   private onVictory(): void {
     this.stopLoop();
     this.clearMeaningTimers();
+    this.clearChelseaHintTimer();
 
     playVictorySound();
 
     this.setState({
       phase: "victory",
+      chelseaHintGroupId: null,
       currentTipContext: "victory",
       currentTipText: this.pickTip("victory"),
       tipVisible: true,
@@ -448,11 +506,13 @@ export class GameEngine {
   private onGameOver(): void {
     this.stopLoop();
     this.clearMeaningTimers();
+    this.clearChelseaHintTimer();
 
     playFailureSound();
 
     this.setState({
       phase: "gameover",
+      chelseaHintGroupId: null,
       currentTipContext: "gameover",
       currentTipText: this.pickTip("gameover"),
       tipVisible: true,
@@ -566,5 +626,6 @@ export class GameEngine {
   destroy(): void {
     this.stopLoop();
     this.clearMeaningTimers();
+    this.clearChelseaHintTimer();
   }
 }

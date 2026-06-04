@@ -23,6 +23,8 @@ const initialState: GameState = {
   currentTipContext: "idle",
   currentTipText: "",
   tipVisible: false,
+  chelseaHelpUsed: false,
+  chelseaHintGroupId: null,
   levelStartTime: 0,
   elapsedMs: 0,
   remainingMs: 0,
@@ -36,6 +38,7 @@ interface GameActions {
   resumeGame: () => void;
   tapOrb: (orbId: string) => void;
   peekOrb: (orbId: string) => void;
+  requestChelseaHelp: () => void;
   resetGame: () => void;
   quitToMenu: () => void;
   getEngine: () => GameEngine | null;
@@ -75,6 +78,10 @@ export const useGameStore = create<GameState & GameActions>()(
 
       peekOrb: (orbId: string) => {
         engine?.handleOrbPeek(orbId);
+      },
+
+      requestChelseaHelp: () => {
+        engine?.requestChelseaHelp();
       },
 
       resetGame: () => {

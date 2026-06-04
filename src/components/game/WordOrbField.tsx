@@ -9,6 +9,7 @@ export const WordOrbField: React.FC = () => {
   const orbs = useGameStore((s) => s.orbs);
   const tapOrb = useGameStore((s) => s.tapOrb);
   const peekOrb = useGameStore((s) => s.peekOrb);
+  const chelseaHintGroupId = useGameStore((s) => s.chelseaHintGroupId);
   const groupColorRef = useRef(new Map<string, number>());
   const visibleOrbs = orbs.filter((o) => o.status !== "matched");
   const visibleGroupIds = Array.from(new Set(visibleOrbs.map((orb) => orb.groupId)));
@@ -49,6 +50,7 @@ export const WordOrbField: React.FC = () => {
                 showMeaning={orb.showMeaning}
                 groupId={orb.groupId}
                 groupColorIndex={groupColorRef.current.get(orb.groupId)}
+                hintHighlighted={chelseaHintGroupId === orb.groupId}
                 status={orb.status}
                 position={orb.position}
                 onTap={tapOrb}

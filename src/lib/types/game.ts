@@ -133,6 +133,8 @@ export interface GameState {
   currentTipContext: ChelseaContext;
   currentTipText: string;
   tipVisible: boolean;
+  chelseaHelpUsed: boolean;
+  chelseaHintGroupId: string | null;
   levelStartTime: number;
   elapsedMs: number;
   remainingMs: number;

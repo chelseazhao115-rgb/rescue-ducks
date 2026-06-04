@@ -10,6 +10,7 @@ export interface WordOrbProps {
   connectionLabel: string;
   groupId: string;
   groupColorIndex?: number;
+  hintHighlighted?: boolean;
   status: "idle" | "selected" | "chained" | "matched" | "wrong";
   showMeaning: boolean;
   position: { x: number; y: number };
@@ -109,12 +110,10 @@ function groupOrbStyles(
   if (status === "wrong") return STATUS_STYLES.wrong;
 
   const selected = status === "selected" || status === "chained";
-  if (!highlighted) {
-    return selected ? STATUS_STYLES.selected : STATUS_STYLES.idle;
-  }
+  const matched = status === "matched";
+  if (!highlighted && !selected && !matched) return STATUS_STYLES.idle;
 
   const color = getGroupOrbColor(groupId, groupColorIndex);
-  const matched = status === "matched";
   const innerOpacity = matched ? 0.9 : selected ? 0.82 : 0.76;
   const outerOpacity = matched ? 0.42 : selected ? 0.36 : 0.32;
   const glowOpacity = matched ? 0.84 : selected ? 0.74 : 0.68;
@@ -141,6 +140,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   connectionLabel,
   groupId,
   groupColorIndex,
+  hintHighlighted,
   status,
   showMeaning,
   position,
@@ -153,7 +153,7 @@ export const WordOrb: React.FC<WordOrbProps> = ({
   const isMatched = status === "matched";
   const isWrong = status === "wrong";
   const isSelected = status === "selected" || status === "chained";
-  const styles = groupOrbStyles(status, groupId, groupColorIndex, isHovered);
+  const styles = groupOrbStyles(status, groupId, groupColorIndex, isHovered || Boolean(hintHighlighted));
 
   const chars = word.length;
   const hasSpaces = word.trim().includes(" ");

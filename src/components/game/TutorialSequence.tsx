@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { audioManager } from "@/lib/audio/AudioManager";
+import { playButtonClick, playChainSound, playCorrectSound, unlockAudio } from "@/lib/utils/sound";
 import { WordOrb } from "./WordOrb";
 
 interface TutorialSequenceProps {
   onComplete: () => void;
 }
 
-type TutorialStep = "connect" | "meaning" | "ready";
+type TutorialStep = "connect" | "meaning" | "help" | "ready";
 
 const TUTORIAL_SEEN_KEY = "rescueDuckTutorialSeenV1";
 
@@ -17,6 +18,8 @@ const ORB_POSITIONS = {
   respond: { x: 0.38, y: 0.42 },
   react: { x: 0.62, y: 0.42 },
   exclude: { x: 0.5, y: 0.43 },
+  assist: { x: 0.38, y: 0.43 },
+  aid: { x: 0.62, y: 0.43 },
 };
 
 export function shouldPlayTutorial(): boolean {
@@ -74,6 +77,10 @@ function ChelseaTutorialBubble({ step }: { step: TutorialStep }) {
     meaning: [
       "Don't know a word? Double-click it.",
       "遇到生词？试试双击它。",
+    ],
+    help: [
+      "Stuck? Ask Chelsea once per level.",
+      "卡住时，每关可以向 Chelsea 求助一次。",
     ],
     ready: [
       "Connect synonyms. Learn naturally. Rescue ducks.",
@@ -371,11 +378,133 @@ function TutorialChain() {
   );
 }
 
+function TutorialAskChelseaButton({
+  used,
+  onClick,
+}: {
+  used: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="absolute right-0 top-0 z-50 flex flex-col items-end gap-1 pr-2 pt-2">
+      <div className="mr-7 w-[170px] max-w-[calc(100vw-88px)] px-0 pt-2">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="font-medium uppercase tracking-wider text-white/52" style={{ fontSize: "15px" }}>
+            Storm
+          </span>
+          <span className="ml-auto text-white/45" style={{ fontSize: "15px" }}>
+            0%
+          </span>
+        </div>
+        <div className="h-[6px] w-full overflow-hidden rounded-full bg-white/10">
+          <div className="h-full w-0 rounded-full bg-[#90b0e0]" />
+        </div>
+      </div>
+
+      <div className="relative mr-7">
+        {!used && (
+          <>
+            <motion.div
+              className="pointer-events-none absolute -inset-2 rounded-full border border-[#ffe7b0]/60"
+              animate={{ scale: [0.96, 1.2, 0.96], opacity: [0.18, 0.72, 0.18] }}
+              transition={{ duration: 1.35, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </>
+        )}
+
+        <motion.button
+          type="button"
+          onClick={onClick}
+          disabled={used}
+          className="relative z-10 flex h-9 items-center justify-center gap-2 rounded-full px-3 font-semibold"
+          style={{
+            background: used ? "rgba(255,255,255,0.05)" : "rgba(255,231,176,0.12)",
+            border: used ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,231,176,0.22)",
+            color: used ? "rgba(255,255,255,0.38)" : "rgba(255,242,207,0.86)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+          }}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={used ? undefined : { scale: 1.06, background: "rgba(255,231,176,0.18)" }}
+          whileTap={used ? undefined : { scale: 0.94 }}
+          transition={{ duration: 0.2 }}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9 18h6" />
+            <path d="M10 22h4" />
+            <path d="M12 2a7 7 0 0 0-4 12.74V16h8v-1.26A7 7 0 0 0 12 2Z" />
+          </svg>
+          <span className="text-sm tracking-wide">{used ? "Used" : "Ask Chelsea"}</span>
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
+function TutorialAskChelseaArrow() {
+  return (
+    <motion.svg
+      className="pointer-events-none absolute inset-0 z-40 h-full w-full"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      fill="none"
+      aria-hidden="true"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0.48, 1, 0.48] }}
+      transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <defs>
+        <filter id="tutorial-help-arrow-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="1.6" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <motion.path
+        d="M 69 43 C 76 36 81 27 87 16"
+        stroke="rgba(255,220,120,0.26)"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        style={{ filter: "url(#tutorial-help-arrow-glow)" }}
+        animate={{ pathLength: [0.82, 1, 0.82] }}
+        transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.path
+        d="M 69 43 C 76 36 81 27 87 16"
+        stroke="rgba(255,242,207,0.92)"
+        strokeWidth="4.4"
+        strokeLinecap="round"
+        strokeDasharray="9 7"
+        vectorEffect="non-scaling-stroke"
+        style={{ filter: "url(#tutorial-help-arrow-glow)" }}
+        animate={{ strokeDashoffset: [24, 0], opacity: [0.72, 1, 0.72] }}
+        transition={{ duration: 1.05, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.path
+        d="M 83.5 15.2 L 88.5 14.4 L 87.5 19.4"
+        stroke="rgba(255,242,207,0.98)"
+        strokeWidth="4.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        style={{ filter: "url(#tutorial-help-arrow-glow)" }}
+        animate={{ x: [-0.6, 0.8, -0.6], y: [0.8, -0.7, 0.8] }}
+        transition={{ duration: 1.05, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </motion.svg>
+  );
+}
+
 export const TutorialSequence: React.FC<TutorialSequenceProps> = ({ onComplete }) => {
   const [step, setStep] = useState<TutorialStep>("connect");
   const [selected, setSelected] = useState<string[]>([]);
   const [connected, setConnected] = useState(false);
   const [meaningVisible, setMeaningVisible] = useState(false);
+  const [helpUsed, setHelpUsed] = useState(false);
 
   useEffect(() => {
     audioManager.playMusic("gameplay", 1.4);
@@ -388,14 +517,18 @@ export const TutorialSequence: React.FC<TutorialSequenceProps> = ({ onComplete }
 
   const handleConnectTap = (orbId: string) => {
     if (step !== "connect" || connected) return;
+    unlockAudio();
     setSelected((current) => {
       if (current.includes(orbId)) return current;
       const next = [...current, orbId];
       if (next.includes("respond") && next.includes("react")) {
+        playChainSound(2);
         window.setTimeout(() => {
           setConnected(true);
           window.setTimeout(() => setStep("meaning"), 2600);
         }, 120);
+      } else {
+        playCorrectSound();
       }
       return next;
     });
@@ -403,11 +536,22 @@ export const TutorialSequence: React.FC<TutorialSequenceProps> = ({ onComplete }
 
   const handlePeek = (orbId: string) => {
     if (step !== "meaning" || orbId !== "exclude") return;
+    unlockAudio();
+    playButtonClick();
     setMeaningVisible(true);
-    window.setTimeout(() => setStep("ready"), 1600);
+    window.setTimeout(() => setStep("help"), 1600);
+  };
+
+  const handleChelseaHelp = () => {
+    if (step !== "help" || helpUsed) return;
+    unlockAudio();
+    playButtonClick();
+    setHelpUsed(true);
+    window.setTimeout(() => setStep("ready"), 2600);
   };
 
   const finish = () => {
+    playButtonClick();
     markTutorialSeen();
     onComplete();
   };
@@ -463,14 +607,14 @@ export const TutorialSequence: React.FC<TutorialSequenceProps> = ({ onComplete }
                   Same meaning found
                 </motion.div>
                 <motion.div
-                  className="absolute left-1/2 bottom-[26%] -translate-x-1/2 text-center font-semibold text-[#fff2cf]"
-                  style={{ fontSize: "calc(26px * var(--vscale, 1))", textShadow: "0 2px 14px rgba(0,0,0,0.42)" }}
+                  className="absolute left-[54%] bottom-[26%] -translate-x-1/2 text-center font-semibold text-[#fff2cf]"
+                  style={{ fontSize: "calc(36px * var(--vscale, 1))", textShadow: "0 2px 16px rgba(0,0,0,0.5)" }}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
                 >
                   <div>Every connection lights the lighthouse.</div>
-                  <div className="mt-1 text-[#ffe7b0]/80" style={{ fontSize: "calc(21px * var(--vscale, 1))" }}>
+                  <div className="mt-1 text-[#ffe7b0]/90" style={{ fontSize: "calc(30px * var(--vscale, 1))" }}>
                     每找到一组同义替换，灯塔都会更亮一点。
                   </div>
                 </motion.div>
@@ -501,7 +645,23 @@ export const TutorialSequence: React.FC<TutorialSequenceProps> = ({ onComplete }
               />
             )}
 
-            <WordOrb orbId="exclude" word="exclude" meaning="v. 排除；不包括" connectionLabel="IELTS Meaning" groupId="tutorial-meaning" groupColorIndex={2} status={meaningVisible ? "selected" : "idle"} showMeaning={meaningVisible} position={ORB_POSITIONS.exclude} onTap={() => {}} onPeek={handlePeek} />
+            {step === "meaning" && (
+              <WordOrb orbId="exclude" word="exclude" meaning="v. 排除；不包括" connectionLabel="IELTS Meaning" groupId="tutorial-meaning" groupColorIndex={2} status={meaningVisible ? "selected" : "idle"} showMeaning={meaningVisible} position={ORB_POSITIONS.exclude} onTap={() => {}} onPeek={handlePeek} />
+            )}
+
+            {(step === "help" || step === "ready") && (
+              <>
+                <WordOrb orbId="assist" word="assist" meaning="v. 帮助" connectionLabel="IELTS Meaning" groupId="tutorial-help" groupColorIndex={3} hintHighlighted={helpUsed} status="idle" showMeaning={false} position={ORB_POSITIONS.assist} onTap={() => {}} onPeek={() => {}} />
+                <WordOrb orbId="aid" word="aid" meaning="v. 帮助；援助" connectionLabel="IELTS Meaning" groupId="tutorial-help" groupColorIndex={3} hintHighlighted={helpUsed} status="idle" showMeaning={false} position={ORB_POSITIONS.aid} onTap={() => {}} onPeek={() => {}} />
+              </>
+            )}
+
+            {step === "help" && (
+              <>
+                {!helpUsed && <TutorialAskChelseaArrow />}
+                <TutorialAskChelseaButton used={helpUsed} onClick={handleChelseaHelp} />
+              </>
+            )}
 
             {step === "ready" && (
               <>

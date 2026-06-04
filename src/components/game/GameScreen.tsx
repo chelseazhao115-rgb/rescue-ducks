@@ -11,6 +11,7 @@ import { TutorialSequence, shouldPlayTutorial } from "./TutorialSequence";
 import { StormMeter } from "./StormMeter";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { PauseButton } from "./PauseButton";
+import { AskChelseaButton } from "./AskChelseaButton";
 import { WordOrbField } from "./WordOrbField";
 import { ChainLink } from "./ChainLink";
 import { Lighthouse } from "./Lighthouse";
@@ -216,6 +217,7 @@ export const GameScreen: React.FC = () => {
         <ScoreDisplay />
         <div className="flex flex-col items-end pt-2 pr-2 gap-1">
           <StormMeter />
+          <AskChelseaButton />
           <PauseButton />
         </div>
       </div>

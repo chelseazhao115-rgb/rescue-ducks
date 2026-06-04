@@ -46,7 +46,8 @@ export const VictoryOverlay: React.FC = () => {
   const score = useGameStore((s) => s.score);
   const maxCombo = useGameStore((s) => s.maxCombo);
   const groupsCompleted = useGameStore((s) => s.groupsCompleted);
-  const totalGroups = useGameStore((s) => s.activeGroups.length);
+  const activeGroups = useGameStore((s) => s.activeGroups);
+  const totalGroups = activeGroups.length;
   const ducksRescued = useGameStore((s) => s.ducks.filter((d) => d.rescued).length);
   const currentStage = useGameStore((s) => s.currentStage);
   const currentLevelInStage = useGameStore((s) => s.currentLevelInStage);
@@ -302,6 +303,55 @@ export const VictoryOverlay: React.FC = () => {
             BACK TO MAP
           </motion.button>
         </motion.div>
+      </motion.div>
+
+      <motion.div
+        className="absolute bottom-13 right-8 z-10 flex max-h-[78vh] w-[min(38vw,620px)] flex-col items-end gap-3 overflow-y-auto pr-1"
+        initial={{ opacity: 0, x: 24 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.72, duration: 0.5 }}
+      >
+        <div
+          className="text-right font-bold uppercase tracking-[0.16em] text-white/70"
+          style={{ fontSize: "calc(25px * var(--vscale, 1))" }}
+        >
+          Chain Review
+        </div>
+
+        {activeGroups.map((group, index) => {
+          const words = group.words.map((word) => word.text).join(" / ");
+          const meaning = group.words[0]?.meaning ?? "";
+
+          return (
+            <motion.div
+              key={group.groupId}
+              className="w-fit max-w-full rounded-full border px-7 py-4 text-right"
+              style={{
+                background: "rgba(255,255,255,0.055)",
+                borderColor: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                boxShadow: "0 0 24px rgba(255,255,255,0.08), inset 0 0 18px rgba(255,255,255,0.04)",
+              }}
+              initial={{ opacity: 0, x: 18 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.82 + index * 0.04, duration: 0.35 }}
+            >
+              <div
+                className="font-semibold text-white"
+                style={{ fontSize: "calc(28px * var(--vscale, 1))", lineHeight: 1.18 }}
+              >
+                {words}
+              </div>
+              <div
+                className="mt-1 text-white/78"
+                style={{ fontSize: "calc(23px * var(--vscale, 1))", lineHeight: 1.22 }}
+              >
+                {meaning}
+              </div>
+            </motion.div>
+          );
+        })}
       </motion.div>
     </motion.div>
   );
