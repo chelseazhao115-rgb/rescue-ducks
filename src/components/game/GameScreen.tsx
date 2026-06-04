@@ -7,6 +7,7 @@ import { getStageAndLevel, TOTAL_LEVELS } from "@/lib/engine/LevelGenerator";
 import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
 import { IntroSequence, shouldPlayIntro, markIntroSeen } from "./IntroSequence";
 import { AccessCodeModal } from "@/components/home/AccessCodeModal";
+import { TutorialSequence, shouldPlayTutorial } from "./TutorialSequence";
 import { StormMeter } from "./StormMeter";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { PauseButton } from "./PauseButton";
@@ -40,12 +41,14 @@ export const GameScreen: React.FC = () => {
   const resetGame = useGameStore((s) => s.resetGame);
   const [showIntro, setShowIntro] = useState(false);
   const [introDone, setIntroDone] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialDone, setTutorialDone] = useState(false);
   const [audience, setAudience] = useState<AudienceProfile | null>(null);
   const [checkedAudience, setCheckedAudience] = useState(false);
 
-  // Reset stale terminal state on mount
+  // Reset any stale engine state on mount so onboarding overlays cannot hide a ticking level.
   useEffect(() => {
-    if (phase === "gameover" || phase === "victory") {
+    if (phase !== "menu") {
       resetGame();
     }
   }, []);
@@ -71,19 +74,33 @@ export const GameScreen: React.FC = () => {
     setIntroDone(true);
   }, []);
 
+  useEffect(() => {
+    if (!introDone) return;
+    if (shouldPlayTutorial()) {
+      setShowTutorial(true);
+    } else {
+      setTutorialDone(true);
+    }
+  }, [introDone]);
+
+  const handleTutorialComplete = useCallback(() => {
+    setShowTutorial(false);
+    setTutorialDone(true);
+  }, []);
+
   // Start game after intro is done and phase is menu
   useEffect(() => {
-    if (audience && introDone && phase === "menu") {
+    if (audience && introDone && tutorialDone && phase === "menu") {
       const globalLevel = resolveGlobalLevel();
       const { stageId, levelInStage } = getStageAndLevel(globalLevel);
       startGame(stageId, levelInStage);
     }
-  }, [audience, introDone, phase, startGame]);
+  }, [audience, introDone, tutorialDone, phase, startGame]);
 
   useAdaptiveStormAudio(stormMeter, phase === "playing");
 
   useEffect(() => {
-    if (showIntro || !introDone) return;
+    if (showIntro || showTutorial || !introDone) return;
     if (phase === "playing") {
       audioManager.playMusic("gameplay", 1.8);
     } else if (phase === "victory") {
@@ -92,7 +109,7 @@ export const GameScreen: React.FC = () => {
       audioManager.crossFade("failure", 1.2);
       audioManager.playSfx("failure", 0.9);
     }
-  }, [introDone, phase, showIntro]);
+  }, [introDone, phase, showIntro, showTutorial]);
 
   // Show intro overlay
   if (checkedAudience && !audience) {
@@ -109,6 +126,15 @@ export const GameScreen: React.FC = () => {
       <div className="relative w-full h-dvh bg-storm-dark overflow-hidden">
         <IntroSequence onComplete={handleIntroComplete} />
       </div>
+    );
+  }
+
+  if (showTutorial) {
+    return (
+      <main className="relative w-full h-dvh bg-storm-dark overflow-hidden select-none">
+        <AnimatedBackground variant="game" stormIntensity={0} />
+        <TutorialSequence onComplete={handleTutorialComplete} />
+      </main>
     );
   }
 

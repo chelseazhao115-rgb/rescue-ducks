@@ -15,6 +15,7 @@ import { AccessCodeModal } from "./AccessCodeModal";
 import { showToast, ToastContainer } from "./Toast";
 import { BorderGlow } from "@/components/shared/BorderGlow";
 import { resetIntroSeen } from "@/components/game/IntroSequence";
+import { resetTutorialSeen } from "@/components/game/TutorialSequence";
 import { switchAmbience, stopAllAmbience } from "@/lib/utils/ambientSound";
 import { unlockAudio, playButtonClick } from "@/lib/utils/sound";
 import { TOTAL_LEVELS, resetAntiRepetition } from "@/lib/engine/LevelGenerator";
@@ -60,6 +61,7 @@ export const HomeScreen: React.FC = () => {
     resetAllProgress();
     resetAntiRepetition();
     resetIntroSeen();
+    resetTutorialSeen();
     setContinueLevel(1);
     setShowMap(false);
     showToast("Progress reset. Start again from Level 1.");
