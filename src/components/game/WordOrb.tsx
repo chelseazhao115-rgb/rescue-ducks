@@ -29,11 +29,11 @@ const STATUS_STYLES: Record<
 > = {
   idle: {
     orbBg:
-      "radial-gradient(circle at 30% 30%, rgba(185,217,255,0.52), rgba(185,217,255,0.16))",
-    orbBorder: "rgba(185,217,255,0.4)",
+      "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.42), rgba(255,255,255,0.13))",
+    orbBorder: "rgba(255,255,255,0.34)",
     textColor: "#ffffff",
-    glowColor: "rgba(185,217,255,0.3)",
-    shadow: "0 0 20px rgba(185,217,255,0.25), inset 0 0 12px rgba(255,255,255,0.14)",
+    glowColor: "rgba(255,255,255,0.28)",
+    shadow: "0 0 20px rgba(255,255,255,0.18), inset 0 0 14px rgba(255,255,255,0.18)",
   },
   selected: {
     orbBg:
@@ -104,27 +104,31 @@ function groupOrbStyles(
   status: WordOrbProps["status"],
   groupId: string,
   groupColorIndex: number | undefined,
-  hovered: boolean,
+  highlighted: boolean,
 ): typeof STATUS_STYLES.idle {
   if (status === "wrong") return STATUS_STYLES.wrong;
 
-  const color = getGroupOrbColor(groupId, groupColorIndex);
   const selected = status === "selected" || status === "chained";
+  if (!highlighted) {
+    return selected ? STATUS_STYLES.selected : STATUS_STYLES.idle;
+  }
+
+  const color = getGroupOrbColor(groupId, groupColorIndex);
   const matched = status === "matched";
-  const innerOpacity = matched ? 0.9 : selected ? 0.82 : hovered ? 0.76 : 0.5;
-  const outerOpacity = matched ? 0.42 : selected ? 0.36 : hovered ? 0.32 : 0.16;
-  const glowOpacity = matched ? 0.84 : selected ? 0.74 : hovered ? 0.68 : 0.3;
-  const shadowOpacity = matched ? 0.68 : selected ? 0.58 : hovered ? 0.54 : 0.24;
-  const wideShadowOpacity = matched ? 0.38 : selected ? 0.3 : hovered ? 0.28 : 0.08;
+  const innerOpacity = matched ? 0.9 : selected ? 0.82 : 0.76;
+  const outerOpacity = matched ? 0.42 : selected ? 0.36 : 0.32;
+  const glowOpacity = matched ? 0.84 : selected ? 0.74 : 0.68;
+  const shadowOpacity = matched ? 0.68 : selected ? 0.58 : 0.54;
+  const wideShadowOpacity = matched ? 0.38 : selected ? 0.3 : 0.28;
 
   return {
     orbBg: `radial-gradient(circle at 30% 30%, rgba(${color.rgb},${innerOpacity}), rgba(${color.rgb},${outerOpacity}))`,
-    orbBorder: selected || hovered || matched ? color.border : `rgba(${color.rgb},0.34)`,
+    orbBorder: selected || matched ? color.border : `rgba(${color.rgb},0.56)`,
     textColor: "#ffffff",
     glowColor: `rgba(${color.rgb},${glowOpacity})`,
     shadow: [
-      `0 0 ${hovered || selected ? 42 : 20}px rgba(${color.rgb},${shadowOpacity})`,
-      `0 0 ${hovered || selected ? 96 : 42}px rgba(${color.rgb},${wideShadowOpacity})`,
+      `0 0 42px rgba(${color.rgb},${shadowOpacity})`,
+      `0 0 96px rgba(${color.rgb},${wideShadowOpacity})`,
       `inset 0 0 ${selected || matched ? 18 : 12}px rgba(255,255,255,${selected || matched ? 0.25 : 0.14})`,
     ].join(", "),
   };
