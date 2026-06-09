@@ -37,8 +37,7 @@ export function getValidatedGlobalLevel(totalLevels: number, allowComplete = tru
 
   if (parsed === null) return 1;
   if (parsed > totalLevels + 1) {
-    resetProgressData();
-    return 1;
+    return maxStoredLevel;
   }
 
   return Math.min(Math.max(1, parsed), maxStoredLevel);
@@ -122,8 +121,7 @@ export function clearSemanticProgress(): void {
 }
 
 export function shouldResetSemanticProgress(totalLevels: number): boolean {
-  const globalLevel = getValidatedGlobalLevel(totalLevels);
-  return globalLevel <= 10 && Object.keys(loadSemanticProgress()).length > 60;
+  return false;
 }
 
 export function loadRecentGroups(): RecentGroupsSave | null {

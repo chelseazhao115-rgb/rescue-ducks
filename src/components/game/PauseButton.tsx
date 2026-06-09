@@ -12,7 +12,7 @@ export const PauseButton: React.FC = () => {
   return (
     <motion.button
       onClick={pauseGame}
-      className="relative z-20 mt-3 mr-7 flex h-9 items-center justify-center gap-2 px-3"
+      className="pointer-events-auto relative z-20 mt-3 mr-7 flex h-9 items-center justify-center gap-2 px-3"
       style={{
         borderRadius: "999px",
         background: "rgba(255,255,255,0.08)",

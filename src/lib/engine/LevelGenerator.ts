@@ -21,7 +21,6 @@ import {
   loadSemanticProgress,
   saveRecentGroups as persistRecentGroups,
   saveSemanticProgress,
-  shouldResetSemanticProgress,
 } from "@/lib/storage/saveData";
 
 // ── Chapter Definition ───────────────────────────────────────
@@ -662,10 +661,6 @@ export interface StageProgress {
 }
 
 function loadProgress(): Record<string, number> {
-  if (shouldResetSemanticProgress(TOTAL_LEVELS)) {
-    clearSemanticProgress();
-    return {};
-  }
   return loadSemanticProgress();
 }
 

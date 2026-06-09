@@ -15,7 +15,7 @@ export const AskChelseaButton: React.FC = () => {
       type="button"
       onClick={requestChelseaHelp}
       disabled={chelseaHelpUsed}
-      className="relative z-20 mr-7 mt-2 flex h-9 items-center justify-center gap-2 px-3 font-semibold"
+      className="pointer-events-auto relative z-20 mr-7 mt-2 flex h-9 items-center justify-center gap-2 px-3 font-semibold"
       style={{
         borderRadius: "999px",
         background: chelseaHelpUsed ? "rgba(255,255,255,0.05)" : "rgba(255,231,176,0.12)",

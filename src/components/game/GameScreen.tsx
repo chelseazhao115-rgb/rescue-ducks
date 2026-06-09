@@ -213,7 +213,7 @@ export const GameScreen: React.FC = () => {
       </AnimatePresence>
 
       {/* Top HUD */}
-      <div className="absolute top-0 left-0 right-0 z-10 flex items-start justify-between">
+      <div className="pointer-events-none absolute top-0 left-0 right-0 z-10 flex items-start justify-between">
         <ScoreDisplay />
         <div className="flex flex-col items-end pt-2 pr-2 gap-1">
           <StormMeter />
