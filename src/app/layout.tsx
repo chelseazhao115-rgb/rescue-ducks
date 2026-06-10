@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ViewportScale } from "@/components/shared/ViewportScale";
 import { AudioUnlocker } from "@/components/shared/AudioUnlocker";
 import "./globals.css";
@@ -16,6 +18,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export default function RootLayout({
   children,
 }: {
@@ -29,6 +33,12 @@ export default function RootLayout({
           <AudioUnlocker />
           {children}
         </div>
+        {isProduction && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
         <main className="mobile-device-blocker" aria-label="Desktop browser required">
           <section className="mobile-device-card">
             <div className="mobile-device-mark">Rescue Ducks</div>
