@@ -18,8 +18,6 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-const isProduction = process.env.NODE_ENV === "production";
-
 export default function RootLayout({
   children,
 }: {
@@ -33,12 +31,8 @@ export default function RootLayout({
           <AudioUnlocker />
           {children}
         </div>
-        {isProduction && (
-          <>
-            <Analytics />
-            <SpeedInsights />
-          </>
-        )}
+        <Analytics />
+        <SpeedInsights />
         <main className="mobile-device-blocker" aria-label="Desktop browser required">
           <section className="mobile-device-card">
             <div className="mobile-device-mark">Rescue Ducks</div>
